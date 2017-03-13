@@ -20,7 +20,7 @@ raw_data_folder = '/home/barendregt/Projects/Attention_Prediction/Psychophysics/
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['s1','s2','s4','s5','s6']#['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
+sublist = ['s1','s2','s3','s4','s5','s6']#['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
 # subname = 's1'#'tk2'#'s3'#'mb2'#'tk2'#'s3'#'tk2'
 
@@ -85,36 +85,49 @@ def run_analysis(subname):
 	plt.subplot(2,2,2)
 	plt.title('Pupil amplitude')
 
-	peak_window = [30,50]
+	peak_window = [20,50]
 	psignals = [[],[],[],[]]
 
+	all_signals = []
+
 	for key,trial_signal in pa.trial_signals.items():
-		trial_signal = trial_signal[:,5:] - trial_signal[:,:5].mean()
+		trial_signal = trial_signal[:,peak_window[0]:peak_window[1]] - trial_signal[:,:5].mean()
 
-		msignal = trial_signal.mean(axis=0)
+		all_signals.extend(trial_signal)
 
-		power_signal = np.array([(signal*msignal)/(np.linalg.norm(msignal, ord=2)**2) for signal in trial_signal])
+	msignal = np.mean(all_signals, axis=0)
+
+	for key,trial_signal in pa.trial_signals.items():
+		trial_signal = trial_signal[:,peak_window[0]:peak_window[1]] - trial_signal[:,:5].mean()
+		# power_signal = np.array([np.dot(signal,msignal)/(np.linalg.norm(msignal, ord=2)**2) for signal in trial_signal])
+		power_signal = np.dot(trial_signal, msignal)/(np.linalg.norm(msignal, ord=2)**2)
 
 		if key < 10:
-			psignals[0].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			# psignals[0].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			psignals[0].extend(power_signal)
 		elif key < 30:
-			psignals[1].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			# psignals[1].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			psignals[1].extend(power_signal)
 		elif key < 50:
-			psignals[2].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			# psignals[2].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			psignals[2].extend(power_signal)
 		else:
-			psignals[3].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			# psignals[3].extend(power_signal[:,peak_window[0]:peak_window[1]].max(axis=1))
+			psignals[3].extend(power_signal)
 
 
 	psignals_mean = [np.mean(s) for s in psignals]
 	psignals_std  = [np.std(s)/np.sqrt(len(s)) for s in psignals]
-	plt.bar(range(1,5), psignals_mean)
-	plt.errorbar(np.arange(1.5,5.5), psignals_mean, psignals_std, fmt = '.')
+	plt.bar(np.arange(4), psignals_mean, yerr = psignals_std, color='w')
 
-	plt.xticks(range(0,5), ['','P','P-U','U-P','U-U'])
+	plt.axis('tight')
+	plt.xticks(np.arange(4), ('P','P-U','U-P','U-U'))
 
 	# REACTION TIME
 	plt.subplot(2,2,3)
 	rts = [[],[],[],[]]
+
+	# embed()
 
 	trial_parameters = pa.read_trial_data(pa.combined_h5_filename)
 
@@ -124,11 +137,22 @@ def run_analysis(subname):
 	trial_limits = [[trial_color_values[1], trial_color_values[-2]],
 		 			[trial_ori_values[1], trial_ori_values[-2]]]
 
+	trial_pcs = np.zeros((trial_parameters.shape[0],1))
+
+	for (tc,to) in zip(trial_color_values, trial_ori_values):
+		# print (tc,to)
+		trial_iis = np.array(((abs(trial_parameters['trial_color'])==tc) & (trial_parameters['task']==1)) | ((abs(trial_parameters['trial_orientation'])==to) & (trial_parameters['task']==2)),dtype=bool)
+		trial_pcs[trial_iis] = trial_parameters['correct_answer'][trial_iis].mean()
+
+	trial_pcs = trial_pcs.squeeze()
+
 	for tcode in np.unique(trial_parameters['trial_codes']):
-		if tcode%2==0:
-			selected_rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) & (trial_parameters['trial_codes']==tcode) & ((trial_parameters['trial_color'] > trial_limits[0][0]) & (trial_parameters['trial_color'] < trial_limits[0][1]))]
-		else:
-			selected_rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) & (trial_parameters['trial_codes']==tcode) & ((trial_parameters['trial_orientation'] > trial_limits[1][0]) & (trial_parameters['trial_orientation'] < trial_limits[1][1]))]
+		# if tcode%2==0:
+		# 	selected_rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) & (trial_parameters['trial_codes']==tcode) & ((trial_parameters['trial_color'] > trial_limits[0][0]) & (trial_parameters['trial_color'] < trial_limits[0][1]))]
+		# else:
+		# 	selected_rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) & (trial_parameters['trial_codes']==tcode) & ((trial_parameters['trial_orientation'] > trial_limits[1][0]) & (trial_parameters['trial_orientation'] < trial_limits[1][1]))]
+		tc_iis = np.array((trial_parameters['correct_answer']==1) & (trial_parameters['trial_codes']==tcode), dtype=bool)
+		selected_rts = trial_parameters['reaction_time'][tc_iis] / trial_pcs[tc_iis]
 
 		if tcode < 10:
 			rts[0].extend(selected_rts)
@@ -143,14 +167,16 @@ def run_analysis(subname):
 	rts_std  = [np.std(s)/np.sqrt(len(s)) for s in rts]
 	rts_mean[1:] /= rts_mean[0]
 	rts_std[1:] /= rts_mean[0]
-	# plt.bar(range(1,4), rts_mean[1:])
-	plt.errorbar(np.arange(1.5,4.5), rts_mean[1:], rts_std[1:], fmt = '.')
+	
+	plt.errorbar(np.arange(3), rts_mean[1:], rts_std[1:], fmt = '.')
 
-	plt.xticks(range(1,4), ['P-U','U-P','U-U'])
+	plt.xticks(np.arange(3), ('P-U','U-P','U-U'))
 
-	all_sub_rts[0].append(rts_mean[1]/rts_mean[0])
-	all_sub_rts[1].append(rts_mean[2]/rts_mean[0])
-	all_sub_rts[2].append(rts_mean[3]/rts_mean[0])
+	plt.axis('tight')
+	plt.axis(xmin=-0.5,xmax=2.5)
+
+
+	plt.tight_layout()
 
 	# plt.show()
 	plt.savefig(os.path.join(figfolder,subname + '-ev_pupil.png'))
@@ -162,9 +188,9 @@ def run_analysis(subname):
 # run_analysis('s2')
 [run_analysis(sub) for sub in sublist]
 
-plt.figure()
+# plt.figure()
 
-plt.bar([1,2,3],np.mean(all_sub_rts, axis=1))
-plt.plot([1,2,3],all_sub_rts,'o')
+# plt.bar([1,2,3],np.mean(all_sub_rts, axis=1))
+# plt.plot([1,2,3],all_sub_rts,'o')
 
-plt.savefig(os.path.join(figfolder,'all_sub_rts.png'))
+# plt.savefig(os.path.join(figfolder,'all_sub_rts.png'))
