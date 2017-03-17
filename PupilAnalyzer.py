@@ -10,6 +10,8 @@ import cPickle as pickle
 import pandas as pd
 import tables
 
+from scipy.signal import fftconvolve
+
 from math import *
 
 from hedfpy.EDFOperator import EDFOperator
@@ -24,7 +26,7 @@ from Analyzer import Analyzer
 
 class PupilAnalyzer(Analyzer):
 
-	def __init__(self, subID, filename, edf_folder, **kwargs):
+	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7, **kwargs):
 
 		# Setup default parameter values
 		self.default_parameters = {'low_pass_pupil_f': 6.0,
@@ -34,7 +36,8 @@ class PupilAnalyzer(Analyzer):
 
 		self.edf_folder = edf_folder
 		self.data_folder = edf_folder
-		
+		self.sort_by_date = sort_by_date
+		self.reference_phase = reference_phase
 		self.fir_signal = {}
 
 		# Initialize variables
@@ -67,7 +70,7 @@ class PupilAnalyzer(Analyzer):
 		# if self.combined_data is None:
 
 		if not os.path.isfile(self.combined_h5_filename): 
-			self.recombine_signal_blocks()
+			self.recombine_signal_blocks(reference_phase = self.reference_phase)
 
 			#self.combined_data = tables.open_file(self.combined_h5_filename, mode = 'r')
 
@@ -84,7 +87,7 @@ class PupilAnalyzer(Analyzer):
 	def read_trial_data(self, input_file):
 
 		with pd.get_store(input_file) as tfile:
-			params = tfile['trials/table']
+			params = tfile['trials/full/table']
 
 		return params
 
@@ -95,7 +98,10 @@ class PupilAnalyzer(Analyzer):
 		if not os.path.isfile(self.data_file):
 
 			edf_files = glob.glob(self.edf_folder + '/*.edf')
-			edf_files.sort(key=lambda x: os.path.getmtime(x))
+			if self.sort_by_date:
+				edf_files.sort(key=lambda x: os.path.getmtime(x))
+			else:
+				edf_files.sort()
 
 			for ii,efile in enumerate(edf_files):
 
@@ -112,7 +118,6 @@ class PupilAnalyzer(Analyzer):
 		edf_files.sort(key=lambda x: os.path.getmtime(x))
 
 		self.aliases = ['%s%d' % (self.subID, i) for i in range(0, len(edf_files))]			
-
 
 
 	def recode_trial_code(self, params, last_node = False):
@@ -136,99 +141,188 @@ class PupilAnalyzer(Analyzer):
 		if (len(params) > 1) & (~last_node):
 			return np.array([self.recode_trial_code(p[1], last_node = True) for p in params.iterrows()], dtype=float)
 
-		if np.array(params['trial_type'] == 1): # base trial (/expected)
-		 	if np.array(params['task'] == 1):
-		 		return 0
-		 	else:
-		 		return 1			
+		new_format = 'trial_cue' in params.keys()
 
-		else: # non-base trial (/unexpected)
-		 	# if np.array(params['task'] == 1):
-		 	# 	return 1
-		 	# else:
-		 	# 	return 3
-			
-			if np.array(params['task'] == 1): # color task
-				if np.array(params['stimulus_type'] == 0): # red45
-					
-					if np.array(params['base_color_a'] > 0):
-						return 10
+		if not new_format:
+			if np.array(params['trial_type'] == 1): # base trial (/expected)
+			 	# if np.array(params['task'] == 1):
+			 	# 	return 0
+			 	# else:
+			 	# 	return 1
+			 	return np.array(params['task']==2, dtype=int)
 
-					else:
-						if np.array(params['base_ori'] == 45):
-							return 30
-						else:
-							return 50
-				if np.array(params['stimulus_type'] == 1): # red135
-					if np.array(params['base_color_a'] > 0):
-						return 10
-
-					else:
-						if np.array(params['base_ori'] == 135):
-							return 30
-						else:
-							return 50
-				if np.array(params['stimulus_type'] == 2): # green45
-					if np.array(params['base_color_a'] < 0):
-						return 10
-
-					else:
-						if np.array(params['base_ori'] == 45):
-							return 30
-						else:
-							return 50	
-				if np.array(params['stimulus_type'] == 3): # green135
-					if np.array(params['base_color_a'] < 0):
-						return 10
-
-					else:
-						if np.array(params['base_ori'] == 135):
-							return 30
-						else:
-							return 50
-
-			else: # orientation task
-				if np.array(params['stimulus_type'] == 0): # red45
-					if np.array(params['base_ori'] == 45):
-						return 20
-
-					else:
+			else: # non-base trial (/unexpected)
+			 	# if np.array(params['task'] == 1):
+			 	# 	return 1
+			 	# else:
+			 	# 	return 3
+				
+				if np.array(params['task'] == 1): # color task
+					if np.array(params['stimulus_type'] == 0): # red45
+						
 						if np.array(params['base_color_a'] > 0):
-							return 40
-						else:
-							return 60
-				if np.array(params['stimulus_type'] == 1): # red135
-					if np.array(params['base_ori'] == 135):
-						return 20
+							return 10
 
-					else:
+						else:
+							if np.array(params['base_ori'] == 45):
+								return 30
+							else:
+								return 50
+					if np.array(params['stimulus_type'] == 1): # red135
 						if np.array(params['base_color_a'] > 0):
-							return 40
-						else:
-							return 60
-				if np.array(params['stimulus_type'] == 2): # green45
-					if np.array(params['base_ori'] == 45):
-						return 20
+							return 10
 
-					else:
+						else:
+							if np.array(params['base_ori'] == 135):
+								return 30
+							else:
+								return 50
+					if np.array(params['stimulus_type'] == 2): # green45
 						if np.array(params['base_color_a'] < 0):
-							return 40
-						else:
-							return 60
-				if np.array(params['stimulus_type'] == 3): # green135
-					if np.array(params['base_ori'] == 135):
-						return 20
+							return 10
 
-					else:
+						else:
+							if np.array(params['base_ori'] == 45):
+								return 30
+							else:
+								return 50	
+					if np.array(params['stimulus_type'] == 3): # green135
 						if np.array(params['base_color_a'] < 0):
-							return 40
+							return 10
+
 						else:
-							return 60				
+							if np.array(params['base_ori'] == 135):
+								return 30
+							else:
+								return 50
+
+				else: # orientation task
+					if np.array(params['stimulus_type'] == 0): # red45
+						if np.array(params['base_ori'] == 45):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] > 0):
+								return 40
+							else:
+								return 60
+					if np.array(params['stimulus_type'] == 1): # red135
+						if np.array(params['base_ori'] == 135):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] > 0):
+								return 40
+							else:
+								return 60
+					if np.array(params['stimulus_type'] == 2): # green45
+						if np.array(params['base_ori'] == 45):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] < 0):
+								return 40
+							else:
+								return 60
+					if np.array(params['stimulus_type'] == 3): # green135
+						if np.array(params['base_ori'] == 135):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] < 0):
+								return 40
+							else:
+								return 60				
+		else:
+
+			stimulus_types = {'red45': 0,
+							  'red135': 1,
+							  'green45': 2,
+							  'green135': 3}
+
+			if params['trial_cue']==params['trial_stimulus_label']:
+				return np.array(params['task']==2, dtype=int)
+
+			else:
+				if np.array(params['task'] == 1): # color task
+					if np.array(stimulus_types[params['trial_cue']] == 0): # red45
+						
+						if np.array(params['base_color_a'] > 0):
+							return 10
+
+						else:
+							if np.array(params['base_ori'] == 45):
+								return 30
+							else:
+								return 50
+					if np.array(stimulus_types[params['trial_cue']] == 1): # red135
+						if np.array(params['base_color_a'] > 0):
+							return 10
+
+						else:
+							if np.array(params['base_ori'] == 135):
+								return 30
+							else:
+								return 50
+					if np.array(stimulus_types[params['trial_cue']] == 2): # green45
+						if np.array(params['base_color_a'] < 0):
+							return 10
+
+						else:
+							if np.array(params['base_ori'] == 45):
+								return 30
+							else:
+								return 50	
+					if np.array(stimulus_types[params['trial_cue']] == 3): # green135
+						if np.array(params['base_color_a'] < 0):
+							return 10
+
+						else:
+							if np.array(params['base_ori'] == 135):
+								return 30
+							else:
+								return 50
+
+				else: # orientation task
+					if np.array(stimulus_types[params['trial_cue']] == 0): # red45
+						if np.array(params['base_ori'] == 45):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] > 0):
+								return 40
+							else:
+								return 60
+					if np.array(stimulus_types[params['trial_cue']] == 1): # red135
+						if np.array(params['base_ori'] == 135):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] > 0):
+								return 40
+							else:
+								return 60
+					if np.array(stimulus_types[params['trial_cue']] == 2): # green45
+						if np.array(params['base_ori'] == 45):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] < 0):
+								return 40
+							else:
+								return 60
+					if np.array(stimulus_types[params['trial_cue']] == 3): # green135
+						if np.array(params['base_ori'] == 135):
+							return 20
+
+						else:
+							if np.array(params['base_color_a'] < 0):
+								return 40
+							else:
+								return 60
 
 
-
-
-	def recombine_signal_blocks(self, single_run = True):
+	def recombine_signal_blocks(self, reference_phase = 7):
 
 		if not hasattr(self, 'signal_downsample_factor'):
 			self.signal_downsample_factor = 10
@@ -241,9 +335,11 @@ class PupilAnalyzer(Analyzer):
 
 		full_signal = np.array([])
 
-		downsampled_signal = np.array([])
+		run_signals = []
 
 		trials = pd.DataFrame()
+
+		run_trials = []
 
 		trial_parameters = {}
 
@@ -259,9 +355,11 @@ class PupilAnalyzer(Analyzer):
 
 			blocks = self.h5_operator.read_session_data(alias, 'blocks')
 			block_start_times = blocks['block_start_timestamp']
-			this_trial_phase_times = this_trial_phase_times[this_trial_phase_times['trial_phase_index']==7]
+			this_trial_phase_times = this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
 
 			block_event_times = pd.DataFrame()
+
+			this_run_signal = np.array([])
 
 			# Kick out incomplete trials
 			if len(this_trial_phase_times) < len(this_trial_times):
@@ -274,21 +372,17 @@ class PupilAnalyzer(Analyzer):
 
 			for bs,be in zip(blocks['block_start_timestamp'], blocks['block_end_timestamp']):
 
-				this_block_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_clean_psc', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
+				this_block_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_clean_zscore', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
 
-				if single_run:
-					full_signal = np.append(full_signal, this_block_signal)
-				else:
-					full_signal = np.vstack([full_signal, this_block_signal])
-				# embed()
+				full_signal = np.append(full_signal, this_block_signal)
+				this_run_signal = np.append(this_run_signal, this_block_signal)
+				
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
 
-				# downsampled_signal = np.append(downsampled_signal, sp.signal.decimate(this_block_signal, self.signal_downsample_factor, zero_phase = True))
-
 			this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
-			this_trial_parameters['trial_response_phase_full_signal'] = pd.Series(this_phase_times + prev_signal_size)
-			this_trial_parameters['trial_response_phase_ds_signal'] = this_trial_parameters['trial_response_phase_full_signal'] / self.signal_downsample_factor
-
+			this_trial_parameters['trial_response_phase_within_run'] = pd.Series(this_phase_times)
+			this_trial_parameters['trial_response_phase_full_signal'] = pd.Series(this_phase_times + prev_signal_size)	
+			
 			if ii > 0:
 
 				# Kick out duplicate trials (do we need to do this actually??)
@@ -299,35 +393,40 @@ class PupilAnalyzer(Analyzer):
 			else:
 				trials = this_trial_parameters
 
-		if single_run:
-			downsampled_signal = sp.signal.decimate(full_signal, self.signal_downsample_factor, 1,)#zero_phase = True)
-		else:
-			downsampled_signal = np.vstack([sp.signal.decimate(sig, self.signal_downsample_factor, 1) for sig in full_signal])
+			run_trials.append(this_trial_parameters)
+			run_signals.append(this_run_signal)
+			
 
 
 		# Store in hdf5 format
-		# embed()
 
-		output_file = tables.open_file(self.combined_h5_filename, mode = 'w', title = self.subID)
+		output_file = tables.open_file(self.combined_h5_filename, mode = 'a', title = self.subID)
 
 		pgroup = output_file.create_group("/","pupil","pupil")
 		tgroup = output_file.create_group("/","trials","trials")
 
-		output_file.create_array(pgroup, "original_signal", full_signal, "pupil_signal_original")
-		output_file.create_array(pgroup, "ds_signal", downsampled_signal, "pupil_signal_ds")
+		output_file.create_array(pgroup, "long_signal", full_signal, "long_signal")
 
+		for rii in range(len(run_signals)):
+			output_file.create_array(pgroup, "r%i_signal"%rii, run_signals[rii], "r%i_signal"%rii)
+		
 		output_file.close()
 
-		trials.to_hdf(self.combined_h5_filename, key = '/trials', mode = 'a', format = 't', data_columns = True)
+		trials.to_hdf(self.combined_h5_filename, key = '/trials/full', mode = 'a', format = 't', data_columns = True)
+
+		for rii in range(len(run_signals)):
+			run_trials[rii].to_hdf(self.combined_h5_filename, key = '/trials/run%i'%rii)
+
+
 
 
 	def signal_per_trial(self, only_correct = True):
 
-		trial_start_offset = 1.25+1.25+0.5+.15+.03+.15 # hack for this dataset only
+		trial_start_offset = 0#1.25+1.25+0.5+.15+.03+.15 # hack for this dataset only
 
 		self.load_combined_data()
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'original_signal')
+		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
 
@@ -348,29 +447,31 @@ class PupilAnalyzer(Analyzer):
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
 
 
-	def run_FIR(self, deconv_interval = None):
+	def get_IRF(self, deconv_interval = None):
 
-		down_fs = 100
+		self.load_combined_data()
+
+		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+
+		events = np.array([trial_parameters['trial_response_phase_full_signal'] + 500,  			    # stimulus onset
+				  		   trial_parameters['trial_response_phase_full_signal'] + (500+150+30+150) + self.signal_sample_frequency*trial_parameters['reaction_time']]) # button press
 
 		if deconv_interval is None:
 			deconv_interval = self.deconvolution_interval
 
 
-		if 'timestamps' not in self.events.keys():
-			self.extract_signal_blocks()
-		embed()
-
-		print '[%s] Starting FIR deconvolution' % (self.__class__.__name__)
+		print('[%s] Starting FIR deconvolution' % (self.__class__.__name__))
 
 		self.FIRo = FIRDeconvolution(
-						signal = self.pupil_signal,
-						events = [self.events['timestamps']['response']],
-						event_names = ['response'],
-						durations = {'response': self.events['durations']['response']},
+						signal = recorded_pupil_signal,
+						events = events / self.signal_sample_frequency,
+						event_names = ['stimulus','button_press'],
+						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
 			        	deconvolution_interval = deconv_interval,
-			        	covariates = self.events['covariates']
+			        	#covariates = self.events['covariates']
 					)
 
 		self.FIRo.create_design_matrix()
@@ -380,48 +481,41 @@ class PupilAnalyzer(Analyzer):
 		self.FIRo.betas_for_events()
 		self.FIRo.calculate_rsq()	
 
-		# embed()
+	def build_design_matrix(self, sub_IRF = None):
+		
 
-		plot_time = len(self.pupil_signal)/self.signal_sample_frequency
-		ordered_covariates = ['response.gain','response.corr']
+		if sub_IRF is None:
+			sub_IRF = {'stimulus': [], 'button_press': []}
 
-		f = pl.figure(figsize = (10,8))
-		s = f.add_subplot(311)
-		s.set_title('FIR responses, R squared %1.3f'%self.FIRo.rsq)
-		for dec in ordered_covariates:
-		    pl.plot(self.FIRo.deconvolution_interval_timepoints, self.FIRo.betas_for_cov(dec))
-		pl.legend(ordered_covariates)
-		sn.despine(offset=10)
+			self.get_IRF()
 
-		pl.axhline(0, lw=0.25, alpha=0.5, color = 'k')
-		s = f.add_subplot(312)
-		s.set_title('design matrix')
-		pl.imshow(self.FIRo.design_matrix[:,:plot_time], aspect = 0.075 * plot_time/self.FIRo.deconvolution_interval_size, 
-		          cmap = 'RdBu', interpolation = 'nearest', rasterized = True)
-		sn.despine(offset=10)
+			for name,dec in zip(self.FIRo.covariates.keys(), self.FIRo.betas_per_event_type.squeeze()):
+				sub_IRF[name] = resample(dec,int(len(dec)*(self.signal_sample_frequency/self.deconv_sample_frequency)))[:,np.newaxis]
 
-		s = f.add_subplot(313)
-		s.set_title('data and predictions')
-		pl.plot(np.linspace(0,plot_time, int(plot_time * self.FIRo.deconvolution_frequency/self.FIRo.sample_frequency)), 
-		        self.FIRo.resampled_signal[:,:int(plot_time * self.FIRo.deconvolution_frequency/self.FIRo.sample_frequency)].T, 'r')
-		pl.plot(np.linspace(0,plot_time, int(plot_time * self.FIRo.deconvolution_frequency/self.FIRo.sample_frequency)), 
-		        self.FIRo.predict_from_design_matrix(self.FIRo.design_matrix[:,:int(plot_time * self.FIRo.deconvolution_frequency/self.FIRo.sample_frequency)]).T, 'k')
-		pl.legend(['signal','explained'])
-		sn.despine(offset=10)
-		pl.tight_layout()		
 
-		pl.show()
+		self.load_combined_data()
 
-		# self.fir_signal = {}
+		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		# pl.figure(figsize=(10,10))
+		stim_times = trial_parameters['trial_response_phase_full_signal'] + 500
+		resp_times = trial_parameters['trial_response_phase_full_signal'] + (500+150+30+150) + self.signal_sample_frequency*trial_parameters['reaction_time']
 
-		# for name,dec in zip(self.FIRo.covariates.keys(), self.FIRo.betas_per_event_type.squeeze()):
-		# 	#self.fir_signal.update({name: [self.FIRo.deconvolution_interval_timepoints, dec]})
-		# 	pl.plot(self.FIRo.deconvolution_interval_timepoints, dec, label = name)
+		embed()
 
-		# pl.legend()
-		# pl.show()
+		stimX = respX = np.ones((recorded_pupil_signal.size,1))		
+		tempX = np.zeros((recorded_pupil_signal.size,1))
+
+		for tcode in np.unique(trial_parameters['trial_codes']):
+			tempX[stim_times[trial_parameters['trial_codes']==tcode]] = 1
+			stimX = np.hstack([stimX, fftconvolve(tempX, sub_IRF['stimulus'])[:recorded_pupil_signal.size]])
+
+			respX = np.hstack([respX, fftconvolve(tempX, sub_IRF['stimulus'])[:recorded_pupil_signal.size]])
+
+
+
+	def run_GLM(self):
+		pass
 
 	def store_pupil(self):
 		# Simply store the relevant variables to save speed

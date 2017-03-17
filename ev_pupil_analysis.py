@@ -20,7 +20,8 @@ raw_data_folder = '/home/barendregt/Projects/Attention_Prediction/Psychophysics/
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['s1','s2','s3','s4','s5','s6']#['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
+sublist = ['AA','AB','AC','AF','AG']#
+# sublist = ['s1','s2','s3','s4','s5','s6']#['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
 # subname = 's1'#'tk2'#'s3'#'mb2'#'tk2'#'s3'#'tk2'
 
@@ -28,7 +29,7 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 8
-deconvolution_interval = np.array([-0.5, 6.5])
+deconvolution_interval = np.array([0, 4.5])
 
 down_fs = 100
 
@@ -43,16 +44,29 @@ def run_analysis(subname):
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
 
-	csvfilename = glob.glob(rawfolder + '/*.csv')[-1]
+	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
 
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval)
+	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 3, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval)
 
 	# pa.recombine_signal_blocks()
 	# Pupil data
+	pa.load_data()
 
 	pa.signal_per_trial()
+
+	plt.figure(figsize=(10,8))
+
+	for name,dec in zip(pa.FIRo.covariates.keys(), pa.FIRo.betas_per_event_type.squeeze()):
+		#pa.fir_signal.update({name: [pa.FIRo.deconvolution_interval_timepoints, dec]})
+		plt.pltot(pa.FIRo.deconvolution_interval_timepoints, dec, label = name)
+
+	plt.legend()
+	plt.show()
+
+	embed()
+
 
 	plt.figure()
 	# EV signals
@@ -74,7 +88,7 @@ def run_analysis(subname):
 	plt.plot(np.mean(pred_signal, axis=0), label='expected')
 	plt.plot(np.mean(unpred_signal, axis=0), label='unexpected')
 
-	plt.ylabel('Pupil response (perc. change)')
+	plt.ylabel('Pupil response (z)')
 	plt.xlabel('Time (s)')
 
 	plt.xticks(np.arange(0,70,10), np.arange(7))
@@ -85,7 +99,7 @@ def run_analysis(subname):
 	plt.subplot(2,2,2)
 	plt.title('Pupil amplitude')
 
-	peak_window = [20,50]
+	peak_window = [10,40]
 	psignals = [[],[],[],[]]
 
 	all_signals = []
@@ -152,7 +166,7 @@ def run_analysis(subname):
 		# else:
 		# 	selected_rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) & (trial_parameters['trial_codes']==tcode) & ((trial_parameters['trial_orientation'] > trial_limits[1][0]) & (trial_parameters['trial_orientation'] < trial_limits[1][1]))]
 		tc_iis = np.array((trial_parameters['correct_answer']==1) & (trial_parameters['trial_codes']==tcode), dtype=bool)
-		selected_rts = trial_parameters['reaction_time'][tc_iis] / trial_pcs[tc_iis]
+		selected_rts = trial_parameters['reaction_time'][tc_iis]# / trial_pcs[tc_iis]
 
 		if tcode < 10:
 			rts[0].extend(selected_rts)
@@ -174,6 +188,11 @@ def run_analysis(subname):
 
 	plt.axis('tight')
 	plt.axis(xmin=-0.5,xmax=2.5)
+
+	# embed()
+	# GLM
+	# pupil_size = beta*[trial_cue_0:3 trial_stimulus_0:3 log(rt) trial_pcs] 
+	
 
 
 	plt.tight_layout()

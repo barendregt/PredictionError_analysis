@@ -16,11 +16,12 @@ from IPython import embed
 from BehaviorAnalyzer import BehaviorAnalyzer
 
 
-raw_data_folder = '/home/barendregt/Projects/Attention_Prediction/Psychophysics/Data' #raw_data'
+raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
-figfolder = '/home/barendregt/Analysis/Attention_Prediction/Figures'
+figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
+sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ']#
+#['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
 # subname = 's1'#'tk2'#'s3'#'mb2'#'tk2'#'s3'#'tk2'
 
@@ -41,12 +42,17 @@ def run_analysis(subname):
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
 
-	csvfilename = glob.glob(rawfolder + '/*.csv')[-1]
+	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
 
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, signal_downsample_frequency = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval)
+	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 3, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval)
 
+	# pa.recombine_signal_blocks()
+	# Pupil data
+	pa.load_data()
+
+	pa.signal_per_trial()
 	# pa.recombine_signal_blocks()
 	# Pupil data
 

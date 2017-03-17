@@ -3,9 +3,9 @@ import os,glob,datetime
 
 import numpy as np
 import scipy as sp
-import seaborn as sn
-import matplotlib.pylab as pl
-import cPickle as pickle
+
+# import cPickle as pickle
+import pickle
 import pandas as pd
 
 from math import *
@@ -39,7 +39,29 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 		super(BehaviorAnalyzer, self).load_data()
 
-		self.csv_data = pd.read_csv(self.csv_file)
+		if len(self.csv_file)==1:
+			self.csv_data = pd.read_csv(self.csv_file[0])
+		else:
+			self.csv_data_runs = []
+			for ii in range(len(self.csv_file)):
+				if ii>0:
+					self.csv_data = pd.concat([self.csv_data, pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'})], axis=0, ignore_index = True)
+					self.csv_data_runs.append(pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'}))
+				else:
+					self.csv_data = pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'})
+					self.csv_data_runs.append(pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'}))
+
+
+		if 'trial_cue' in self.csv_data.keys():
+			stimulus_types = {'red45': 0,
+							  'red135': 1,
+							  'green45': 2,
+							  'green135': 3}
+
+			self.csv_data['trial_cue_label'] = self.csv_data['trial_cue']
+			self.csv_data['trial_cue'] = np.array([stimulus_types[tc] for tc in self.csv_data['trial_cue_label']], dtype=int)
+
+		
 
 	def recode_trial_types(self):
 		"""
@@ -520,7 +542,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 	def compute_performance_attended_unattended(self):
 
 
- 		self.load_data()
+		self.load_data()
 
 		performance = []
 		reaction_time = []
@@ -763,6 +785,6 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 	def store_behavior(self):
 		# Simply store the relevant variables to save speed
-		print '[%s] Storing behavioural data' % (self.__class__.__name__)
+		print('[%s] Storing behavioural data' % (self.__class__.__name__))
 		#pickle.dump([self.task_data,self.events,self.task_performance,self.trial_signals],open(os.path.join(self.data_folder, self.output_filename),'wb'))
 		pickle.dump([self.task_data,self.events,self.task_performance],open(os.path.join(self.data_folder, 'behavior_' + self.output_filename),'wb'))
