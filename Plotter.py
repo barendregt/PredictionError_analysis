@@ -12,6 +12,7 @@ import pandas as pd
 
 from IPython import embed
 
+alphabetnum = np.array(list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), dtype="|S1")
 
 class Plotter(object):
 
@@ -25,32 +26,154 @@ class Plotter(object):
 			self.figure_folder = os.getcwd()
 
 
-	def event_related_pupil_average(self, pupil_signal = [], xtimes = []):
-		
-		if len(xtimes)==0:
-			xtimes = np.arange(pupil_signal.shape[1])
+		self.figure = None
 
-		pred_signal = []
-		unpred_signal = []
+	def incorrect_data_format(self, data, conditions):
+		if not isinstance(data, dict):
+			print('ERROR: data must be a dictionary')
+			return True
 
-		for key,trial_signal in pa.trial_signals.items():
-			if key < 10:
-				pred_signal.extend(trial_signal - trial_signal[:,:5].mean())
+		# Quickly check that all requested conditions are present in the data
+		for key in conditions:
+			if key not in data.keys():
+				print('ERROR: not all requested keys present in provided data')
+				return True
+		return False
+
+	def open_figure(self, force = 0):
+
+		if self.figure is None:
+			self.figure = plt.figure()
+		else:
+			if force==1:
+				plt.close("all")
+
+				self.figure = plt.figure()
 			else:
-				unpred_signal.extend(trial_signal - trial_signal[:,:5].mean())
+				print('Warning: figure is already open. Use force=1 to create new axes')
 
-		plt.axvline(5, ymin=0, ymax=1, linewidth=1.5, color='k')
+	def subplot(self, *args, **kwargs):
+		plt.subplot(*args, **kwargs)		
 
-		plt.plot(np.mean(pred_signal, axis=0), label='expected')
-		plt.plot(np.mean(unpred_signal, axis=0), label='unexpected')
+	def plot(self, x, y, label = None, *args, **kwargs):
 
-		plt.xticks()
+		if len(x)==0:
+			plt.plot(np.arange(len(y)), y, label=label, figure = self.figure, *args, **kwargs)
+		else:
+			plt.plot(x, y, label=label, figure = self.figure, *args, **kwargs)
 
-		plt.ylabel('Pupil response (z)')
-		plt.xlabel('Time after stim onset (s)')
+	def event_related_pupil_average(self, pupil_signal, signal_labels = {}, xtimes = [], yticks = [], xticks = [], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = True, title = '', compute_mean = False, compute_sd = False):
+			
 
-		plt.xticks(np.arange(5,45,10).tolist(),[0, 1.0, 2.0, 3.0, 4.0])#, labels=np.arange(-0.5,4.0,5).tolist())
+		if onset_marker != []:
+			plt.axvline(onset_marker, ymin=0, ymax=1, linewidth=1.5, color='k', figure = self.figure)
 
-		# plt.legend()
+		if isinstance(pupil_signal, dict):
+			for (label, signal) in pupil_signal.items():
+
+				if compute_mean:
+					signal = np.mean(signal, axis=0)
+
+					self.plot(xtimes, signal, label=label)
+
+		else:
+			for (key,signal) in enumerate(pupil_signal):
+				if compute_mean:
+					signal = np.mean(signal, axis=0)
+
+				if len(signal_labels)==0:
+					self.plot(xtimes, signal, label=key)
+				else:
+					self.plot(xtimes, signal, label=signal_labels[key])
+		
+		plt.ylabel(ylabel)
+		plt.xlabel(xlabel)
+
+		if len(title)>0:
+			plt.title(title)
+
+		if show_legend:
+			plt.legend(loc = 'best')
+
+		if len(xticks)>0:
+			if len(xticklabels)>0:
+				plt.xticks(xticks, xticklabels)
+			else:
+				plt.xticks(xticks)
+
+		if len(yticks)>0:
+			if len(yticklabels)>0:
+				plt.yticks(yticks, yticklabels)
+			else:
+				plt.yticks(yticks)
 
 		sn.despine(offset=5)		
+
+
+	def event_related_pupil_difference(self, data, conditions, reference_index = 0, xtimes = [], yticks = [], xticks = [], yticklabels = [], xticklabels = [], show_legend = True, title='', ylabel = '', xlabel = ''):
+		
+		# Plot the difference between conditions
+
+		if self.incorrect_data_format(data, conditions):
+			return
+
+		# default behaviour is: diff_N = condition_N - condition_0
+		reference_condition = conditions[reference_index]
+		reference_mean = np.mean(data[reference_condition], axis=0)
+
+		for key in conditions[1:]:
+			self.plot(xtimes, np.mean(data[key], axis=0) - reference_mean, label=key+'v'+reference_condition)
+
+		if len(title)>0:
+			plt.title(title)
+
+		if show_legend:
+			plt.legend(loc = 'best')
+
+		plt.ylabel(ylabel)
+		plt.xlabel(xlabel)
+
+		if len(xticks)>0:
+			if len(xticklabels)>0:
+				plt.xticks(xticks, xticklabels)
+			else:
+				plt.xticks(xticks)
+
+		if len(yticks)>0:
+			if len(yticklabels)>0:
+				plt.yticks(yticks, yticklabels)
+			else:
+				plt.yticks(yticks)		
+
+		sn.despine(offset=5)
+
+	def pupil_amplitude_per_condition(self, data, conditions, with_error = False):
+
+		if self.incorrect_data_format(data, conditions):
+			return
+
+		for ii,key in enumerate(conditions):
+
+			# First compute the within-subject average
+			average_data = [np.mean(subdata) for subdata in data[key]]
+
+			# Then plot group average
+			if with_error:
+				plt.bar(ii, np.mean(average_data), yerr = np.std(average_data)/np.sqrt(len(average_data)), width = 0.75, label = key)
+			else:
+				plt.bar(ii, np.mean(average_data), width = 0.75, label = key)
+
+		plt.xticks(range(len(conditions)), conditions)
+
+		sn.despine()
+
+
+	def save_figure(self, filename = ''):
+
+		self.figure.tight_layout()
+
+		# Create a random PDF filename if none is provided
+		if len(filename)==0: 
+			filename = "".join(np.random.choice(alphabetnum, [1, 8])) + '.pdf'
+
+		self.figure.savefig(os.path.join(self.figure_folder, filename))
