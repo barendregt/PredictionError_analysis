@@ -58,7 +58,7 @@ class Plotter(object):
 	def plot(self, x, y, label = None, *args, **kwargs):
 
 		if len(x)==0:
-			plt.plot(np.arange(len(y)), y, label=label, figure = self.figure, *args, **kwargs)
+			plt.plot(np.arange(np.array(y).size), y, label=label, figure = self.figure, *args, **kwargs)
 		else:
 			plt.plot(x, y, label=label, figure = self.figure, *args, **kwargs)
 
@@ -110,19 +110,64 @@ class Plotter(object):
 		sn.despine(offset=5)		
 
 
-	def event_related_pupil_difference(self, data, conditions, reference_index = 0, xtimes = [], yticks = [], xticks = [], yticklabels = [], xticklabels = [], show_legend = True, title='', ylabel = '', xlabel = ''):
+	def event_related_pupil_difference(self, data, conditions, reference_index = 0, xtimes = [], yticks = [], xticks = [], yticklabels = [], xticklabels = [], show_legend = True, title='', ylabel = '', xlabel = '', with_stats = False):
 		
 		# Plot the difference between conditions
 
 		if self.incorrect_data_format(data, conditions):
 			return
-
+		
 		# default behaviour is: diff_N = condition_N - condition_0
 		reference_condition = conditions[reference_index]
 		reference_mean = np.mean(data[reference_condition], axis=0)
-
+		
 		for key in conditions[1:]:
-			self.plot(xtimes, np.mean(data[key], axis=0) - reference_mean, label=key+'v'+reference_condition)
+			condition_mean = np.mean(np.array(data[key]) - reference_mean, axis=0) 
+			self.plot(xtimes, condition_mean, label=reference_condition+'v'+key)
+
+			# if with_stats:
+			# 	condition_ste = np.std(np.array(data[key]) - reference_mean, axis=0)/np.sqrt(len(data[key]))
+			# 	plt.fill_between(range(np.array(reference_mean).size), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5)
+
+		
+		# Do time-by-time stats on difference
+		
+		if with_stats:
+			extract_data = np.array([data[key] for key in conditions])
+
+			f = np.zeros((np.array(reference_mean).size,1))
+			p = np.zeros((np.array(reference_mean).size,1))
+
+			y_pos = plt.axis()[2]
+
+			for time_point in range(np.array(reference_mean).size):
+				y_pos = 0
+				# All conditions one-way
+				f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][:][time_point],
+																  extract_data[1][:][time_point],
+																  extract_data[2][:][time_point],
+																  extract_data[3][:][time_point])
+
+				if p[time_point] < (0.000000000001):
+					plt.text(time_point, y_pos,'*')
+
+				# y_pos = 1
+				# for ii in range(4):
+				# 	for jj in range(4):
+				# 		if (ii<jj):
+				# 			# All combinations
+				# 			f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[ii][:][time_point],
+				# 															  extract_data[jj][:][time_point])
+
+				# 			if p[time_point] < (0.05/8):
+				# 				plt.text(time_point, y_pos,'*')	
+
+				# 			y_pos += 1
+
+				# plt.axis([0, len(reference_mean), 0, y_pos+1])
+
+			print(p)																		
+
 
 		if len(title)>0:
 			plt.title(title)
@@ -155,13 +200,13 @@ class Plotter(object):
 		for ii,key in enumerate(conditions):
 
 			# First compute the within-subject average
-			average_data = [np.mean(subdata) for subdata in data[key]]
+			# average_data = [np.mean(subdata) for subdata in data[key]]
 
 			# Then plot group average
 			if with_error:
-				plt.bar(ii, np.mean(average_data), yerr = np.std(average_data)/np.sqrt(len(average_data)), width = 0.75, label = key)
+				plt.bar(ii, np.mean(data[key]), yerr = np.std(data[key])/np.sqrt(len(data[key])), width = 0.75, label = key)
 			else:
-				plt.bar(ii, np.mean(average_data), width = 0.75, label = key)
+				plt.bar(ii, np.mean(data[key]), width = 0.75, label = key)
 
 		plt.xticks(range(len(conditions)), conditions)
 

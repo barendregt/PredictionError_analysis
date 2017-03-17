@@ -125,7 +125,7 @@ power_signals = {'PP': [],
 				 'PU': [],
 				 'UU': []}
 
-power_time_window = [5,35]
+power_time_window = [10,25]
 
 for subname in sublist:
 
@@ -143,13 +143,13 @@ for subname in sublist:
 
 	for key,trial_signal in pa.trial_signals.items():
 		if key < 10:
-			pupil_signals['PP'].extend(trial_signal[:,5:] - trial_signal[:,:5].mean())
+			pupil_signals['PP'].extend(trial_signal - trial_signal[:,:5].mean())
 		elif key < 30:
-			pupil_signals['UP'].extend(trial_signal[:,5:] - trial_signal[:,:5].mean())
+			pupil_signals['UP'].extend(trial_signal - trial_signal[:,:5].mean())
 		elif key < 50:
-			pupil_signals['PU'].extend(trial_signal[:,5:] - trial_signal[:,:5].mean())
+			pupil_signals['PU'].extend(trial_signal - trial_signal[:,:5].mean())
 		else:
-			pupil_signals['UU'].extend(trial_signal[:,5:] - trial_signal[:,:5].mean())
+			pupil_signals['UU'].extend(trial_signal - trial_signal[:,:5].mean())
 
 	psignals = [[],[],[],[]]
 
@@ -169,24 +169,19 @@ for subname in sublist:
 		power_signal = np.dot(trial_signal, msignal)/msignal_norm
 
 		if key < 10:
-			psignals[0].extend(power_signal)
+			power_signals['PP'].extend(power_signal)
 		elif key < 30:
-			psignals[1].extend(power_signal)
+			power_signals['UP'].extend(power_signal)
 		elif key < 50:
-			psignals[2].extend(power_signal)
+			power_signals['PU'].extend(power_signal)
 		else:
-			psignals[3].extend(power_signal)
-
-	power_signals['PP'].append(psignals[0])
-	power_signals['UP'].append(psignals[1])
-	power_signals['PU'].append(psignals[2])
-	power_signals['UU'].append(psignals[3])
+			power_signals['UU'].extend(power_signal)
 
 	pa.unload_data()
 
 pl.open_figure(force=1)
 pl.subplot(1,2,1, title='Average pupil difference')
-pl.event_related_pupil_difference(data = pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, ylabel= 'Pupil size difference (sd, pred - unpred)', xlabel = 'Time after stimulus onset (s)')
+pl.event_related_pupil_difference(data = pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, xticks = np.arange(0,40,5), xticklabels = np.arange(-5,3.5,.5), ylabel= 'Pupil size difference (sd, pred - unpred)', xlabel = 'Time after stimulus onset (s)')
 
 
 
