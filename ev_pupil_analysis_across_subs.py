@@ -191,7 +191,7 @@ pl.event_related_pupil_difference(data = pupil_signals, conditions = ['PP','UP',
 
 
 pl.subplot(1,2,2, title='Average pupil amplitude')
-pl.pupil_amplitude_per_condition(data = power_signals, conditions = ['PP','UP','PU','UU'])
+pl.pupil_amplitude_per_condition(data = power_signals, conditions = ['PP','UP','PU','UU'], with_error = True)
 
 
 #### PLOT AVERAGE PUPIL AMPLITUDE
