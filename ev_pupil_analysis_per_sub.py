@@ -32,7 +32,7 @@ signal_sample_frequency = 1000
 deconv_sample_frequency = 8
 deconvolution_interval = np.array([-1.5, 4.5])
 
-down_fs = 500
+down_fs = 100
 
 pl = Plotter(figure_folder = figfolder)
 
@@ -44,25 +44,27 @@ pl = Plotter(figure_folder = figfolder)
 
 # pl.subplot(1,2,2, title= 'Average pupil difference')
 
-pupil_signals = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}
-power_signals = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}
-ie_scores = {'PP': [],
-			 'UP': [],
-			 'PU': [],
-			 'UU': []}
 
-power_time_window = [30,50]#[15,30]
+
+power_time_window = [30,50]#$[10,30]#[30,50]#
 zero_point = 15
 
 all_ie_scores = []
 
 for subname in sublist:
+
+	pupil_signals = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}
+	power_signals = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}
+	ie_scores = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}
 
 	# print subname
 	# Organize filenames
@@ -78,6 +80,25 @@ for subname in sublist:
 
 	# Get pupil data (ev)
 	pa.signal_per_trial(only_correct = True)
+
+
+
+	pl.open_figure(force=1)
+
+	for key,trial_signal in pa.trial_signals.items():
+
+		if key < 10:
+			pupil_signals['PP'].extend(trial_signal)
+		if key < 30:
+			pupil_signals['UP'].extend(trial_signal)
+		elif key < 50:
+			pupil_signals['PU'].extend(trial_signal)
+		else:
+			pupil_signals['UU'].extend(trial_signal)
+
+	pl.event_related_pupil_average(data = pupil_signals, conditions = ['PP','UP','PU','UU'], compute_mean = True, compute_sd = True, xticks = np.arange(0,60,15), xticklabels = np.arange(0,6.0,1.5))
+
+	pl.save_figure('S%i-ev_pupil_average.pdf'%sublist.index(subname), sub_folder = 'individual')
 
 	ref_signals = []
 
@@ -120,18 +141,18 @@ for subname in sublist:
 
 	pa.unload_data()
 
-pl.open_figure(force=1)
+	pl.open_figure(force=1)
 
-pl.subplot(1,2,1, title='Pupil amplitude')
-pl.bar_plot(data = power_signals, conditions = ['UP','PU','UU'], with_error = True, ylabel = 'Pupil amplitude (a.u.)', x_lim = [0.5, None])
+	pl.subplot(1,2,1, title='Pupil amplitude')
+	pl.bar_plot(data = power_signals, conditions = ['UP','PU','UU'], with_error = True, ylabel = 'Pupil amplitude (a.u.)', x_lim = [0.5, None])
 
-# Convert IE scores back to milliseconds
-for (key,item) in ie_scores.items():
-	ie_scores[key] = np.array(ie_scores[key]) * np.median(all_ie_scores)
+	# Convert IE scores back to milliseconds
+	for (key,item) in ie_scores.items():
+		ie_scores[key] = np.array(ie_scores[key]) * np.median(all_ie_scores)
 
-pl.subplot(1,2,2, title='Reaction times')
-pl.hline(y = np.median(all_ie_scores))
-pl.bar_plot(data = ie_scores, conditions = ['UP','PU','UU'], ylabel='Inverse Efficiency (ms)', with_error = True, x_lim = [0.5, None], y_lim = [1.4, None], yticks = np.arange(1.4,1.9,.1), yticklabels = np.arange(1400,1900,100))
+	pl.subplot(1,2,2, title='Reaction times')
+	pl.hline(y = np.median(all_ie_scores))
+	pl.bar_plot(data = ie_scores, conditions = ['UP','PU','UU'], ylabel='Inverse Efficiency (ms)', with_error = True, x_lim = [0.5, None], y_lim = [1.4, None], yticks = np.arange(1.4,1.9,.1), yticklabels = np.arange(1400,1900,100))
 
 
 
@@ -143,4 +164,4 @@ pl.bar_plot(data = ie_scores, conditions = ['UP','PU','UU'], ylabel='Inverse Eff
 
 
 
-pl.save_figure('all-ev_pupil_summary-things.pdf', sub_folder = 'summary')
+	pl.save_figure('S%i-ev_pupil_summary.pdf'%sublist.index(subname), sub_folder = 'individual')

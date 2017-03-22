@@ -10,7 +10,7 @@ import cPickle as pickle
 import pandas as pd
 import tables
 
-from scipy.signal import fftconvolve
+from scipy.signal import fftconvolve, resample
 
 from math import *
 
@@ -26,13 +26,13 @@ from Analyzer import Analyzer
 
 class PupilAnalyzer(Analyzer):
 
-	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7, **kwargs):
+	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7,verbosity = 0, **kwargs):
 
 		# Setup default parameter values
 		self.default_parameters = {'low_pass_pupil_f': 6.0,
 								   'high_pass_pupil_f': 0.01}
 
-		super(PupilAnalyzer, self).__init__(subID, filename, **kwargs)
+		super(PupilAnalyzer, self).__init__(subID, filename, verbosity=verbosity, **kwargs)
 
 		self.edf_folder = edf_folder
 		self.data_folder = edf_folder
@@ -65,12 +65,12 @@ class PupilAnalyzer(Analyzer):
 		if not (self.combined_data is None):
 			self.combined_data.close()
 
-	def load_combined_data(self):
+	def load_combined_data(self, force_rebuild = False):
 
 		# if self.combined_data is None:
 
-		if not os.path.isfile(self.combined_h5_filename): 
-			self.recombine_signal_blocks(reference_phase = self.reference_phase)
+		if (not os.path.isfile(self.combined_h5_filename)) or force_rebuild: 
+			self.recombine_signal_blocks(reference_phase = self.reference_phase, force_rebuild = force_rebuild)
 
 			#self.combined_data = tables.open_file(self.combined_h5_filename, mode = 'r')
 
@@ -322,7 +322,7 @@ class PupilAnalyzer(Analyzer):
 								return 60
 
 
-	def recombine_signal_blocks(self, reference_phase = 7):
+	def recombine_signal_blocks(self, reference_phase = 7, force_rebuild = False):
 
 		if not hasattr(self, 'signal_downsample_factor'):
 			self.signal_downsample_factor = 10
@@ -399,8 +399,12 @@ class PupilAnalyzer(Analyzer):
 
 
 		# Store in hdf5 format
+		file_mode = 'a'
 
-		output_file = tables.open_file(self.combined_h5_filename, mode = 'a', title = self.subID)
+		if force_rebuild and os.path.isfile(self.combined_h5_filename):
+			os.remove(self.combined_h5_filename)
+
+		output_file = tables.open_file(self.combined_h5_filename, mode = file_mode, title = self.subID)
 
 		pgroup = output_file.create_group("/","pupil","pupil")
 		tgroup = output_file.create_group("/","trials","trials")
@@ -422,29 +426,34 @@ class PupilAnalyzer(Analyzer):
 
 	def signal_per_trial(self, only_correct = True):
 
-		trial_start_offset = 0#1.25+1.25+0.5+.15+.03+.15 # hack for this dataset only
+		trial_start_offset = 0#0.5+.15+.03+.15 # hack for this dataset only
 
 		self.load_combined_data()
 
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
+		# trial_start_offset = trial_parameters['reaction_time']*self.signal_sample_frequency
 
-		self.trial_signals = {}
+		self.trial_signals =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		self.ie_scores =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
-			self.trial_signals[tcode] = []#np.array([])
+			# self.trial_signals[tcode] = []#np.array([])
 
 			if only_correct:
 				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==1), dtype=bool)
 			else:
 				selected_trials = np.array(trial_parameters['trial_codes']==tcode, dtype=bool)			
 
-			for ts,te in zip(trial_parameters['trial_response_phase_full_signal'][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_response_phase_full_signal'][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1]):
+			for tii,(ts,te) in enumerate(zip(trial_parameters['trial_response_phase_full_signal'][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_response_phase_full_signal'][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])):
 				if (ts > 0) & (te < recorded_pupil_signal.size):
 					self.trial_signals[tcode].append(sp.signal.decimate(recorded_pupil_signal[int(ts):int(te)], self.signal_downsample_factor, 1))
-			
+				else:
+					selected_trials[tii] = False
+					
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
+			self.ie_scores[tcode] = np.array(trial_parameters['reaction_time'][selected_trials] / np.mean(trial_parameters['correct_answer'][selected_trials]))
 
 
 	def get_IRF(self, deconv_interval = None):
@@ -483,6 +492,7 @@ class PupilAnalyzer(Analyzer):
 
 	def build_design_matrix(self, sub_IRF = None):
 		
+		print('[%s] Creating design matrix for GLM' % (self.__class__.__name__))
 
 		if sub_IRF is None:
 			sub_IRF = {'stimulus': [], 'button_press': []}
@@ -491,6 +501,7 @@ class PupilAnalyzer(Analyzer):
 
 			for name,dec in zip(self.FIRo.covariates.keys(), self.FIRo.betas_per_event_type.squeeze()):
 				sub_IRF[name] = resample(dec,int(len(dec)*(self.signal_sample_frequency/self.deconv_sample_frequency)))[:,np.newaxis]
+				sub_IRF[name] /= max(abs(sub_IRF[name]))
 
 
 		self.load_combined_data()
@@ -498,24 +509,39 @@ class PupilAnalyzer(Analyzer):
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		stim_times = trial_parameters['trial_response_phase_full_signal'] + 500
-		resp_times = trial_parameters['trial_response_phase_full_signal'] + (500+150+30+150) + self.signal_sample_frequency*trial_parameters['reaction_time']
+		stim_times = trial_parameters['trial_response_phase_full_signal'] + (500+150+30+150)
+		resp_times = trial_parameters['trial_response_phase_full_signal'] + self.signal_sample_frequency*trial_parameters['reaction_time']
 
-		embed()
+		# embed()
 
-		stimX = respX = np.ones((recorded_pupil_signal.size,1))		
+		self.design_matrix = np.ones((recorded_pupil_signal.size,1))	
 		tempX = np.zeros((recorded_pupil_signal.size,1))
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
-			tempX[stim_times[trial_parameters['trial_codes']==tcode]] = 1
-			stimX = np.hstack([stimX, fftconvolve(tempX, sub_IRF['stimulus'])[:recorded_pupil_signal.size]])
+			for trial in np.where(trial_parameters['trial_codes']==tcode):
+			# tempX[stim_times[] = 1
 
-			respX = np.hstack([respX, fftconvolve(tempX, sub_IRF['stimulus'])[:recorded_pupil_signal.size]])
 
+				self.design_matrix = np.hstack([self.design_matrix, fftconvolve(tempX, sub_IRF['stimulus'])[:recorded_pupil_signal.size], fftconvolve(tempX, sub_IRF['stimulus'])[:recorded_pupil_signal.size]])
 
 
 	def run_GLM(self):
-		pass
+
+		print('[%s] Running GLM analysis' % (self.__class__.__name__))
+
+		if not hasattr(self, 'design_matrix'):
+			self.build_design_matrix()
+
+		self.load_combined_data()
+
+		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+
+		trial_betas = np.linalg.pinv(self.design_matrix).dot(recorded_pupil_signal)
+
+		embed()
+
+
 
 	def store_pupil(self):
 		# Simply store the relevant variables to save speed

@@ -22,11 +22,11 @@ from PupilAnalyzer import PupilAnalyzer
 
 class BehaviorAnalyzer(PupilAnalyzer):
 
-	def __init__(self, subID, csv_filename, h5_filename, raw_folder, **kwargs):
+	def __init__(self, subID, csv_filename, h5_filename, raw_folder, verbosity=0, **kwargs):
 
 		self.default_parameters = {}
 
-		super(BehaviorAnalyzer, self).__init__(subID, h5_filename, raw_folder, **kwargs)
+		super(BehaviorAnalyzer, self).__init__(subID, h5_filename, raw_folder,verbosity=verbosity, **kwargs)
 
 		self.csv_file = csv_filename
 
@@ -388,6 +388,24 @@ class BehaviorAnalyzer(PupilAnalyzer):
 	# 						   'trial_color': trial_color,
 	# 						   'trial_orientation': trial_orientation,
 	# 						   'trial_correct': trial_correct})
+
+
+	def compute_inverse_efficiency_scores(self, compute_average = False):
+
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+
+		ie_scores = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
+		for tcode in np.unique(trial_parameters['trial_codes']):
+			
+			rts = trial_parameters['reaction_time'][trial_parameters['trial_codes']==tcode]
+
+			if compute_average:
+				ie_scores[tcode] = np.median(rts / np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode]))
+			else:
+				ie_scores[tcode] = np.array(rts / np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode]))
+
+		return ie_scores
 
 
 	def compute_performance(self):
