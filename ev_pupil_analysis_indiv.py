@@ -115,7 +115,7 @@ for subname in sublist:
 		ref_signal.extend(trial_signal)
 
 	msignal = np.mean(ref_signal, axis=0)
-	msignal_norm = np.linalg.norm(msignal, ord=2)#**2
+	msignal_norm = np.linalg.norm(msignal, ord=2)#**2xx
 
 	for key,trial_signal in pa.trial_signals.items():
 		trial_signal = trial_signal[:,power_time_window[0]:power_time_window[1]] - trial_signal[:,zero_point][:,np.newaxis]

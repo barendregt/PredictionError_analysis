@@ -4,7 +4,11 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import seaborn as sn
 
+import statsmodels.api as sm
+from statsmodels.stats.api import anova_lm
+from statsmodels.formula.api import ols
 from math import *
+
 import os,glob,sys
 
 import cPickle as pickle
@@ -62,7 +66,7 @@ class Plotter(object):
 		else:
 			plt.plot(x, y, label=label, figure = self.figure, *args, **kwargs)
 
-	def event_related_pupil_average(self, data, conditions = {}, xtimes = [], yticks = [], xticks = [], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False):
+	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False):
 			
 
 		if onset_marker != []:
@@ -70,21 +74,25 @@ class Plotter(object):
 
 		if isinstance(data, dict):
 			for (label, signal) in data.items():
-
-				if compute_mean:
-					signal = np.mean(signal, axis=0)
-
-					self.plot(xtimes, signal, label=label)
+				if label in conditions:
+					if compute_mean:
+						signal = np.mean(signal, axis=0)
+						
+					if len(signal_labels)==0:
+						self.plot(xtimes, signal, label=label)
+					else:
+						self.plot(xtimes, signal, label=signal_labels[label])
 
 		else:
 			for (key,signal) in enumerate(data):
-				if compute_mean:
-					signal = np.mean(signal, axis=0)
+				if key in conditions:
+					if compute_mean:
+						signal = np.mean(signal, axis=0)
 
-				if len(signal_labels)==0:
-					self.plot(xtimes, signal, label=key)
-				else:
-					self.plot(xtimes, signal, label=signal_labels[key])
+					if len(signal_labels)==0:
+						self.plot(xtimes, signal, label=key)
+					else:
+						self.plot(xtimes, signal, label=signal_labels[key])
 		
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)
@@ -107,10 +115,13 @@ class Plotter(object):
 			else:
 				plt.yticks(yticks)
 
+		plt.xlim(x_lim[0], x_lim[1])
+		plt.ylim(y_lim[0], y_lim[1])	
+
 		sn.despine(offset=5)		
 
 
-	def event_related_pupil_difference(self, data, conditions, reference_index = 0, xtimes = [], yticks = [], xticks = [], yticklabels = [], xticklabels = [], show_legend = True, title='', ylabel = '', xlabel = '', with_stats = False, with_error = False):
+	def event_related_pupil_difference(self, data, conditions, reference_index = 0, xtimes = [], x_lim =[None, None], y_lim=[None, None], yticks = [], xticks = [], yticklabels = [], xticklabels = [], show_legend = True, title='', ylabel = '', xlabel = '', with_stats = False, with_error = False):
 		
 		# Plot the difference between conditions
 
@@ -123,13 +134,14 @@ class Plotter(object):
 		sub_ii_list = np.arange(0,len(data[reference_condition]), 2)
 		reference_mean = np.mean([np.mean(np.vstack([data[reference_condition][sii], data[reference_condition][sii+1]]),axis=0) for sii in sub_ii_list], axis=0)
 		
-		for key in conditions[1:]:
-			condition_mean = np.mean(np.array([np.mean(np.vstack([reference_mean - data[key][sii], reference_mean - data[key][sii+1]]),axis=0) for sii in sub_ii_list]), axis=0) 
-			self.plot(xtimes, condition_mean, label=reference_condition+'v'+key)
+		for key in conditions:
+			if key != reference_condition:
+				condition_mean = np.mean(np.array([np.mean(np.vstack([reference_mean - data[key][sii], reference_mean - data[key][sii+1]]),axis=0) for sii in sub_ii_list]), axis=0) 
+				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key)
 
-			if with_error:
-				condition_ste = np.std(np.array([np.mean(np.vstack([reference_mean - data[key][sii], reference_mean - data[key][sii+1]]),axis=0) for sii in sub_ii_list]), axis=0)/np.sqrt(len(data[key]))
-				plt.fill_between(range(np.array(reference_mean).size), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5)
+				if with_error:
+					condition_ste = np.std(np.array([np.mean(np.vstack([reference_mean - data[key][sii], reference_mean - data[key][sii+1]]),axis=0) for sii in sub_ii_list]), axis=0)/np.sqrt(len(data[key]))
+					plt.fill_between(range(np.array(reference_mean).size), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5)
 
 		
 		# Do time-by-time stats on difference
@@ -173,14 +185,17 @@ class Plotter(object):
 			if len(yticklabels)>0:
 				plt.yticks(yticks, yticklabels)
 			else:
-				plt.yticks(yticks)		
+				plt.yticks(yticks)	
+
+		plt.xlim(x_lim[0], x_lim[1])
+		plt.ylim(y_lim[0], y_lim[1])	
 
 		# plt.axis('square')
 
 		sn.despine(offset=5)
 
 
-	def bar_plot(self, data, conditions, with_error = False, ylabel = '', xlabel = '', yticks = [], xticks = [], yticklabels = [], xticklabels = [], x_lim = [None, None], y_lim = [None, None]):
+	def bar_plot(self, data, conditions, with_error = False, with_stats = False, ylabel = '', xlabel = '', yticks = [], xticks = [], yticklabels = [], xticklabels = [], x_lim = [None, None], y_lim = [None, None]):
 		if self.incorrect_data_format(data, conditions):
 			return
 
@@ -196,6 +211,7 @@ class Plotter(object):
 
 		# plt.xticks(1+np.arange(len(conditions)), conditions)
 
+
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)
 
@@ -205,7 +221,10 @@ class Plotter(object):
 			else:
 				plt.xticks(xticks + (bar_width/2))
 		else:
-			plt.xticks(1+np.arange(len(conditions)) + (bar_width/2), conditions)
+			if len(xticklabels)>0:
+				plt.xticks(1+np.arange(len(conditions)) + (bar_width/2), xticklabels)
+			else:
+				plt.xticks(1+np.arange(len(conditions)) + (bar_width/2), conditions)
 
 		if len(yticks)>0:
 			if len(yticklabels)>0:
@@ -221,11 +240,19 @@ class Plotter(object):
 		sn.despine()
 
 
-	def hline(self, y = 0):
-		plt.axhline(y = y, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)
+	def hline(self, y = 0, label = None):
+		
 
-	def vline(self, x = 0):
+		if label is not None:
+			plt.text(0.55, y, label, alpha = 0.5, fontsize=8, horizontalalignment='left', verticalalignment='center', bbox=dict(facecolor='w',edgecolor='w'))
+
+		plt.axhline(y = y, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)	
+
+	def vline(self, x = 0, label = None):
 		plt.axhline(x = x, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)
+
+		if label is not None:
+			plt.text(x, -0.1, label)
 
 	def save_figure(self, filename = '', sub_folder = ''):
 
@@ -236,6 +263,9 @@ class Plotter(object):
 			filename = "".join(np.random.choice(alphabetnum, [1, 8])) + '.pdf'
 
 		if len(sub_folder) > 0:
+			if not os.path.isdir(os.path.join(self.figure_folder, sub_folder+'/')):
+				os.makedirs(os.path.join(self.figure_folder, sub_folder+'/'))
+
 			self.figure.savefig(os.path.join(self.figure_folder, sub_folder, filename))
 		else:
 			self.figure.savefig(os.path.join(self.figure_folder, filename))

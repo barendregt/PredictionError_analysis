@@ -81,24 +81,33 @@ for subname in sublist:
 	# Get pupil data (ev)
 	pa.signal_per_trial(only_correct = True)
 
+	ref_signals = []
 
+	for key,trial_signal in pa.trial_signals.items():
+		if key < 10:
+			#trial_signal = trial_signal - trial_signal[:,zero_point][:,np.newaxis]
+
+			ref_signals.extend(trial_signal)
+
+	msignal = np.mean(ref_signals, axis=0)
+	msignal_norm = np.linalg.norm(msignal, ord=2)#**2
 
 	pl.open_figure(force=1)
 
 	for key,trial_signal in pa.trial_signals.items():
 
 		if key < 10:
-			pupil_signals['PP'].extend(trial_signal)
-		if key < 30:
-			pupil_signals['UP'].extend(trial_signal)
-		elif key < 50:
-			pupil_signals['PU'].extend(trial_signal)
+			pupil_signals['PP'].extend((trial_signal-msignal))
+		elif key < 30:
+			pupil_signals['PU'].extend((trial_signal-msignal))
+		elif key <50:
+			pupil_signals['UP'].extend((trial_signal-msignal))
 		else:
-			pupil_signals['UU'].extend(trial_signal)
+			pupil_signals['UU'].extend((trial_signal-msignal))
 
 	pl.event_related_pupil_average(data = pupil_signals, conditions = ['PP','UP','PU','UU'], compute_mean = True, compute_sd = True, xticks = np.arange(0,60,15), xticklabels = np.arange(0,6.0,1.5))
 
-	pl.save_figure('S%i-ev_pupil_average.pdf'%sublist.index(subname), sub_folder = 'individual')
+	pl.save_figure('S%i-ev_pupil_average2.pdf'%sublist.index(subname), sub_folder = 'individual')
 
 	ref_signals = []
 

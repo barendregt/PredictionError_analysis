@@ -389,6 +389,22 @@ class BehaviorAnalyzer(PupilAnalyzer):
 	# 						   'trial_orientation': trial_orientation,
 	# 						   'trial_correct': trial_correct})
 
+	def compute_reaction_times(self, compute_average = False):
+
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+
+		reaction_times = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
+		for tcode in np.unique(trial_parameters['trial_codes']):
+			
+			rts = trial_parameters['reaction_time'][(trial_parameters['trial_codes']==tcode) * (np.array(trial_parameters['reaction_time']>0.0, dtype=bool))]
+
+			if compute_average:
+				reaction_times[tcode] = np.median(rts)
+			else:
+				reaction_times[tcode] = np.array(rts)
+
+		return reaction_times
 
 	def compute_inverse_efficiency_scores(self, compute_average = False):
 
@@ -408,297 +424,27 @@ class BehaviorAnalyzer(PupilAnalyzer):
 		return ie_scores
 
 
-	def compute_performance(self):
-		
-		if len(self.events) == 0:
-			#self.recode_trial_types()
-			self.extract_signal_blocks()
+	def compute_error_rates(self):
 
-		self.load_data()
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		performance = []
-		reaction_time = []
+		hit_rates = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
-		# self.collect_task_data()
+		for tcode in np.unique(trial_parameters['trial_codes']):
+			error_rates[tcode] = np.mean((trial_parameters['reaction_time'] > 0.0) & (trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==0))
 
-		trial_codes = []
-		for ii in range(len(self.csv_data)):
-			trial_codes.extend([self.recode_trial_code(self.csv_data.iloc[ii])])
+		return error_rates
 
-		trial_codes = np.array(trial_codes)
+	def compute_percent_correct(self):
 
-		trial_tasks = np.array(self.csv_data['task'])#np.array(self.task_data['trial_tasks'])
-		trial_color = abs(np.array(self.csv_data['trial_color']))#abs(np.array(self.task_data['trial_color']))
-		trial_orientation = abs(np.array(self.csv_data['trial_orientation']))#abs(np.array(self.task_data['trial_orientation']))
-		trial_correct = np.array(self.csv_data['correct_answer'])#self.compute_correct_responses()#np.array(self.task_data['trial_correct'])
-		trial_rts = np.array(self.csv_data['reaction_time'])#np.array(self.task_data['reaction_time'])
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		# embed()
-		# trial_/correct[np.where((trial_tasks == 1) & (trial_color < 0))] = 1-trial_correct[np.where((trial_tasks == 1) & (trial_color < 0))]
-		# trial_correct[np.where((trial_tasks == 2) & (trial_orientation < 0))] = 1-trial_correct[np.where((trial_tasks == 2) & (trial_orientation < 0))]
+		percent_correct = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
-		int_steps = np.array([0.25,0.35,0.5, 0.7, 1.0, 1.41, 2.0, 2.83, 4])
+		for tcode in np.unique(trial_parameters['trial_codes']):
+			percent_correct[tcode] = np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode])
 
-		uniq_ints = np.vstack([np.unique(trial_color), np.unique(trial_orientation)])
-
-		# trial_ints = np.zeros((trial_tasks.size,1))
-		# for ii,taskval in enumerate(zip(trial_tasks,trial_color,trial_orientation)):
-		# 	trial_ints[ii] = int_steps[taskval[taskval[0]]==uniq_ints[taskval[0]-1]]
-
-		trial_ints = np.array([int_steps[taskval[int(taskval[0])]==uniq_ints[int(taskval[0])-1]] for taskval in zip(trial_tasks,trial_color,trial_orientation)])
-
-		# COLOR
-
-		self.task_performance.update({'pred-v-unpred': [[],[]],
-									  'pred-v-unpred-rt': [[],[]]})
-
-		unpred_trials = trial_codes>10
-		pred_trials = trial_codes<10
-
-		ints = trial_ints[pred_trials]
-		correct = np.extract(pred_trials, trial_correct)
-		rts = np.extract(pred_trials, trial_rts)
-		self.task_performance['pred-v-unpred'][0] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-		self.task_performance['pred-v-unpred-rt'][0] = [[i, np.extract(ints==i, rts)] for i in np.unique(ints)]
-
-		ints = trial_ints[unpred_trials]
-		correct = np.extract(unpred_trials, trial_correct)
-		rts = np.extract(unpred_trials, trial_rts)
-		self.task_performance['pred-v-unpred'][1] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-		self.task_performance['pred-v-unpred-rt'][1] = [[i, np.extract(ints==i, rts)] for i in np.unique(ints)]
-
-		for ii in range(2):
-			self.task_performance['pred-v-unpred'][ii][self.task_performance['pred-v-unpred'][ii][:,1]<.5,1] = 1-self.task_performance['pred-v-unpred'][ii][self.task_performance['pred-v-unpred'][ii][:,1]<.5,1]
-
-
-
-	def compute_performance_pred_unpred(self):
-
-		if len(self.events) == 0:
-			#self.recode_trial_types()
-			self.extract_signal_blocks()
-
-		self.load_data()
-
-		performance = []
-		reaction_time = []
-
-		# self.collect_task_data()
-
-		trial_codes = []
-		for ii in range(len(self.csv_data)):
-			trial_codes.extend([self.recode_trial_code(self.csv_data.iloc[ii])])
-
-		trial_codes = np.array(trial_codes)
-
-		trial_tasks = np.array(self.csv_data['task'])#np.array(self.task_data['trial_tasks'])
-		trial_color = abs(np.array(self.csv_data['trial_color']))#abs(np.array(self.task_data['trial_color']))
-		trial_orientation = abs(np.array(self.csv_data['trial_orientation']))#abs(np.array(self.task_data['trial_orientation']))
-		trial_correct = np.array(self.csv_data['correct_answer'])#self.compute_correct_responses()#np.array(self.task_data['trial_correct'])
-		trial_rts = np.array(self.csv_data['reaction_time'])#np.array(self.task_data['reaction_time'])
-
-		# embed()
-		# trial_/correct[np.where((trial_tasks == 1) & (trial_color < 0))] = 1-trial_correct[np.where((trial_tasks == 1) & (trial_color < 0))]
-		# trial_correct[np.where((trial_tasks == 2) & (trial_orientation < 0))] = 1-trial_correct[np.where((trial_tasks == 2) & (trial_orientation < 0))]
-
-		# COLOR
-
-		self.task_performance.update({'col_pred-v-unpred': [[],[]]})
-
-		unpred_trials = ((trial_codes/10)%2>0) & (trial_codes>10)
-		pred_trials = trial_codes==0
-
-		#ints = np.zeros((len(trial_codes)))
-		#ints[np.where(trial_codes[pred_trials]==0)] = np.extract(trial_codes[pred_trials]==0, trial_color) #/ max(trial_color)
-		# ints[np.where(trial_codes[pred_trials]==1)] = np.extract(trial_codes[pred_trials]==1, trial_orientation) #/ max(trial_orientation)
-		ints = trial_color[pred_trials]
-		correct = np.extract(pred_trials, trial_correct)
-		# rts = np.extract(pred_trials, trial_rts)
-		# embed()
-		self.task_performance['col_pred-v-unpred'][0] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-		# self.task_performance['RT_pred-v-unpred'][0] = np.array([[i, np.nanmean(np.extract(ints==i, trial_rts))] for i in np.unique(ints)])	
-
-		ints = trial_color[unpred_trials]
-		# ints[np.where(((trial_codes[unpred_trials]/10)%2)==0)] = np.extract(((trial_codes[unpred_trials]/10)%2)==0, trial_color) #/ max(trial_color)
-		# ints[np.where(((trial_codes[unpred_trials]/10)%2)>0)] = np.extract(((trial_codes[unpred_trials]/10)%2)>0, trial_orientation) #/ max(trial_orientation)
-		correct = np.extract(unpred_trials, trial_correct)
-		# rts = np.extract(unpred_trials, trial_rts)
-		self.task_performance['col_pred-v-unpred'][1] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-		# self.task_performance['RT_pred-v-unpred'][1] = np.array([[i, np.nanmean(np.extract(ints==i, trial_rts))] for i in np.unique(ints)])	
-
-
-		# ORIENTATION
-
-		self.task_performance.update({'ori_pred-v-unpred': [[],[]]})
-
-		unpred_trials = ((trial_codes/10)%2==0) & (trial_codes>10)
-		pred_trials = trial_codes==1
-
-		#ints = np.zeros((len(trial_codes)))
-		#ints[np.where(trial_codes[pred_trials]==0)] = np.extract(trial_codes[pred_trials]==0, trial_color) #/ max(trial_color)
-		# ints[np.where(trial_codes[pred_trials]==1)] = np.extract(trial_codes[pred_trials]==1, trial_orientation) #/ max(trial_orientation)
-		ints = trial_orientation[pred_trials]
-		correct = np.extract(pred_trials, trial_correct)
-		# rts = np.extract(pred_trials, trial_rts)
-		self.task_performance['ori_pred-v-unpred'][0] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-		# self.task_performance['RT_pred-v-unpred'][0] = np.array([[i, np.nanmean(np.extract(ints==i, trial_rts))] for i in np.unique(ints)])	
-
-		ints = trial_orientation[unpred_trials]
-		# ints[np.where(((trial_codes[unpred_trials]/10)%2)==0)] = np.extract(((trial_codes[unpred_trials]/10)%2)==0, trial_color) #/ max(trial_color)
-		# ints[np.where(((trial_codes[unpred_trials]/10)%2)>0)] = np.extract(((trial_codes[unpred_trials]/10)%2)>0, trial_orientation) #/ max(trial_orientation)
-		correct = np.extract(unpred_trials, trial_correct)
-		# rts = np.extract(unpred_trials, trial_rts)
-		self.task_performance['ori_pred-v-unpred'][1] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-		# self.task_performance['RT_pred-v-unpred'][1] = np.array([[i, np.nanmean(np.extract(ints==i, trial_rts))] for i in np.unique(ints)])	
-
-		for ii in range(2):
-			self.task_performance['col_pred-v-unpred'][ii][self.task_performance['col_pred-v-unpred'][ii][:,1]<.5,1] = 1-self.task_performance['col_pred-v-unpred'][ii][self.task_performance['col_pred-v-unpred'][ii][:,1]<.5,1]
-			self.task_performance['ori_pred-v-unpred'][ii][self.task_performance['ori_pred-v-unpred'][ii][:,1]<.5,1] = 1-self.task_performance['ori_pred-v-unpred'][ii][self.task_performance['ori_pred-v-unpred'][ii][:,1]<.5,1]
-			# self.task_performance['task_pred-v-unpred'][ii][:,0] = np.log10(self.task_performance['task_pred-v-unpred'][ii][:,0]) #/ np.log(2)
-			# self.task_performance['task_pred-v-unpred'][ii] = self.task_performance['task_pred-v-unpred'][ii][1:,]
-
-	def compute_performance_attended_unattended(self):
-
-
-		self.load_data()
-
-		performance = []
-		reaction_time = []
-
-		# self.collect_task_data()
-		# embed()
-		trial_codes = []
-		for ii in range(len(self.csv_data)):
-			trial_codes.extend([self.recode_trial_code(self.csv_data.iloc[ii])])
-
-		trial_codes = np.array(trial_codes)
-
-		trial_tasks = np.array(self.csv_data['task'])#np.array(self.task_data['trial_tasks'])
-		trial_color = abs(np.array(self.csv_data['trial_color']))#abs(np.array(self.task_data['trial_color']))
-		trial_orientation = abs(np.array(self.csv_data['trial_orientation']))#abs(np.array(self.task_data['trial_orientation']))
-		trial_correct = np.array(self.csv_data['correct_answer'])#self.compute_correct_responses()#np.array(self.task_data['trial_correct'])
-		trial_rts = np.array(self.csv_data['reaction_time'])#np.array(self.task_data['reaction_time'])
-
-		# COLOR
-
-		self.task_performance.update({'col_att-v-unatt': [[],[],[]]})
-
-		pred_unpred_trials = trial_codes == 10
-		unpred_pred_trials = trial_codes == 30
-		unpred_unpred_trials = trial_codes == 50
-
-		ints = trial_color[pred_unpred_trials]
-		correct = np.extract(pred_unpred_trials, trial_correct)
-		self.task_performance['col_att-v-unatt'][0] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-
-		ints = trial_color[unpred_pred_trials]
-		correct = np.extract(unpred_pred_trials, trial_correct)
-		self.task_performance['col_att-v-unatt'][1] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])
-
-		ints = trial_color[unpred_unpred_trials]
-		correct = np.extract(unpred_unpred_trials, trial_correct)
-		self.task_performance['col_att-v-unatt'][2] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])
-
-		# ORIENTATION
-
-		self.task_performance.update({'ori_att-v-unatt': [[],[],[]]})
-
-		pred_unpred_trials = trial_codes == 20
-		unpred_pred_trials = trial_codes == 40
-		unpred_unpred_trials = trial_codes == 60
-
-		ints = trial_orientation[pred_unpred_trials]
-		correct = np.extract(pred_unpred_trials, trial_correct)
-		self.task_performance['ori_att-v-unatt'][0] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])	
-
-		ints = trial_orientation[unpred_pred_trials]
-		correct = np.extract(unpred_pred_trials, trial_correct)
-		self.task_performance['ori_att-v-unatt'][1] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])
-
-		ints = trial_orientation[unpred_unpred_trials]
-		correct = np.extract(unpred_unpred_trials, trial_correct)
-		self.task_performance['ori_att-v-unatt'][2] = np.array([[i, np.nanmean(np.extract(ints==i, correct))] for i in np.unique(ints)])
-		# embed()
-		for ii in range(3):
-			self.task_performance['col_att-v-unatt'][ii][self.task_performance['col_att-v-unatt'][ii][:,1]<.5,1] = 1-np.extract(self.task_performance['col_att-v-unatt'][ii][:,1]<.5, self.task_performance['col_att-v-unatt'][ii][:,1])
-			self.task_performance['ori_att-v-unatt'][ii][self.task_performance['ori_att-v-unatt'][ii][:,1]<.5,1] = 1-np.extract(self.task_performance['ori_att-v-unatt'][ii][:,1]<.5, self.task_performance['ori_att-v-unatt'][ii][:,1])
-			# self.task_performance['task_pred-v-unpred'][ii][:,0] = np.log10(self.task_performance['task_pred-v-unpred'][ii][:,0]) #/ np.log(2)
-			# self.task_performance['task_pred-v-unpred'][ii] = self.task_performance['task_pred-v-unpred'][ii][1:,]
-
-	# def compute_performance_attended_unattended(self):
-
-	# 	if len(self.events) == 0:
-	# 		#self.recode_trial_types()
-	# 		self.extract_signal_blocks()
-
-	# 	self.load_data()
-
-	# 	performance = []
-	# 	reaction_time = []
-
-	# 	# self.collect_task_data()
-
-	# 	trial_codes = self.task_data['coded_trials']
-
-	# 	# trial_codes[trial_codes==10 or trial_codes==11) = 10
-	# 	# trial_codes(trial_codes==20 or trial_codes==21) = 11
-	# 	# trial_codes(trial_codes==30 or trial_codes==31) = 12
-
-	# 	trial_tasks = np.array(self.task_data['trial_tasks'])
-	# 	trial_color = abs(np.array(self.task_data['trial_color']))
-	# 	trial_orientation = abs(np.array(self.task_data['trial_orientation']))
-	# 	trial_correct = np.array(self.task_data['trial_correct'])
-	# 	trial_rts = np.array(self.task_data['reaction_time'])
-
-
-	# 	# color_intensities = abs(np.unique(trial_color))
-	# 	# orientation_intensities = abs(np.unique(trial_orientation))
-
-	# 	self.task_performance.update({'task_att-v-unatt': [[],[],[]],
-	# 							 	  'RT_att-v-unatt': [[],[],[]]})
-
-
-	# 	pred_unpred_trials = (trial_codes >= 10) & (trial_codes <= 20)
-	# 	unpred_pred_trials = (trial_codes >= 30) & (trial_codes <= 40)
-	# 	unpred_unpred_trials = (trial_codes >= 50) & (trial_codes <= 60)
-
-	# 	ints = np.zeros((len(trial_codes)))
-	# 	ints[np.where(trial_codes[pred_unpred_trials]==0)] = np.extract(trial_codes[pred_unpred_trials]==0, trial_color)# / max(trial_color)
-	# 	ints[np.where(trial_codes[pred_unpred_trials]==1)] = np.extract(trial_codes[pred_unpred_trials]==1, trial_orientation)# #/ max(trial_orientation)
-	# 	correct = np.extract(pred_unpred_trials, trial_correct)
-	# 	rts = np.extract(pred_unpred_trials, trial_rts)
-	# 	self.task_performance['task_att-v-unatt'][0] = np.array([[i, np.mean(np.extract(ints==i, trial_correct))] for i in np.unique(ints)])	
-	# 	self.task_performance['RT_att-v-unatt'][0] = np.array([[i, np.mean(np.extract(ints==i, trial_rts))] for i in np.unique(ints)])	
-
-	# 	ints = np.zeros((len(trial_codes)))
-	# 	ints[np.where(((trial_codes[unpred_pred_trials]/10)%2)==0)] = np.extract(((trial_codes[unpred_pred_trials]/10)%2)==0, trial_color) #/ max(trial_color)
-	# 	ints[np.where(((trial_codes[unpred_pred_trials]/10)%2)>0)] = np.extract(((trial_codes[unpred_pred_trials]/10)%2)>0, trial_orientation)# / max(trial_orientation)
-	# 	correct = np.extract(unpred_pred_trials, trial_correct)
-	# 	rts = np.extract(unpred_pred_trials, trial_rts)
-	# 	self.task_performance['task_att-v-unatt'][1] = np.array([[i, np.mean(np.extract(ints==i, trial_correct))] for i in np.unique(ints)])	
-	# 	self.task_performance['RT_att-v-unatt'][1] = np.array([[i, np.mean(np.extract(ints==i, trial_rts))] for i in np.unique(ints)])		
-
-	# 	ints = np.zeros((len(trial_codes)))
-	# 	ints[np.where(((trial_codes[unpred_unpred_trials]/10)%2)==0)] = np.extract(((trial_codes[unpred_unpred_trials]/10)%2)==0, trial_color) #/ max(trial_color)
-	# 	ints[np.where(((trial_codes[unpred_unpred_trials]/10)%2)>0)] = np.extract(((trial_codes[unpred_unpred_trials]/10)%2)>0, trial_orientation)# / max(trial_orientation)
-	# 	correct = np.extract(unpred_unpred_trials, trial_correct)
-	# 	rts = np.extract(unpred_unpred_trials, trial_rts)
-	# 	self.task_performance['task_att-v-unatt'][2] = np.array([[i, np.mean(np.extract(ints==i, trial_correct))] for i in np.unique(ints)])	
-	# 	self.task_performance['RT_att-v-unatt'][2] = np.array([[i, np.mean(np.extract(ints==i, trial_rts))] for i in np.unique(ints)])			
-
-	# 	for ii in range(3):
-	# 		self.task_performance['task_att-v-unatt'][ii][self.task_performance['task_att-v-unatt'][ii][:,1]<.5,1] = 1-self.task_performance['task_att-v-unatt'][ii][self.task_performance['task_att-v-unatt'][ii][:,1]<.5,1]
-	# 		self.task_performance['task_att-v-unatt'][ii][:,0] = np.log10(self.task_performance['task_att-v-unatt'][ii][:,0])# / np.log(2)
-	# 		self.task_performance['task_att-v-unatt'][ii] = self.task_performance['task_att-v-unatt'][ii][1:,]
-
-	def compute_correct_responses(self):
-		
-		# Color task
-		color_iis = self.task_data['trial_tasks'] == 1
-
-
-
-
+		return percent_correct
 
 
 	def fit_cum_vonmises(self):

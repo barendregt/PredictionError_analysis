@@ -29,7 +29,7 @@ class PupilAnalyzer(Analyzer):
 	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7,verbosity = 0, **kwargs):
 
 		# Setup default parameter values
-		self.default_parameters = {'low_pass_pupil_f': 6.0,
+		self.default_parameters = {'low_pass_pupil_f': 4.0,
 								   'high_pass_pupil_f': 0.01}
 
 		super(PupilAnalyzer, self).__init__(subID, filename, verbosity=verbosity, **kwargs)
@@ -70,7 +70,7 @@ class PupilAnalyzer(Analyzer):
 		# if self.combined_data is None:
 
 		if (not os.path.isfile(self.combined_h5_filename)) or force_rebuild: 
-			self.recombine_signal_blocks(reference_phase = self.reference_phase, force_rebuild = force_rebuild)
+			self.recombine_signal_blocks(force_rebuild = force_rebuild)
 
 			#self.combined_data = tables.open_file(self.combined_h5_filename, mode = 'r')
 
@@ -322,7 +322,7 @@ class PupilAnalyzer(Analyzer):
 								return 60
 
 
-	def recombine_signal_blocks(self, reference_phase = 7, force_rebuild = False):
+	def recombine_signal_blocks(self, force_rebuild = False):
 
 		if not hasattr(self, 'signal_downsample_factor'):
 			self.signal_downsample_factor = 10
@@ -331,7 +331,8 @@ class PupilAnalyzer(Analyzer):
 
 		self.load_data()
 
-		print '[%s] Recombining signal and parameters from blocks/runs' % (self.__class__.__name__)
+		if self.verbosity:
+			print '[%s] Recombining signal and parameters from blocks/runs' % (self.__class__.__name__)
 
 		full_signal = np.array([])
 
@@ -345,17 +346,15 @@ class PupilAnalyzer(Analyzer):
 
 		for ii,alias in enumerate(self.aliases):
 
-			# embed()
-
 			this_trial_parameters = self.h5_operator.read_session_data(alias, 'parameters')
 
 			this_trial_phase_times = self.h5_operator.read_session_data(alias, 'trial_phases')
 			this_trial_times = self.h5_operator.read_session_data(alias, 'trials')
-			#trial_types = self.h5_operator.read_session_data(alias, 'parameters')['trial_type']
-
+			
 			blocks = self.h5_operator.read_session_data(alias, 'blocks')
 			block_start_times = blocks['block_start_timestamp']
-			this_trial_phase_times = this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
+
+			# this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
 
 			block_event_times = pd.DataFrame()
 
@@ -364,9 +363,8 @@ class PupilAnalyzer(Analyzer):
 			# Kick out incomplete trials
 			if len(this_trial_phase_times) < len(this_trial_times):
 				this_trial_times = this_trial_times[0:len(this_trial_phase_times)]
-				#trial_types = trial_types[0:len(this_trial_phase_times)]		
-
-			this_phase_times = np.array(this_trial_phase_times['trial_phase_EL_timestamp'].values, dtype=float)# + full_signal.shape[0]/self.signal_sample_frequency
+				
+			this_phase_times = np.array(this_trial_phase_times['trial_phase_EL_timestamp'].values, dtype=float)
 			
 			prev_signal_size = np.float(full_signal.shape[0])
 
@@ -380,8 +378,9 @@ class PupilAnalyzer(Analyzer):
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
 
 			this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
-			this_trial_parameters['trial_response_phase_within_run'] = pd.Series(this_phase_times)
-			this_trial_parameters['trial_response_phase_full_signal'] = pd.Series(this_phase_times + prev_signal_size)	
+			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
+				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)])
+				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)] + prev_signal_size)	
 			
 			if ii > 0:
 
