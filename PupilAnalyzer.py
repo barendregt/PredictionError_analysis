@@ -470,7 +470,7 @@ class PupilAnalyzer(Analyzer):
 					# sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 8))?
 
 					# self.trial_signals[tcode].append(resample(trial_pupil_signal, round(len(trial_pupil_signal)/self.signal_downsample_factor)))
-					dsignal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, ftype='iir', zero_phase = True)
+					dsignal = trial_pupil_signal#sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, ftype='iir', zero_phase = True)
 					
 					self.trial_signals[tcode].append(dsignal)
 					
