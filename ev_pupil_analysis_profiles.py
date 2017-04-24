@@ -33,7 +33,7 @@ from Plotter import Plotter
 #raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
 shared_data_folder = raw_data_folder #'raw_data'
-figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
+figfolder = '/home/barendregt/Analysis/PredictionError_analysis/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
