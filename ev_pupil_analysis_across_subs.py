@@ -44,7 +44,7 @@ low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
-deconvolution_interval = np.array([-1.5, 4.5])
+deconvolution_interval = np.array([-0.5, 4.5])
 
 down_fs = 100
 
@@ -104,11 +104,13 @@ for subname in sublist:
 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, sort_by_date = sbsetting[sublist.index(subname)], signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval, verbosity = 0)
 
 	# redo signal extraction
-	pa.recombine_signal_blocks(force_rebuild = True)
+	# pa.recombine_signal_blocks(force_rebuild = True)
 
 	# # Get pupil data (ev)
-	# pa.signal_per_trial(only_correct = True)
+	pa.signal_per_trial(only_correct = True)
 
+
+	embed()
 	# ref_signals = []
 
 	# for key,trial_signal in pa.trial_signals.items():
@@ -120,7 +122,28 @@ for subname in sublist:
 	# msignal = np.mean(ref_signals, axis=0)
 	# msignal_norm = np.linalg.norm(msignal, ord=2)#**2
 
-	# for key, trial_signal in pa.trial_signals.items():
+	pp_signal = []
+	up_signal = []
+	pu_signal = []
+	uu_signal = []
+	
+
+	for key, trial_signal in pa.trial_signals.items():
+		if key < 10:
+			pp_signal.extend(trial_signal)
+		elif key < 30:
+			up_signal.extend(trial_signal)
+		elif key < 50:
+			pu_signal.extend(trial_signal)
+		else:
+			uu_signal.extend(trial_signal)
+
+
+	pred_signal = np.array(pred_signal)
+	pe_signal = np.array(pe_signal)
+
+
+
 
 	# 	#trial_signal -= trial_signal[:,:zero_point].mean()
 	# 	#trial_signal[:,zero_point] = 0

@@ -76,23 +76,39 @@ class Plotter(object):
 			for (label, signal) in data.items():
 				if label in conditions:
 					if compute_mean:
-						signal = np.mean(signal, axis=0)
-						
-					if len(signal_labels)==0:
-						self.plot(xtimes, signal, label=label)
+						msignal = np.mean(signal, axis=0)
 					else:
-						self.plot(xtimes, signal, label=signal_labels[label])
+						msignal = signal
+
+					if compute_sd:
+						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
+						plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)		
+
+					if len(signal_labels)==0:
+						self.plot(xtimes, msignal, label=label)
+					else:
+						self.plot(xtimes, msignal, label=signal_labels[label])
+
+				
 
 		else:
 			for (key,signal) in enumerate(data):
 				if key in conditions:
 					if compute_mean:
-						signal = np.mean(signal, axis=0)
+						msignal = np.mean(signal, axis=0)
+					else:
+						msignal = signal
+
+					if compute_sd:	
+						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
+						plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
 
 					if len(signal_labels)==0:
-						self.plot(xtimes, signal, label=key)
+						self.plot(xtimes, msignal, label=key)
 					else:
-						self.plot(xtimes, signal, label=signal_labels[key])
+						self.plot(xtimes, msignal, label=signal_labels[key])
+
+	
 		
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)
@@ -131,16 +147,16 @@ class Plotter(object):
 		# default behaviour is: diff_N = condition_N - condition_0
 
 		reference_condition = conditions[reference_index]
-		sub_ii_list = np.arange(0,len(data[reference_condition]), 2)
-		reference_mean = np.mean([np.mean(np.vstack([data[reference_condition][sii], data[reference_condition][sii+1]]),axis=0) for sii in sub_ii_list], axis=0)
+		#sub_ii_list = np.arange(0,len(data[reference_condition]), 2)
+		reference_mean = np.mean(data[reference_condition], axis=0)
 		
 		for key in conditions:
 			if key != reference_condition:
-				condition_mean = np.mean(np.array([np.mean(np.vstack([reference_mean - data[key][sii], reference_mean - data[key][sii+1]]),axis=0) for sii in sub_ii_list]), axis=0) 
+				condition_mean = np.mean(reference_mean - data[key],axis=0) 
 				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key)
 
 				if with_error:
-					condition_ste = np.std(np.array([np.mean(np.vstack([reference_mean - data[key][sii], reference_mean - data[key][sii+1]]),axis=0) for sii in sub_ii_list]), axis=0)/np.sqrt(len(data[key]))
+					condition_ste = np.std(reference_mean - data[key], axis=0)/np.sqrt(len(data[key]))
 					plt.fill_between(range(np.array(reference_mean).size), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5)
 
 		
@@ -157,10 +173,10 @@ class Plotter(object):
 			for time_point in range(np.array(reference_mean).size):
 				y_pos = 0
 				# All conditions one-way
-				f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][:][time_point],
-																  extract_data[1][:][time_point],
-																  extract_data[2][:][time_point],
-																  extract_data[3][:][time_point])
+				f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][time_point],
+																  extract_data[1][time_point],
+																  extract_data[2][time_point],
+																  extract_data[3][time_point])
 
 				if p[time_point] < (0.000000000001):
 					plt.text(time_point, y_pos,'*')																	
@@ -199,6 +215,8 @@ class Plotter(object):
 		if self.incorrect_data_format(data, conditions):
 			return
 
+		latex_code = '\\addplot plot coordinates {'
+
 		bar_color = 'w'
 		bar_width = 0.75
 
@@ -208,9 +226,13 @@ class Plotter(object):
 				plt.bar(ii+1, np.mean(data[key]), yerr = np.std(data[key])/np.sqrt(5*len(data[key])), width = bar_width, label = key, color= bar_color)
 			else:
 				plt.bar(ii+1, np.mean(data[key]), width = bar_width, label = key, color = bar_color)
+			
+			latex_code += '(%i,%.2f) '%(ii, np.mean(data[key]))
 
 		# plt.xticks(1+np.arange(len(conditions)), conditions)
+		latex_code += '};'
 
+		print latex_code
 
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)
@@ -239,10 +261,8 @@ class Plotter(object):
 
 		sn.despine()
 
-
 	def hline(self, y = 0, label = None):
 		
-
 		if label is not None:
 			plt.text(0.55, y, label, alpha = 0.5, fontsize=8, horizontalalignment='left', verticalalignment='center', bbox=dict(facecolor='w',edgecolor='w'))
 

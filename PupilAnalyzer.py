@@ -423,36 +423,58 @@ class PupilAnalyzer(Analyzer):
 
 
 
-	def signal_per_trial(self, only_correct = True):
+	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False):
 
 		trial_start_offset = 0#0.5+.15+.03+.15 # hack for this dataset only
 
-		self.load_combined_data()
+		
+
+		self.load_combined_data(force_rebuild=force_rebuild)
 
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		# trial_start_offset = trial_parameters['reaction_time']*self.signal_sample_frequency
-
 		self.trial_signals =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
-		self.ie_scores =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
-			# self.trial_signals[tcode] = []#np.array([])
+		
 
 			if only_correct:
 				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==1), dtype=bool)
 			else:
 				selected_trials = np.array(trial_parameters['trial_codes']==tcode, dtype=bool)			
 
-			for tii,(ts,te) in enumerate(zip(trial_parameters['trial_response_phase_full_signal'][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_response_phase_full_signal'][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])):
-				if (ts > 0) & (te < recorded_pupil_signal.size):
-					self.trial_signals[tcode].append(sp.signal.decimate(recorded_pupil_signal[int(ts):int(te)], self.signal_downsample_factor, 1))
+
+			if with_rt:
+				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
+			else:
+				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
+
+			if baseline_correction:
+				if baseline_type == 'relative':
+					baseline_times =  np.vstack([trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
 				else:
-					selected_trials[tii] = False
+					baseline_times =  np.vstack([trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
+
+			for tii,(ts,te) in enumerate(trial_times):
+				if (ts > 0) & (te < recorded_pupil_signal.size):
+
+					trial_pupil_signal = recorded_pupil_signal[int(ts):int(te)]
+
+					if baseline_correction:
+						trial_pupil_signal -= np.mean(recorded_pupil_signal[int(baseline_times[0, int(tii)]):int(baseline_times[1,int(tii)])])
+
+						# trial_pupil_signal /= np.mean(trial_pupil_signal)
+
+
+					# sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 8))?
+
+					# self.trial_signals[tcode].append(resample(trial_pupil_signal, round(len(trial_pupil_signal)/self.signal_downsample_factor)))
+					dsignal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, ftype='iir', zero_phase = True)
+					
+					self.trial_signals[tcode].append(dsignal)
 					
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
-			self.ie_scores[tcode] = np.array(trial_parameters['reaction_time'][selected_trials] / np.mean(trial_parameters['correct_answer'][selected_trials]))
 
 
 	def get_IRF(self, deconv_interval = None):
