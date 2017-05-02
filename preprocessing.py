@@ -4,8 +4,8 @@ import scipy as sp
 from math import *
 import os,glob,sys
 
-from joblib import Parallel, delayed
-import multiprocessing
+# from joblib import Parallel, delayed
+# import multiprocessing
 
 import cPickle as pickle
 import pandas as pd
@@ -16,11 +16,12 @@ from IPython import embed
 from BehaviorAnalyzer import BehaviorAnalyzer
 
 
-raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data' #raw_data'
+raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ']#
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']#
+sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
 # subname = 's1'#'tk2'#'s3'#'mb2'#'tk2'#'s3'#'tk2'
@@ -50,9 +51,11 @@ def run_analysis(subname):
 
 	# pa.recombine_signal_blocks()
 	# Pupil data
-	pa.load_data()
+	# pa.load_data()
 
-	pa.signal_per_trial()
+	pa.preprocessing_report()
+
+	# pa.signal_per_trial()
 	# pa.recombine_signal_blocks()
 	# Pupil data
 

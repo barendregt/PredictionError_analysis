@@ -223,9 +223,9 @@ class Plotter(object):
 		for ii,key in enumerate(conditions):
 
 			if with_error:
-				plt.bar(ii+1, np.mean(data[key]), yerr = np.std(data[key])/np.sqrt(5*len(data[key])), width = bar_width, label = key, color= bar_color)
+				plt.bar(ii+1, np.mean(data[key]), yerr = np.std(data[key])/np.sqrt(5*len(data[key])), width = bar_width, label = key, color= bar_color,edgecolor='k')
 			else:
-				plt.bar(ii+1, np.mean(data[key]), width = bar_width, label = key, color = bar_color)
+				plt.bar(ii+1, np.mean(data[key]), width = bar_width, label = key, color = bar_color, edgecolor='k')
 			
 			latex_code += '(%i,%.2f) '%(ii, np.mean(data[key]))
 

@@ -30,14 +30,15 @@ from BehaviorAnalyzer import BehaviorAnalyzer
 from Plotter import Plotter
 
 
-#raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
-raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
+raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
+#raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
 shared_data_folder = raw_data_folder #'raw_data'
-figfolder = '/home/barendregt/Analysis/PredictionError_analysis/Figures'
+figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']
+#sublist = ['AA','AB','AC','AF']
+sublist = ['AG','AH','AI','AJ','AK','AL','AM','AN','AO']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -47,7 +48,7 @@ signal_sample_frequency = 1000
 deconv_sample_frequency = 10
 deconvolution_interval = np.array([-2.0, 3.0])
 
-down_fs = 100
+down_fs = 10
 
 pl = Plotter(figure_folder = figfolder)
 
@@ -108,7 +109,7 @@ for subname in sublist:
 	# pa.recombine_signal_blocks(force_rebuild = True)
 
 	# # Get pupil data (ev)
-	pa.signal_per_trial(only_correct = False, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-2.5, 0.0], force_rebuild=True)
+	pa.signal_per_trial(only_correct = False, reference_phase = 4, with_rt = False, baseline_correction = False, baseline_type = 'relative', baseline_period = [-2.5, 0.0], force_rebuild=True)
 
 
 	# embed()
@@ -160,6 +161,7 @@ for subname in sublist:
 				   'PU': pu_signal,
 				   'UU': uu_signal}
 
+	embed()
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)

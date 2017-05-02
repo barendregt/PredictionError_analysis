@@ -5,7 +5,7 @@ import os,glob,datetime
 import numpy as np
 import scipy as sp
 import seaborn as sn
-import matplotlib.pylab as pl
+import matplotlib.pylab as plt
 import cPickle as pickle
 import pandas as pd
 import tables
@@ -24,12 +24,14 @@ from IPython import embed
 
 from Analyzer import Analyzer
 
+sn.set(style = 'ticks')
+
 class PupilAnalyzer(Analyzer):
 
 	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7,verbosity = 0, **kwargs):
 
 		# Setup default parameter values
-		self.default_parameters = {'low_pass_pupil_f': 4.0,
+		self.default_parameters = {'low_pass_pupil_f': 6.0,
 								   'high_pass_pupil_f': 0.01}
 
 		super(PupilAnalyzer, self).__init__(subID, filename, verbosity=verbosity, **kwargs)
@@ -395,7 +397,7 @@ class PupilAnalyzer(Analyzer):
 			run_trials.append(this_trial_parameters)
 			run_signals.append(this_run_signal)
 			
-
+		
 
 		# Store in hdf5 format
 		file_mode = 'a'
@@ -421,6 +423,92 @@ class PupilAnalyzer(Analyzer):
 			run_trials[rii].to_hdf(self.combined_h5_filename, key = '/trials/run%i'%rii)
 
 
+	def preprocessing_report(self):
+		
+		signal_types = ['gaze_x',
+						'gaze_y',
+						'pupil',
+						'vel_x',
+						'vel_y',
+						'pupil_int',
+						'pupil_hp',
+						'pupil_lp',
+						'pupil_lp_psc',
+						'pupil_lp_diff',
+						'pupil_bp',
+						'pupil_bp_dt',
+						'pupil_bp_zscore',
+						'pupil_bp_psc',
+						'pupil_baseline',
+						'gaze_x_int',
+						'gaze_y_int',
+						'pupil_lp_clean',
+						'pupil_lp_clean_psc',
+						'pupil_lp_clean_zscore',
+						'pupil_bp_clean',
+						'pupil_bp_clean_psc',
+						'pupil_bp_clean_zscore',
+						'pupil_bp_clean_dt']
+
+		selected_types = ['pupil_int',
+						  'pupil_bp',
+						  'pupil_bp_clean']
+
+		self.load_data()
+
+		self.get_aliases()
+
+		#if not os.path.isdir(os.path.join(self.edf_folder,'report/')):
+		reference_phase = 7
+
+		for ii,alias in enumerate(self.aliases):
+
+			if not os.path.isdir(os.path.join(self.edf_folder,'report',alias + '/')):
+				os.makedirs(os.path.join(self.edf_folder,'report',alias + '/'))
+			# os.mkdirs(os.path.join(self.edf_folder,'report',alias,'per_run/'))
+
+			blocks = self.h5_operator.read_session_data(alias, 'blocks')
+			block_start_times = blocks['block_start_timestamp']
+			
+			this_trial_phase_times = self.h5_operator.read_session_data(alias, 'trial_phases')
+			this_trial_phase_times = this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
+			this_phase_times = np.array(this_trial_phase_times['trial_phase_EL_timestamp'].values, dtype=float)
+#
+			for bs,be in zip(blocks['block_start_timestamp'], blocks['block_end_timestamp']):
+
+				selected_signals = {}
+
+
+
+				for sig_type in signal_types:
+					this_block_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = sig_type, requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
+
+				# 	plt.figure(figsize=(10,6))
+				# 	plt.title(sig_type)
+				# 	#plt.axvline(this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)],0,1,alpha=0.5)
+				# 	plt.plot(this_block_signal)
+				# 	plt.savefig(os.path.join(self.edf_folder,'report',alias,sig_type+'.jpg'))
+				# 	plt.close()
+
+					if sig_type in selected_types:
+						selected_signals.update({sig_type: this_block_signal})
+
+				plt.figure()
+
+				for ii,stype in enumerate(selected_types):
+					splt = plt.subplot(3,1,ii+1)
+
+					splt.set_title(stype)
+
+					for xpos in this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] - bs:
+						splt.axvline(xpos,0,1,alpha=0.5)
+					splt.plot(selected_signals[stype])
+					sn.despine()
+				plt.tight_layout()
+
+				plt.savefig(os.path.join(self.edf_folder,'report',alias + '_overview.jpg'))
+				plt.close()
+
 
 
 	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False):
@@ -435,6 +523,7 @@ class PupilAnalyzer(Analyzer):
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
 		self.trial_signals =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
 		
@@ -470,7 +559,7 @@ class PupilAnalyzer(Analyzer):
 					# sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 8))?
 
 					# self.trial_signals[tcode].append(resample(trial_pupil_signal, round(len(trial_pupil_signal)/self.signal_downsample_factor)))
-					dsignal = trial_pupil_signal#sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, ftype='iir', zero_phase = True)
+					dsignal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, ftype='iir', zero_phase = True)
 					
 					self.trial_signals[tcode].append(dsignal)
 					
