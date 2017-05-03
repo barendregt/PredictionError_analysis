@@ -4,8 +4,8 @@ import scipy as sp
 from math import *
 import os,glob,sys
 
-# from joblib import Parallel, delayed
-# import multiprocessing
+from joblib import Parallel, delayed
+import multiprocessing
 
 import cPickle as pickle
 import pandas as pd
@@ -20,11 +20,11 @@ from IPython import embed
 from BehaviorAnalyzer import BehaviorAnalyzer
 
 
-raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
+raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'#'/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']#
+sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']#
 # sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
@@ -127,8 +127,8 @@ def run_analysis(subname):
 
 			plt.figure()
 
-			for ii,stype in enumerate(selected_types):
-				splt = plt.subplot(3,1,ii+1)
+			for sii,stype in enumerate(selected_types):
+				splt = plt.subplot(3,1,sii+1)
 
 				splt.set_title(stype)
 
@@ -153,70 +153,76 @@ def run_analysis(subname):
 
 			plt.figure()
 
-			this_parameters = pa.h5_operator.read_session_data(alias, 'parameters')
+			this_parameters = pa.read_trial_data(input_file = pa.combined_h5_filename, run = 'run%i'%ii)
 
 			PP_rt = []
 			PU_rt = []
 			UP_rt = []
 			UU_rt = []
 
-			for trial_code in np.unique(this_parameters['trial_code']):
+			for trial_code in np.unique(this_parameters['trial_codes']):
 				if trial_code < 10:
-					PP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					PP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				elif trial_code < 30:
-					PU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					PU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				elif trial_code < 50:
-					UP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					UP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				else:
-					UU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					UU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==1) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 
 			splt = plt.subplot(2,2,1)
 
 			splt.set_title('RT correct')
 
-			splt.bar(['PP','PU','UP','UU'], [np.median(PP_rt), np.median(PU_rt), np.median(UP_rt), np.median(UU_rt)], color='w', edgecolor='k')
+			splt.bar([0.5,1.5,2.5,3.5], [np.median(PP_rt), np.median(PU_rt), np.median(UP_rt), np.median(UU_rt)], color='w', edgecolor='k')
+
+			splt.set(xticklabels = ['PP','PU','UP','UU'])
 
 			PP_rt = []
 			PU_rt = []
 			UP_rt = []
 			UU_rt = []
 
-			for trial_code in np.unique(this_parameters['trial_code']):
+			for trial_code in np.unique(this_parameters['trial_codes']):
 				if trial_code < 10:
-					PP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					PP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				elif trial_code < 30:
-					PU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					PU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				elif trial_code < 50:
-					UP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					UP_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				else:
-					UU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					UU_rt.extend(this_parameters['reaction_time'][(this_parameters['correct_answer']==0) *(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 
 			splt = plt.subplot(2,2,2)
 
 			splt.set_title('RT incorrect')
 
-			splt.bar(['PP','PU','UP','UU'], [np.median(PP_rt), np.median(PU_rt), np.median(UP_rt), np.median(UU_rt)], color='w', edgecolor='k')		
+			splt.bar([0.5,1.5,2.5,3.5], [np.median(PP_rt), np.median(PU_rt), np.median(UP_rt), np.median(UU_rt)], color='w', edgecolor='k')		
+
+			splt.set(xticklabels = ['PP','PU','UP','UU'])
 
 			PP_pc = []
 			PU_pc = []
 			UP_pc = []
 			UU_pc = []
 
-			for trial_code in np.unique(this_parameters['trial_code']):
+			for trial_code in np.unique(this_parameters['trial_codes']):
 				if trial_code < 10:
-					PP_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					PP_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				elif trial_code < 30:
-					PU_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					PU_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				elif trial_code < 50:
-					UP_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					UP_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 				else:
-					UU_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_code']==trial_code)])
+					UU_pc.extend(this_parameters['correct_answer'][(this_parameters['reaction_time']>0) * (this_parameters['trial_codes']==trial_code)])
 
 			splt = plt.subplot(2,2,3)
 
 			splt.set_title('Performance')
 
-			splt.bar(['PP','PU','UP','UU'], [np.mean(PP_pc), np.mean(PU_pc), np.mean(UP_pc), np.mean(UU_pc)], color='w', edgecolor='k')		
+			splt.bar([0.5,1.5,2.5,3.5], [np.mean(PP_pc), np.mean(PU_pc), np.mean(UP_pc), np.mean(UU_pc)], color='w', edgecolor='k')		
+
+			splt.set(xticklabels = ['PP','PU','UP','UU'])
 
 			plt.tight_layout()
 
@@ -246,8 +252,8 @@ def run_analysis(subname):
 
 	pa.unload_data()
 
-[run_analysis(sub) for sub in sublist]
-# Run everything in parallel for speed 
+#[run_analysis(sub) for sub in sublist]
+#Run everything in parallel for speed 
 # num_cores = multiprocessing.cpu_count()
 
-# Parallel(n_jobs=num_cores)(delayed(run_analysis)(subname) for subname in sublist)
+Parallel(n_jobs=8)(delayed(run_analysis)(subname) for subname in sublist)

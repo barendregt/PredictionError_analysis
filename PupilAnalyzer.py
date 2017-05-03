@@ -86,10 +86,10 @@ class PupilAnalyzer(Analyzer):
 
 		return signal
 
-	def read_trial_data(self, input_file):
+	def read_trial_data(self, input_file, run = 'full'):
 
 		with pd.get_store(input_file) as tfile:
-			params = tfile['trials/full/table']
+			params = tfile['trials/' + run + '/table']
 
 		return params
 
