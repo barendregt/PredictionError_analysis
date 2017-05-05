@@ -337,10 +337,12 @@ class PupilAnalyzer(Analyzer):
 			print '[%s] Recombining signal and parameters from blocks/runs' % (self.__class__.__name__)
 
 		full_signal = np.array([])
+		full_baseline = np.array([])
 
 		run_signals = []
 
 		trials = pd.DataFrame()
+		blinks = pd.DataFrame()
 
 		run_trials = []
 
@@ -356,11 +358,14 @@ class PupilAnalyzer(Analyzer):
 			blocks = self.h5_operator.read_session_data(alias, 'blocks')
 			block_start_times = blocks['block_start_timestamp']
 
+			this_trial_blinks = self.h5_operator.read_session_data(alias, 'blinks_from_message_file')
+
 			# this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
 
-			block_event_times = pd.DataFrame()
+			# block_event_times = pd.DataFrame()
 
 			this_run_signal = np.array([])
+			this_run_baseline = np.array([])
 
 			# Kick out incomplete trials
 			if len(this_trial_phase_times) < len(this_trial_times):
@@ -372,10 +377,14 @@ class PupilAnalyzer(Analyzer):
 
 			for bs,be in zip(blocks['block_start_timestamp'], blocks['block_end_timestamp']):
 
-				this_block_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_clean_zscore', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
-
+				this_block_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_zscore', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
+				this_block_baseline = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_lp', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
+				
 				full_signal = np.append(full_signal, this_block_signal)
+				full_baseline = np.append(full_baseline, this_block_baseline)
+
 				this_run_signal = np.append(this_run_signal, this_block_signal)
+				this_run_baseline = np.append(this_run_baseline, this_block_baseline)
 				
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
 
@@ -386,6 +395,8 @@ class PupilAnalyzer(Analyzer):
 			
 			if ii > 0:
 
+				blinks = pd.concat([blinks, this_trial_blinks[this_trial_blinks['duration']<4000]], axis=0, ignore_index = True)
+
 				# Kick out duplicate trials (do we need to do this actually??)
 				if this_trial_parameters.iloc[0]['trial_nr'] == trials.iloc[-1]['trial_nr']:
 					this_trial_parameters = this_trial_parameters[1:]
@@ -393,9 +404,11 @@ class PupilAnalyzer(Analyzer):
 				trials = pd.concat([trials, this_trial_parameters], axis=0, ignore_index = True)
 			else:
 				trials = this_trial_parameters
+				blinks = this_trial_blinks[this_trial_blinks['duration']<4000]
 
 			run_trials.append(this_trial_parameters)
 			run_signals.append(this_run_signal)
+			run_blinks.append(this_trial_blinks[this_trial_blinks['duration']<4000])
 			
 		
 
@@ -418,9 +431,11 @@ class PupilAnalyzer(Analyzer):
 		output_file.close()
 
 		trials.to_hdf(self.combined_h5_filename, key = '/trials/full', mode = 'a', format = 't', data_columns = True)
+		blinks.to_hdf(self.combined_h5_filename, key = '/pupil/long_signal', mode = 'a', format = 't', data_columns = True)
 
 		for rii in range(len(run_signals)):
 			run_trials[rii].to_hdf(self.combined_h5_filename, key = '/trials/run%i'%rii, mode = 'a', format = 't', data_columns = True)
+			run_blinks[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_signal'%rii, mode = 'a', format = 't', data_columns = True)
 
 
 	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False):
@@ -516,6 +531,12 @@ class PupilAnalyzer(Analyzer):
 
 		self.sub_IRF['stimulus'] = self.FIRo.betas_per_event_type[0].ravel() - self.FIRo.betas_per_event_type[0].ravel().mean()
 		self.sub_IRF['button_press'] = self.FIRo.betas_per_event_type[1].ravel() - self.FIRo.betas_per_event_type[1].ravel().mean()
+
+
+
+
+
+
 
 
 	def build_design_matrix(self, sub_IRF = None):
