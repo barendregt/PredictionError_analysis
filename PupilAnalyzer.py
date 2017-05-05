@@ -340,6 +340,7 @@ class PupilAnalyzer(Analyzer):
 		full_baseline = np.array([])
 
 		run_signals = []
+		run_baselines = []
 
 		trials = pd.DataFrame()
 		blinks = pd.DataFrame()
@@ -408,6 +409,7 @@ class PupilAnalyzer(Analyzer):
 
 			run_trials.append(this_trial_parameters)
 			run_signals.append(this_run_signal)
+			run_baselines.append(this_run_baseline)
 			run_blinks.append(this_trial_blinks[this_trial_blinks['duration']<4000])
 			
 		
@@ -424,9 +426,11 @@ class PupilAnalyzer(Analyzer):
 		tgroup = output_file.create_group("/","trials","trials")
 
 		output_file.create_array(pgroup, "long_signal", full_signal, "long_signal")
+		output_file.create_array(pgroup, "baseline", full_baseline, "baseline")
 
 		for rii in range(len(run_signals)):
 			output_file.create_array(pgroup, "r%i_signal"%rii, run_signals[rii], "r%i_signal"%rii)
+			output_file.create_array(pgroup, "r%i_signal"%rii, run_baselines[rii], "r%i_baseline"%rii)
 		
 		output_file.close()
 
