@@ -431,16 +431,16 @@ class PupilAnalyzer(Analyzer):
 
 		for rii in range(len(run_signals)):
 			output_file.create_array(pgroup, "r%i_signal"%rii, run_signals[rii], "r%i_signal"%rii)
-			output_file.create_array(pgroup, "r%i_signal"%rii, run_baselines[rii], "r%i_baseline"%rii)
+			output_file.create_array(pgroup, "r%i_baseline"%rii, run_baselines[rii], "r%i_baseline"%rii)
 		
 		output_file.close()
 
 		trials.to_hdf(self.combined_h5_filename, key = '/trials/full', mode = 'a', format = 't', data_columns = True)
-		blinks.to_hdf(self.combined_h5_filename, key = '/pupil/long_signal', mode = 'a', format = 't', data_columns = True)
+		blinks.to_hdf(self.combined_h5_filename, key = '/pupil/blinks', mode = 'a', format = 't', data_columns = True)
 
 		for rii in range(len(run_signals)):
 			run_trials[rii].to_hdf(self.combined_h5_filename, key = '/trials/run%i'%rii, mode = 'a', format = 't', data_columns = True)
-			run_blinks[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_signal'%rii, mode = 'a', format = 't', data_columns = True)
+			run_blinks[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_blinks'%rii, mode = 'a', format = 't', data_columns = True)
 
 
 	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False):
