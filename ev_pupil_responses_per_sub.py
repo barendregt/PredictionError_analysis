@@ -36,7 +36,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -105,6 +105,8 @@ for subname in sublist:
 					 'PU': [],
 					 'UU': []}	
 
+	this_sub_IRF = {'stimulus': [], 'button_press': []}
+
 	# print subname
 	# Organize filenames
 	rawfolder = os.path.join(raw_data_folder,subname)
@@ -127,6 +129,9 @@ for subname in sublist:
 	# # Get pupil data (ev)
 	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-2.5, 0.0], force_rebuild=False)
 
+	pa.get_IRF()
+
+	this_sub_IRF['button_press'] = pa.sub_IRF['button_press']
 
 	# embed()
 	ref_signals = []
@@ -198,7 +203,9 @@ for subname in sublist:
 	pa.deconvolution_interval = stimulus_deconvolution_interval
 	pa.signal_per_trial(only_correct = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False)
 
+	pa.get_IRF()
 
+	this_sub_IRF['stimulus'] = pa.sub_IRF['stimulus']
 
 
 	# embed()
@@ -369,7 +376,7 @@ for subname in sublist:
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
-	pl.event_related_pupil_average(data = pa.sub_IRF, conditions = ['stimulus','button_press'], show_legend=True, ylabel = 'Pupil size', compute_mean = False, compute_sd = False)
+	pl.event_related_pupil_average(data = this_sub_IRF, conditions = ['stimulus','button_press'], show_legend=True, ylabel = 'Pupil size', compute_mean = False, compute_sd = False)
 
 	pl.save_figure('pupil_IRF.pdf', sub_folder = 'pupil')
 

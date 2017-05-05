@@ -36,7 +36,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']
+sublist = ['AA','AB','AC','AF','AH','AI','AJ','AK','AL','AM','AN','AO']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -47,7 +47,7 @@ deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-2.0, 3.0])
 stimulus_deconvolution_interval = np.array([-0.5, 4.5])
 
-down_fs = 100
+down_fs = 50
 
 pl = Plotter(figure_folder = figfolder)
 
@@ -95,7 +95,10 @@ all_ie_scores = {'PP': [],
 				 'UP': [],
 				 'PU': [],
 				 'UU': []}	
-power_time_window = [100,600]#[15,30]
+
+all_sub_IRF = {'stimulus': [], 'button_press': []}
+
+power_time_window = [int(1*(signal_sample_frequency/down_fs)),int(6*(signal_sample_frequency/down_fs))]#[15,30]
 zero_point = 15
 
 # all_ie_scores = []
@@ -119,6 +122,10 @@ for subname in sublist:
 
 	# # Get pupil data (ev)
 	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-2.5, 0.0], force_rebuild=False)
+
+	pa.get_IRF()
+
+	all_sub_IRF['button_press'].append(pa.sub_IRF['button_press'])
 
 
 	# embed()
@@ -191,8 +198,9 @@ for subname in sublist:
 	pa.deconvolution_interval = stimulus_deconvolution_interval
 	pa.signal_per_trial(only_correct = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False)
 
+	pa.get_IRF()
 
-
+	all_sub_IRF['stimulus'].append(pa.sub_IRF['stimulus'])
 
 	# embed()
 	ref_signals = []
