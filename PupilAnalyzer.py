@@ -86,6 +86,13 @@ class PupilAnalyzer(Analyzer):
 
 		return signal
 
+	def read_blink_data(self, input_file):
+
+		with pd.get_store(input_file) as tfile:
+			blinks = tfile['pupil/blinks/table']
+
+		return blinks
+
 	def read_trial_data(self, input_file, run = 'full'):
 
 		with pd.get_store(input_file) as tfile:
@@ -502,8 +509,12 @@ class PupilAnalyzer(Analyzer):
 
 		self.load_combined_data()
 
+		embed()
+
+		
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		blinks = self.read_blink_data(self.combined_h5_filename)
 
 		events = np.array([trial_parameters['trial_phase_4_full_signal'],  			    # stimulus onset
 				  		   trial_parameters['trial_phase_7_full_signal'] + self.signal_sample_frequency*trial_parameters['reaction_time']]) # button press
@@ -536,11 +547,6 @@ class PupilAnalyzer(Analyzer):
 
 		self.sub_IRF['stimulus'] = self.FIRo.betas_per_event_type[0].ravel() - self.FIRo.betas_per_event_type[0].ravel().mean()
 		self.sub_IRF['button_press'] = self.FIRo.betas_per_event_type[1].ravel() - self.FIRo.betas_per_event_type[1].ravel().mean()
-
-
-
-
-
 
 
 
