@@ -346,6 +346,7 @@ class PupilAnalyzer(Analyzer):
 		blinks = pd.DataFrame()
 
 		run_trials = []
+		run_blinks = []
 
 		trial_parameters = {}
 
