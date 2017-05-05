@@ -47,7 +47,7 @@ deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-2.0, 3.0])
 stimulus_deconvolution_interval = np.array([-0.5, 4.5])
 
-down_fs = 10
+down_fs = 100
 
 pl = Plotter(figure_folder = figfolder)
 
@@ -139,26 +139,28 @@ for subname in sublist:
 	uu_signal = []
 	
 
-	for key, trial_signal in pa.trial_signals.items():
-		if key < 10:
-			response_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
-		elif key < 30:
-			response_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
-		elif key < 50:
-			response_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
-		else:
-			response_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
+	try:
+		for key, trial_signal in pa.trial_signals.items():
+			if key < 10:
+				response_pupil_signals['PP'].extend(trial_signal)
+			elif key < 30:
+				response_pupil_signals['UP'].extend(trial_signal)
+			elif key < 50:
+				response_pupil_signals['PU'].extend(trial_signal)
+			else:
+				response_pupil_signals['UU'].extend(trial_signal)
 
 
-		if key < 10:
-			response_diff_signals['PP'].extend((trial_signal*msignal)/msignal_norm)
-		elif key < 30:
-			response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
-		elif key <50:
-			response_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
-		else:
-			response_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
-
+			if key < 10:
+				response_diff_signals['PP'].extend((trial_signal*msignal)/msignal_norm)
+			elif key < 30:
+				response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
+			elif key <50:
+				response_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
+			else:
+				response_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
+	except:
+		embed()
 
 	ref_signals = []
 
@@ -212,13 +214,13 @@ for subname in sublist:
 
 	for key, trial_signal in pa.trial_signals.items():
 		if key < 10:
-			stimulus_pupil_signals['PP'].append(np.mean(trial_signal,axis=0))
+			stimulus_pupil_signals['PP'].extend(trial_signal)
 		elif key < 30:
-			stimulus_pupil_signals['UP'].append(np.mean(trial_signal,axis=0))
+			stimulus_pupil_signals['UP'].extend(trial_signal)
 		elif key < 50:
-			stimulus_pupil_signals['PU'].append(np.mean(trial_signal,axis=0))
+			stimulus_pupil_signals['PU'].extend(trial_signal)
 		else:
-			stimulus_pupil_signals['UU'].append(np.mean(trial_signal,axis=0))
+			stimulus_pupil_signals['UU'].extend(trial_signal)
 
 
 		if key < 10:
@@ -276,37 +278,37 @@ for subname in sublist:
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_average(data = response_diff_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 450], xticks = np.arange(0,450,50), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
+pl.event_related_pupil_average(data = response_diff_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
 pl.save_figure('pupil_amplitude_button-press.pdf', sub_folder = 'over_subs')
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_average(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 450], xticks = np.arange(0,450,50), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
+pl.event_related_pupil_average(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
 pl.save_figure('pupil_response_button-press.pdf', sub_folder = 'over_subs')
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_difference(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, ylabel = 'Pupil size', x_lim = [0, 450], xticks = np.arange(0,450,50), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
+pl.event_related_pupil_difference(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, ylabel = 'Pupil size', x_lim = [0, 45], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 
 pl.save_figure('pupil_difference_button-press.pdf', sub_folder = 'over_subs')
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_average(data = stimulus_diff_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 500], xticks = np.arange(0,500,50), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
+pl.event_related_pupil_average(data = stimulus_diff_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
 pl.save_figure('pupil_amplitude-stimulus.pdf', sub_folder = 'over_subs')
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_average(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 500], xticks = np.arange(0,500,50), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
+pl.event_related_pupil_average(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
 pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'over_subs')
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_difference(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, ylabel = 'Pupil size', x_lim = [0, 500], xticks = np.arange(0,500,50), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5))
+pl.event_related_pupil_difference(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, ylabel = 'Pupil size', x_lim = [0, 5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5))
 
 pl.save_figure('pupil_difference-stimulus.pdf', sub_folder = 'over_subs')
 

@@ -471,7 +471,7 @@ class PupilAnalyzer(Analyzer):
 					# sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 8))?
 
 					# self.trial_signals[tcode].append(resample(trial_pupil_signal, round(len(trial_pupil_signal)/self.signal_downsample_factor)))
-					dsignal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, ftype='iir', zero_phase = True)
+					dsignal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 1)
 					
 					self.trial_signals[tcode].append(dsignal)
 					
@@ -485,8 +485,8 @@ class PupilAnalyzer(Analyzer):
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		events = np.array([trial_parameters['trial_response_phase_full_signal'] + 500,  			    # stimulus onset
-				  		   trial_parameters['trial_response_phase_full_signal'] + (500+150+30+150) + self.signal_sample_frequency*trial_parameters['reaction_time']]) # button press
+		events = np.array([trial_parameters['trial_phase_4_full_signal'],  			    # stimulus onset
+				  		   trial_parameters['trial_phase_7_full_signal'] + self.signal_sample_frequency*trial_parameters['reaction_time']]) # button press
 
 		if deconv_interval is None:
 			deconv_interval = self.deconvolution_interval
@@ -512,6 +512,12 @@ class PupilAnalyzer(Analyzer):
 		self.FIRo.betas_for_events()
 		self.FIRo.calculate_rsq()	
 
+		self.sub_IRF = {'stimulus': [], 'button_press': []}
+
+		self.sub_IRF['stimulus'] = self.FIRo.betas_per_event_type[0].ravel() - self.FIRo.betas_per_event_type[0].ravel().mean()
+		self.sub_IRF['button_press'] = self.FIRo.betas_per_event_type[1].ravel() - self.FIRo.betas_per_event_type[1].ravel().mean()
+
+
 	def build_design_matrix(self, sub_IRF = None):
 		
 		print('[%s] Creating design matrix for GLM' % (self.__class__.__name__))
@@ -519,7 +525,7 @@ class PupilAnalyzer(Analyzer):
 		if sub_IRF is None:
 			sub_IRF = {'stimulus': [], 'button_press': []}
 
-			self.get_IRF()
+		
 
 			for name,dec in zip(self.FIRo.covariates.keys(), self.FIRo.betas_per_event_type.squeeze()):
 				sub_IRF[name] = resample(dec,int(len(dec)*(self.signal_sample_frequency/self.deconv_sample_frequency)))[:,np.newaxis]
