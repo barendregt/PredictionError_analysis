@@ -211,7 +211,7 @@ class Plotter(object):
 		sn.despine(offset=5)
 
 
-	def bar_plot(self, data, conditions, with_error = False, with_stats = False, ylabel = '', xlabel = '', yticks = [], xticks = [], yticklabels = [], xticklabels = [], x_lim = [None, None], y_lim = [None, None]):
+	def bar_plot(self, data, conditions, with_error = False, with_stats = False, with_data_points = False, ylabel = '', xlabel = '', yticks = [], xticks = [], yticklabels = [], xticklabels = [], x_lim = [None, None], y_lim = [None, None]):
 		if self.incorrect_data_format(data, conditions):
 			return
 
@@ -227,6 +227,9 @@ class Plotter(object):
 			else:
 				plt.bar(ii+1, np.mean(data[key]), width = bar_width, label = key, color = bar_color, edgecolor='k')
 			
+			if with_data_points:
+				plt.plot(np.ones((len(data[key]),1))*ii+1, data[key], 'o')
+
 			latex_code += '(%i,%.2f) '%(ii, np.mean(data[key]))
 
 		# plt.xticks(1+np.arange(len(conditions)), conditions)

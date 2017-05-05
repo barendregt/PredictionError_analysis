@@ -30,7 +30,7 @@ from BehaviorAnalyzer import BehaviorAnalyzer
 from Plotter import Plotter
 
 
-raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
+raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'#/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
@@ -44,7 +44,7 @@ low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
-response_deconvolution_interval = np.array([-0.5, 4.5])
+response_deconvolution_interval = np.array([-1, 4.5])
 stimulus_deconvolution_interval = np.array([-0.5, 4.5])
 
 down_fs = 50
@@ -114,10 +114,10 @@ for subname in sublist:
 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pl.figure_folder = os.path.join(rawfolder,'results/')
+	#pl.figure_folder = os.path.join(rawfolder,'results/')
 
-	if not os.path.isdir(os.path.join(rawfolder,'results/')):
-		os.makedirs(os.path.join(rawfolder,'results/'))
+	# if not os.path.isdir(os.path.join(rawfolder,'results/')):
+	# 	os.makedirs(os.path.join(rawfolder,'results/'))
 
 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, sort_by_date = sbsetting[sublist.index(subname)], signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
@@ -127,7 +127,7 @@ for subname in sublist:
 	#sub_rts = pa.compute_reaction_times()
 
 	# # Get pupil data (ev)
-	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-2.5, 0.0], force_rebuild=False)
+	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False)
 
 	pa.get_IRF()
 
@@ -300,56 +300,56 @@ for subname in sublist:
 	pl.hline(y=0)
 	pl.event_related_pupil_average(data = response_diff_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-	pl.save_figure('pupil_amplitude_button-press.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_amplitude_button-press.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
 	pl.event_related_pupil_average(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-	pl.save_figure('pupil_response_button-press.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_response_button-press.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
 	pl.event_related_pupil_difference(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, ylabel = 'Pupil size', x_lim = [0, 45], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 
-	pl.save_figure('pupil_difference_button-press.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_difference_button-press.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
 	pl.event_related_pupil_average(data = stimulus_diff_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-	pl.save_figure('pupil_amplitude-stimulus.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_amplitude-stimulus.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
 	pl.event_related_pupil_average(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','UU':'Task irrelevant','PU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-	pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_response-stimulus.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
 	pl.event_related_pupil_difference(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, ylabel = 'Pupil size', x_lim = [0, 5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5))
 
-	pl.save_figure('pupil_difference-stimulus.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_difference-stimulus.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 	# pl.open_figure(force=1)
 	# pl.hline(y=0)
 	# pl.event_related_pupil_average(data = pupil_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, x_lim = [0, 45], xticks = np.arange(0,45,5), xticklabels = np.arange(deconvolution_interval[0]+0.5, deconvolution_interval[1]+0.5,.5), compute_mean = True)
 
-	# pl.save_figure('pupil_average.pdf', sub_folder = 'pupil')
+	# pl.save_figure('%s-pupil_average.pdf'%subname, sub_folder = 'pupil')
 
 	# pl.open_figure(force=1)
 	# pl.hline(y=0)
 	# pl.event_related_pupil_difference(data = diff_signals, conditions = ['PP','UP','PU','UU'], show_legend=True, x_lim = [0, 45], xticks = np.arange(0,45,5), xticklabels = np.arange(deconvolution_interval[0]+0.5, deconvolution_interval[1]+0.5,.5), with_error = False)
 
-	# pl.save_figure('pupil_difference.pdf', sub_folder = 'pupil')
+	# pl.save_figure('%s-pupil_difference.pdf'%subname, sub_folder = 'pupil')
 
 	# pl.open_figure(force=1)
 	# # pl.figure.suptitle('Reaction time')
 	# pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
 	# pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative reaction time (% of predicted)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
-	# pl.save_figure('reaction_times.pdf', sub_folder = 'pupil')
+	# pl.save_figure('reaction_times.pdf'%subname, sub_folder = 'pupil')
 
 	# # # rtdata = pd.DataFrame(data = np.vstack([np.hstack([rts['UP'], rts['PU'], rts['UU']]), np.hstack([['PU']*len(rts['PU']), ['UP']*len(rts['UP']), ['UU']*len(rts['UU'])])]).T, columns = ['RT','PE_type'])
 	# # # rtdata.to_csv('rt.csv')
@@ -358,13 +358,13 @@ for subname in sublist:
 	# # pl.figure.suptitle('Performance')
 	# pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', with_error = True, x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
 
-	# pl.save_figure('percent_correct.pdf', sub_folder = 'pupil')
+	# pl.save_figure('percent_correct.pdf'%subname, sub_folder = 'pupil')
 	pl.open_figure(force=1)
 	# pl.figure.suptitle('Pupil amplitude')
 	# pl.subplot(1,2,1, title='Pupil amplitude')
 	pl.bar_plot(data = power_signals, conditions = ['UP','PU','UU'], with_error = True, ylabel = 'Pupil amplitude (a.u.)', x_lim = [0.5, None], y_lim = [0.6, 1.21], yticks = np.arange(0.6, 2.0, 0.2), yticklabels = np.arange(0.8,2.2,0.2), xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error')
 
-	pl.save_figure('pupil_amplitude_bar.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_amplitude_bar.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 
 	pl.open_figure(force=1)
@@ -372,19 +372,19 @@ for subname in sublist:
 	# pl.subplot(1,2,1, title='Pupil amplitude')
 	pl.bar_plot(data = power_signals, conditions = ['UP','PU','UU'], with_error = True, ylabel = 'Pupil amplitude (a.u.)', x_lim = [0.5, None], y_lim = [0.6, 1.21], yticks = np.arange(0.6, 2.0, 0.2), yticklabels = np.arange(0.8,2.2,0.2), xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error')
 
-	pl.save_figure('pupil_amplitude_bar.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_amplitude_bar.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
 	pl.event_related_pupil_average(data = this_sub_IRF, conditions = ['stimulus','button_press'], show_legend=True, ylabel = 'Pupil size', compute_mean = False, compute_sd = False)
 
-	pl.save_figure('pupil_IRF.pdf', sub_folder = 'pupil')
+	pl.save_figure('%s-pupil_IRF.pdf'%subname, sub_folder = 'per_sub/pupil')
 
 
 	pl.open_figure(force=1)
 	pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative reaction time (% of predicted)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
-	pl.save_figure('reaction_times.pdf', sub_folder = 'task')
+	pl.save_figure('%s-reaction_times.pdf'%subname, sub_folder = 'per_sub/task')
 
 	# # rtdata = pd.DataFrame(data = np.vstack([np.hstack([rts['UP'], rts['PU'], rts['UU']]), np.hstack([['PU']*len(rts['PU']), ['UP']*len(rts['UP']), ['UU']*len(rts['UU'])])]).T, columns = ['RT','PE_type'])
 	# # rtdata.to_csv('rt.csv')
@@ -393,7 +393,7 @@ for subname in sublist:
 	# pl.figure.suptitle('Performance')
 	pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', with_error = True, x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
 
-	pl.save_figure('percent_correct.pdf', sub_folder = 'task')
+	pl.save_figure('%s-percent_correct.pdf'%subname, sub_folder = 'per_sub/task')
 
 
 # # # pl.save_figure('all-ev_pupil_summary-things.pdf', sub_folder = 'summary')
