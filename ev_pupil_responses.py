@@ -44,7 +44,7 @@ low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
-response_deconvolution_interval = np.array([-2.0, 3.0])
+response_deconvolution_interval = np.array([-0.5, 4.5])
 stimulus_deconvolution_interval = np.array([-0.5, 4.5])
 
 down_fs = 50
