@@ -93,6 +93,13 @@ class PupilAnalyzer(Analyzer):
 
 		return blinks
 
+	def read_saccade_data(self, input_file):
+
+		with pd.get_store(input_file) as tfile:
+			saccades = tfile['pupil/saccades/table']
+
+		return saccades
+
 	def read_trial_data(self, input_file, run = 'full'):
 
 		with pd.get_store(input_file) as tfile:
