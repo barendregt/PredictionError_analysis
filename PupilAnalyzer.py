@@ -406,11 +406,11 @@ class PupilAnalyzer(Analyzer):
 				this_run_baseline = np.append(this_run_baseline, this_block_baseline)
 				
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
-				this_block_blinks['start_block_timestamp'] = pd.Series(this_block_blinks['start_timestamp'].values - bs)
-				this_block_blinks['end_block_timestamp'] = pd.Series(this_block_blinks['end_timestamp'].values - bs)
+				this_block_blinks['start_block_timestamp'] = pd.Series(this_block_blinks['start_timestamp'].values - bs + prev_signal_size)
+				this_block_blinks['end_block_timestamp'] = pd.Series(this_block_blinks['end_timestamp'].values - bs + prev_signal_size)
 
-				this_block_saccades['start_block_timestamp'] = pd.Series(this_block_saccades['start_timestamp'].values - bs)
-				this_block_saccades['end_block_timestamp'] = pd.Series(this_block_saccades['end_timestamp'].values - bs)
+				this_block_saccades['start_block_timestamp'] = pd.Series(this_block_saccades['start_timestamp'].values - bs + prev_signal_size)
+				this_block_saccades['end_block_timestamp'] = pd.Series(this_block_saccades['end_timestamp'].values - bs + prev_signal_size)
 
 			this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
 			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
@@ -535,6 +535,7 @@ class PupilAnalyzer(Analyzer):
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 		blinks = self.read_blink_data(self.combined_h5_filename)
+		saccades = self.read_saccade_data(self.combined_h5_filename)
 
 		events = np.array([trial_parameters['trial_phase_4_full_signal'],  			    # stimulus onset
 				  		   trial_parameters['trial_phase_7_full_signal'] + self.signal_sample_frequency*trial_parameters['reaction_time']]) # button press
