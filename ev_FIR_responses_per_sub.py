@@ -137,7 +137,7 @@ for subname in sublist:
 	plt.plot(other_betas)
 	plt.legend(labels[1])
 
-	ax.set(xticks=np.arange(0,80,10), xticklabels=np.arange(-2,6))
+	ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
 	sn.despine()
 
@@ -145,7 +145,7 @@ for subname in sublist:
 	plt.title('PE')
 	plt.plot(pe_betas-pe_betas[:5].mean(axis=0))
 	plt.legend(labels[0])
-	ax.set(xticks=np.arange(0,50,10), xticklabels=np.arange(-1,4))
+	ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
 
 	sn.despine()
 
