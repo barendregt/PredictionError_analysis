@@ -70,13 +70,15 @@ zero_point = 15
 # all_ie_scores = []
 all_betas = []
 
+response_fir_signals = {'PP': [],
+						 'UP': [],
+						 'PU': [],
+						 'UU': []}
+
 for subname in sublist:
 
 
-	response_pupil_signals = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}
+
 	stimulus_pupil_signals = {'PP': [],
 					 'UP': [],
 					 'PU': [],
@@ -131,7 +133,10 @@ for subname in sublist:
 	pe_betas = betas[0]
 	other_betas = betas[1]
 
-	all_betas.append(pe_betas)
+	response_fir_signals['PU'].extend(pe_betas[:,0])
+	response_fir_signals['PP'].extend(pe_betas[:,1])
+	response_fir_signals['UU'].extend(pe_betas[:,2])
+	response_fir_signals['UP'].extend(pe_betas[:,3])
 
 	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
 	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
@@ -166,8 +171,7 @@ for subname in sublist:
 
 	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
 
-plt.figure()
-plt.plot(np.mean(all_betas, axis=0))
-plt.legend(labels[0])
-sn.despine()
-plt.savefig(os.path.join(figfolder,'over_subs','FIR.pdf'))
+pl.open_figure(force=1)
+pl.hline(y=0)
+pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
+pl.save_figure(filename='FIR.pdf',sub_folder = 'over_subs')
