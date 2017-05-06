@@ -131,7 +131,7 @@ for subname in sublist:
 	pe_betas = betas[0]
 	other_betas = betas[1]
 
-	recorded_signal = pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
+	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
 	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
 
 	plt.figure()
@@ -148,7 +148,7 @@ for subname in sublist:
 	plt.plot(other_betas)
 	plt.legend(labels[1])
 
-	ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
 	sn.despine()
 
@@ -156,7 +156,7 @@ for subname in sublist:
 	plt.title('PE')
 	plt.plot(pe_betas-pe_betas[:5,:].mean(axis=0))
 	plt.legend(labels[0])
-	ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
+	# ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
 
 	sn.despine()
 
