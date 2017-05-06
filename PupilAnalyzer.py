@@ -355,6 +355,7 @@ class PupilAnalyzer(Analyzer):
 
 		run_signals = []
 		run_baselines = []
+		run_saccades = []
 
 		trials = pd.DataFrame()
 		blinks = pd.DataFrame()
