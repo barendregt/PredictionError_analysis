@@ -131,24 +131,24 @@ for subname in sublist:
 	pe_betas = betas[0]
 	other_betas = betas[1]
 
-	figure()
-	ax=subplot(1,2,1)
-	title('Nuissances')
-	plot(other_betas)
-	legend(labels[1])
+	pl.figure()
+	ax=pl.subplot(1,2,1)
+	pl.title('Nuissances')
+	pl.plot(other_betas)
+	pl.legend(labels[1])
 
 	ax.set(xticks=np.arange(0,100,10), xticklabels=np.arange(-2,8))
 
 	sn.despine()
 
-	ax=subplot(1,2,2)
-	title('PE')
-	plot(pe_betas)
-	legend(labels[0])
+	ax=pl.subplot(1,2,2)
+	pl.title('PE')
+	pl.plot(pe_betas)
+	pl.legend(labels[0])
 	ax.set(xticks=np.arange(0,40,10), xticklabels=np.arange(-1,3))
 
 	sn.despine()
 
-	tight_layout()
+	pl.tight_layout()
 
-	savefig('fir_example.pdf')
+	pl.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
