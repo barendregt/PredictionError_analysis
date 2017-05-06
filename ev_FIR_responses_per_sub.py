@@ -41,7 +41,8 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']
+sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO']
+sublist_neg = ['AC','AF','AH','AI','AK','AN']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -75,7 +76,7 @@ response_fir_signals = {'PP': [],
 						 'PU': [],
 						 'UU': []}
 
-for subname in sublist:
+for subname in sublist_pos:
 
 
 
@@ -173,5 +174,107 @@ for subname in sublist:
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
-pl.save_figure(filename='FIR.pdf',sub_folder = 'over_subs')
+pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
+pl.save_figure(filename='FIR_pos.pdf',sub_folder = 'over_subs')
+
+
+for subname in sublist_neg:
+
+
+
+	stimulus_pupil_signals = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}				 
+	response_diff_signals  = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}	
+	stimulus_diff_signals  = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}				 
+	power_signals = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}
+	ie_scores 	  = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}
+	rts 	  	  = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}
+	pc 	  	  	  = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}			
+	all_ie_scores = {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}	
+
+	this_sub_IRF = {'stimulus': [], 'button_press': []}
+
+	# print subname
+	# Organize filenames
+	rawfolder = os.path.join(raw_data_folder,subname)
+	sharedfolder = os.path.join(shared_data_folder,subname)
+	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
+	h5filename = os.path.join(sharedfolder,subname+'.h5')
+
+	#pl.figure_folder = os.path.join(rawfolder,'results/')
+
+	# if not os.path.isdir(os.path.join(rawfolder,'results/')):
+	# 	os.makedirs(os.path.join(rawfolder,'results/'))
+
+	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, sort_by_date = sbsetting[sublist.index(subname)], signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+
+	betas, labels = pa.get_IRF()
+
+	pe_betas = betas[0]
+	other_betas = betas[1]
+
+	response_fir_signals['PU'].append(pe_betas[:,0])
+	response_fir_signals['PP'].append(pe_betas[:,1])
+	response_fir_signals['UU'].append(pe_betas[:,2])
+	response_fir_signals['UP'].append(pe_betas[:,3])
+
+	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
+	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
+
+	plt.figure()
+	plt.plot(recorded_signal, label='pupil_signal')
+	plt.plot(predicted_signal, label='predicted_signal')
+	plt.legend()
+
+	sn.despine()
+	plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
+
+	plt.figure()
+	ax=plt.subplot(1,2,1)
+	plt.title('Nuissances')
+	plt.plot(other_betas)
+	plt.legend(labels[1])
+
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+
+	sn.despine()
+
+	ax=plt.subplot(1,2,2)
+	plt.title('PE')
+	plt.plot(pe_betas-pe_betas[:5,:].mean(axis=0))
+	plt.legend(labels[0])
+	# ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
+
+	sn.despine()
+
+	plt.tight_layout()
+
+	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
+
+pl.open_figure(force=1)
+pl.hline(y=0)
+pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
+pl.save_figure(filename='FIR_neg.pdf',sub_folder = 'over_subs')
