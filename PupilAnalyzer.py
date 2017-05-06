@@ -593,7 +593,7 @@ class PupilAnalyzer(Analyzer):
 		
 
 		pe_betas = self.fir_betas[-events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency:].reshape((events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
-		other_betas = self.fir_betas[:-events.shape[0]*(nuiss_devonv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency].reshape((events.shape[0],(nuiss_devonv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+		other_betas = self.fir_betas[:-events.shape[0]*(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency].reshape((events.shape[0],(nuiss_devonv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
 		return [[pe_betas, other_betas], [self.FIR2.covariates.keys(), self.FIR1.covariates.keys()]]
 
