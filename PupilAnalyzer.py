@@ -529,8 +529,6 @@ class PupilAnalyzer(Analyzer):
 
 		self.load_combined_data()
 
-		embed()
-
 
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
