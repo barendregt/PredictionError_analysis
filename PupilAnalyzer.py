@@ -537,11 +537,11 @@ class PupilAnalyzer(Analyzer):
 
 		events = np.array([blinks['end_block_timestamp'],
 						   saccades['end_block_timestamp'],
-						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
-				  		   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+						   trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
+				  		   trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
-		deconv_interval = [-2, 7]
+		deconv_interval = [-2, 5]
 
 
 		print('[%s] Starting FIR deconvolution' % (self.__class__.__name__))
@@ -561,12 +561,12 @@ class PupilAnalyzer(Analyzer):
 
 		dm1 = self.FIR1.design_matrix
 
-		deconv_interval = [-1,2]
+		deconv_interval = [-1,3]
 
-		events = np.array([trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']<10], # no PE
-						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']>40], # both PE
-						   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['trial_codes']>=10) * (trial_parameters['trial_codes']<30)], # PE TR
-						   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['trial_codes']>=30) * (trial_parameters['trial_codes']<50)]  # PE ~TR
+		events = np.array([trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']<10], # no PE
+						   trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']>40], # both PE
+						   trial_parameters['trial_phase_7_full_signal'][(trial_parameters['trial_codes']>=10) * (trial_parameters['trial_codes']<30)], # PE TR
+						   trial_parameters['trial_phase_7_full_signal'][(trial_parameters['trial_codes']>=30) * (trial_parameters['trial_codes']<50)]  # PE ~TR
 						  ])
 
 
@@ -591,8 +591,8 @@ class PupilAnalyzer(Analyzer):
 		betas = sp.linalg.lstsq(design_matrix.T, sp.signal.resample(recorded_pupil_signal, int(recorded_pupil_signal.shape[-1] / self.signal_sample_frequency*self.deconv_sample_frequency), axis = -1).T)[0]
 
 
-		pe_betas = betas[-120:].reshape((4,30)).T
-		other_betas = betas[:-120].reshape((4,90)).T
+		pe_betas = betas[-160:].reshape((4,40)).T
+		other_betas = betas[:-160].reshape((4,70)).T
 
 		return [[pe_betas, other_betas], [self.FIR2.covariates.keys(), self.FIR1.covariates.keys()]]
 
