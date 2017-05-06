@@ -131,6 +131,17 @@ for subname in sublist:
 	pe_betas = betas[0]
 	other_betas = betas[1]
 
+	recorded_signal = pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
+	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
+
+	plt.figure()
+	plt.plot(recorded_signal, label='pupil_signal')
+	plt.plot(predicted_signal, label='predicted_signal')
+	plt.legend()
+
+	sn.despine()
+	plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
+
 	plt.figure()
 	ax=plt.subplot(1,2,1)
 	plt.title('Nuissances')

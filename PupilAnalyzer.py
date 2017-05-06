@@ -537,11 +537,11 @@ class PupilAnalyzer(Analyzer):
 
 		events = np.array([blinks['end_block_timestamp'],
 						   saccades['end_block_timestamp'],
-						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
-				  		   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+						   trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
+				  		   trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequencytrial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
-		deconv_interval = [-2, 5]
+		nuiss_deconv_interval = [-2, 5]
 
 
 		print('[%s] Starting FIR deconvolution' % (self.__class__.__name__))
@@ -553,7 +553,7 @@ class PupilAnalyzer(Analyzer):
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
-			        	deconvolution_interval = deconv_interval,
+			        	deconvolution_interval = nuiss_deconv_interval,
 			        	#covariates = self.events['covariates']
 					)
 
@@ -561,7 +561,7 @@ class PupilAnalyzer(Analyzer):
 
 		dm1 = self.FIR1.design_matrix
 
-		deconv_interval = [-1,3]
+		resp_deconv_interval = [-1.5,3]
 
 		events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']<10]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']<10], # no PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']>40]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']>40], # both PE
@@ -577,7 +577,7 @@ class PupilAnalyzer(Analyzer):
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
-			        	deconvolution_interval = deconv_interval,
+			        	deconvolution_interval = resp_deconv_interval,
 			        	#covariates = self.events['covariates']
 					)
 
@@ -586,13 +586,14 @@ class PupilAnalyzer(Analyzer):
 		dm2 = self.FIR2.design_matrix
 
 
-		design_matrix = np.vstack([dm1, dm2])
+		self.design_matrix = np.vstack([dm1, dm2])
 
-		betas = sp.linalg.lstsq(design_matrix.T, sp.signal.resample(recorded_pupil_signal, int(recorded_pupil_signal.shape[-1] / self.signal_sample_frequency*self.deconv_sample_frequency), axis = -1).T)[0]
+		self.fir_betas = sp.linalg.lstsq(self.design_matrix.T, sp.signal.resample(recorded_pupil_signal, int(recorded_pupil_signal.shape[-1] / self.signal_sample_frequency*self.deconv_sample_frequency), axis = -1).T)[0]
 
+		
 
-		pe_betas = betas[-320:].reshape((4,80)).T
-		other_betas = betas[:-320].reshape((4,140)).T
+		pe_betas = self.fir_betas[-events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency:].reshape((events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
+		other_betas = self.fir_betas[:-events.shape[0]*(nuiss_devonv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency].reshape((events.shape[0],(nuiss_devonv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
 		return [[pe_betas, other_betas], [self.FIR2.covariates.keys(), self.FIR1.covariates.keys()]]
 
