@@ -17,6 +17,11 @@ from pandas import *
 # stats = importr('stats')
 # base = importr('base')
 
+import matplotlib as plt 
+import seaborn as sn 
+
+sn.set(style='ticks')
+
 from math import *
 import os,glob,sys
 
@@ -123,17 +128,27 @@ for subname in sublist:
 
 	betas, labels = pa.get_IRF()
 
-	pe_betas = dict(zip(labels[0], betas[0]))
-	other_betas = dict(zip(labels[1], betas[1]))
+	pe_betas = betas[0]
+	other_betas = betas[1]
 
-	pl.open_figure(force=1)
-	pl.subplot(1,2,1)
-	pl.hline(y=0)
-	pl.event_related_pupil_average(data = pe_betas, conditions=labels[0], signal_labels = {'noPE': 'Predicted', 'PEtr': 'Task relevant','PEntr':'Task irrelevant','bothPE':'Both'}, show_legend=True, ylabel = 'Pupil size')#, x_lim = [0, 3*(signal_sample_frequency/down_fs)], xticks = np.arange(0,3*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5))
+	figure()
+	ax=subplot(1,2,1)
+	title('Nuissances')
+	plot(other_betas)
+	legend(labels[1])
 
-	#pl.open_figure(force=1)
-	pl.subplot(1,2,2)
-	pl.hline(y=0)
-	pl.event_related_pupil_average(data = other_betas, conditions=labels[1], show_legend=True, ylabel = 'Pupil size')#, x_lim = [0, 9*(signal_sample_frequency/down_fs)], xticks = np.arange(0,9*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
+	ax.set(xticks=np.arange(0,100,10), xticklabels=np.arange(-2,8))
 
-	pl.save_figure('%s-FIR.pdf'%subname, sub_folder='per_sub/FIR')
+	sn.despine()
+
+	ax=subplot(1,2,2)
+	title('PE')
+	plot(pe_betas)
+	legend(labels[0])
+	ax.set(xticks=np.arange(0,40,10), xticklabels=np.arange(-1,3))
+
+	sn.despine()
+
+	tight_layout()
+
+	savefig('fir_example.pdf')
