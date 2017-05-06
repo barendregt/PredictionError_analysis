@@ -129,11 +129,11 @@ for subname in sublist:
 	pl.open_figure(force=1)
 	pl.subplot(1,2,1)
 	pl.hline(y=0)
-	pl.event_related_pupil_average(data = pe_betas, conditions=labels[0], signal_labels = {'noPE': 'Predicted', 'PEtr': 'Task relevant','PEntr':'Task irrelevant','bothPE':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 3*(signal_sample_frequency/down_fs)], xticks = np.arange(0,3*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5))
+	pl.event_related_pupil_average(data = pe_betas, conditions=labels[0], signal_labels = {'noPE': 'Predicted', 'PEtr': 'Task relevant','PEntr':'Task irrelevant','bothPE':'Both'}, show_legend=True, ylabel = 'Pupil size')#, x_lim = [0, 3*(signal_sample_frequency/down_fs)], xticks = np.arange(0,3*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5))
 
 	#pl.open_figure(force=1)
 	pl.subplot(1,2,2)
 	pl.hline(y=0)
-	pl.event_related_pupil_average(data = other_betas, conditions=labels[1], show_legend=True, ylabel = 'Pupil size', x_lim = [0, 9*(signal_sample_frequency/down_fs)], xticks = np.arange(0,9*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
+	pl.event_related_pupil_average(data = other_betas, conditions=labels[1], show_legend=True, ylabel = 'Pupil size')#, x_lim = [0, 9*(signal_sample_frequency/down_fs)], xticks = np.arange(0,9*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 
 	pl.save_figure('%s-FIR.pdf'%subname, sub_folder='per_sub/FIR')
