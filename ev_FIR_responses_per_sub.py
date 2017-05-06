@@ -143,7 +143,7 @@ for subname in sublist:
 
 	ax=plt.subplot(1,2,2)
 	plt.title('PE')
-	plt.plot(pe_betas-pe_betas[:5].mean(axis=0))
+	plt.plot(pe_betas-pe_betas[:5,:].mean(axis=0))
 	plt.legend(labels[0])
 	ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
 
