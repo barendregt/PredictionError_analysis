@@ -17,7 +17,7 @@ from pandas import *
 # stats = importr('stats')
 # base = importr('base')
 
-import matplotlib as plt 
+import matplotlib.pyplot as plt 
 import seaborn as sn 
 
 sn.set(style='ticks')
