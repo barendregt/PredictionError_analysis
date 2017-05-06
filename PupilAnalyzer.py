@@ -537,19 +537,21 @@ class PupilAnalyzer(Analyzer):
 		blinks = self.read_blink_data(self.combined_h5_filename)
 		saccades = self.read_saccade_data(self.combined_h5_filename)
 
-		events = np.array([trial_parameters['trial_phase_4_full_signal'],  			    # stimulus onset
-				  		   trial_parameters['trial_phase_7_full_signal'] + self.signal_sample_frequency*trial_parameters['reaction_time']]) # button press
+		events = np.array([blinks['end_block_timestamp'],
+						   saccades['end_block_timestamp'],
+						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
+				  		   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
-		if deconv_interval is None:
-			deconv_interval = self.deconvolution_interval
+		#if deconv_interval is None:
+		deconv_interval = [-2, 7]
 
 
 		print('[%s] Starting FIR deconvolution' % (self.__class__.__name__))
 
-		self.FIRo = FIRDeconvolution(
+		self.FIR1 = FIRDeconvolution(
 						signal = recorded_pupil_signal,
 						events = events / self.signal_sample_frequency,
-						event_names = ['stimulus','button_press'],
+						event_names = ['blinks','saccades','red_stim','green_stim'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
@@ -557,17 +559,77 @@ class PupilAnalyzer(Analyzer):
 			        	#covariates = self.events['covariates']
 					)
 
-		self.FIRo.create_design_matrix()
+		self.FIR1.create_design_matrix(intercept=False)
 
-		print '[%s] Fitting IRF' % (self.__class__.__name__)
-		self.FIRo.regress(method = 'lstsq')
-		self.FIRo.betas_for_events()
-		self.FIRo.calculate_rsq()	
+		dm1 = self.FIR1.design_matrix
 
-		self.sub_IRF = {'stimulus': [], 'button_press': []}
+		deconv_interval = [-1,2]
 
-		self.sub_IRF['stimulus'] = self.FIRo.betas_per_event_type[0].ravel() - self.FIRo.betas_per_event_type[0].ravel().mean()
-		self.sub_IRF['button_press'] = self.FIRo.betas_per_event_type[1].ravel() - self.FIRo.betas_per_event_type[1].ravel().mean()
+		events = np.array([trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']<10], # no PE
+						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']>40], # both PE
+						   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['trial_codes']>=10) * (trial_parameters['trial_codes']<30)], # PE TR
+						   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['trial_codes']>=30) * (trial_parameters['trial_codes']<50)]  # PE ~TR
+						  ])
+
+
+		self.FIR2 = FIRDeconvolution(
+						signal = recorded_pupil_signal,
+						events = events / self.signal_sample_frequency,
+						event_names = ['noPE','bothPE','PEtr','PEntr'],
+						#durations = {'response': self.events['durations']['response']},
+						sample_frequency = self.signal_sample_frequency,
+			            deconvolution_frequency = self.deconv_sample_frequency,
+			        	deconvolution_interval = deconv_interval,
+			        	#covariates = self.events['covariates']
+					)
+
+		self.FIR2.create_design_matrix(intercept=False)
+
+		dm2 = self.FIR2.design_matrix
+
+
+		design_matrix = np.vstack([dm1, dm2])
+
+		betas = sp.linalg.lstsq(design_matrix.T, sp.signal.resample(recorded_pupil_signal, int(recorded_pupil_signal.shape[-1] / self.signal_sample_frequency*self.deconv_sample_frequency), axis = -1).T)[0]
+
+
+		pe_betas = betas[-120:].reshape((4,30)).T
+		other_betas = betas[:-120].reshape((4,90)).T
+
+		return [[pe_betas, other_betas], [self.FIR2.covariates.keys(), self.FIR1.covariates.keys()]]
+
+		# figure()
+		# ax=subplot(1,2,1)
+		# title('Nuissances')
+		# plot(other_betas)
+		# legend(self.FIR1.covariates.keys())
+
+		# ax.set(xticks=np.arange(0,100,10), xticklabels=np.arange(-2,8))
+
+		# sn.despine()
+
+		# ax=subplot(1,2,2)
+		# title('PE')
+		# plot(pe_betas)
+		# legend(self.FIR2.covariates.keys())
+		# ax.set(xticks=np.arange(0,40,10), xticklabels=np.arange(-1,3))
+
+		# sn.despine()
+
+		# tight_layout()
+
+		# savefig('fir_example.pdf')
+
+
+		# print '[%s] Fitting IRF' % (self.__class__.__name__)
+		# self.FIRo.regress(method = 'lstsq')
+		# self.FIRo.betas_for_events()
+		# self.FIRo.calculate_rsq()	
+
+		# self.sub_IRF = {'stimulus': [], 'button_press': []}
+
+		# self.sub_IRF['stimulus'] = self.FIRo.betas_per_event_type[0].ravel() - self.FIRo.betas_per_event_type[0].ravel().mean()
+		# self.sub_IRF['button_press'] = self.FIRo.betas_per_event_type[1].ravel() - self.FIRo.betas_per_event_type[1].ravel().mean()
 
 
 

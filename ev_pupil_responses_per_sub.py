@@ -129,9 +129,9 @@ for subname in sublist:
 	# # Get pupil data (ev)
 	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False)
 
-	pa.get_IRF()
+	# pa.get_IRF()
 
-	this_sub_IRF['button_press'] = pa.sub_IRF['button_press']
+	# this_sub_IRF['button_press'] = pa.sub_IRF['button_press']
 
 	# embed()
 	ref_signals = []
@@ -203,9 +203,9 @@ for subname in sublist:
 	pa.deconvolution_interval = stimulus_deconvolution_interval
 	pa.signal_per_trial(only_correct = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False)
 
-	pa.get_IRF()
+	# pa.get_IRF()
 
-	this_sub_IRF['stimulus'] = pa.sub_IRF['stimulus']
+	# this_sub_IRF['stimulus'] = pa.sub_IRF['stimulus']
 
 
 	# embed()
@@ -270,10 +270,17 @@ for subname in sublist:
 	pc['UU'].append(sub_pc[50])
 	pc['UU'].append(sub_pc[60])
 
-	pa.get_IRF()
 
 
 
+	betas, labels = pa.get_IRF()
+
+	pe_betas = dict(zip(labels[0], betas[0]))
+	other_betas = dict(zip(labels[1], betas[1]))
+
+	pl.open_figure(force=1)
+	pl.hline(y=0)
+	pl.event_related_pupil_average(data = pe_betas, conditions=labels[0], signal_labels = {'noPE': 'Predicted', 'PEtr': 'Task relevant','PEntr':'Task irrelevant','bothPE':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 
 
 # # embed()
