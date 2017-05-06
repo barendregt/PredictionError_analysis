@@ -351,6 +351,7 @@ class PupilAnalyzer(Analyzer):
 
 		trials = pd.DataFrame()
 		blinks = pd.DataFrame()
+		saccades = pd.DataFrame()
 
 		run_trials = []
 		run_blinks = []
@@ -367,7 +368,8 @@ class PupilAnalyzer(Analyzer):
 			blocks = self.h5_operator.read_session_data(alias, 'blocks')
 			block_start_times = blocks['block_start_timestamp']
 
-			this_trial_blinks = self.h5_operator.read_session_data(alias, 'blinks_from_message_file')
+			this_block_blinks = self.h5_operator.read_session_data(alias, 'blinks_from_message_file')
+			this_block_saccades = self.h5_operator.read_session_data(alias, 'saccades_from_message_file')
 
 			# this_trial_phase_times[this_trial_phase_times['trial_phase_index']==reference_phase]
 
@@ -396,6 +398,11 @@ class PupilAnalyzer(Analyzer):
 				this_run_baseline = np.append(this_run_baseline, this_block_baseline)
 				
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
+				this_block_blinks['start_block_timestamp'] = pd.Series(this_block_blinks['start_timestamp'].values - bs)
+				this_block_blinks['end_block_timestamp'] = pd.Series(this_block_blinks['end_timestamp'].values - bs)
+
+				this_block_saccades['start_block_timestamp'] = pd.Series(this_block_saccades['start_timestamp'].values - bs)
+				this_block_saccades['end_block_timestamp'] = pd.Series(this_block_saccades['end_timestamp'].values - bs)
 
 			this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
 			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
@@ -404,7 +411,8 @@ class PupilAnalyzer(Analyzer):
 			
 			if ii > 0:
 
-				blinks = pd.concat([blinks, this_trial_blinks[this_trial_blinks['duration']<4000]], axis=0, ignore_index = True)
+				blinks = pd.concat([blinks, this_block_blinks[this_block_blinks['duration']<4000]], axis=0, ignore_index = True)
+				saccades = pd.concat([saccades, this_block_saccades], axis=0, ignore_index = True)
 
 				# Kick out duplicate trials (do we need to do this actually??)
 				if this_trial_parameters.iloc[0]['trial_nr'] == trials.iloc[-1]['trial_nr']:
@@ -413,12 +421,14 @@ class PupilAnalyzer(Analyzer):
 				trials = pd.concat([trials, this_trial_parameters], axis=0, ignore_index = True)
 			else:
 				trials = this_trial_parameters
-				blinks = this_trial_blinks[this_trial_blinks['duration']<4000]
+				blinks = this_block_blinks[this_block_blinks['duration']<4000]
+				saccades = this_block_saccades
 
 			run_trials.append(this_trial_parameters)
 			run_signals.append(this_run_signal)
 			run_baselines.append(this_run_baseline)
-			run_blinks.append(this_trial_blinks[this_trial_blinks['duration']<4000])
+			run_blinks.append(this_block_blinks[this_block_blinks['duration']<4000])
+			run_saccades.append(this_block_saccades)
 			
 		
 
@@ -444,10 +454,12 @@ class PupilAnalyzer(Analyzer):
 
 		trials.to_hdf(self.combined_h5_filename, key = '/trials/full', mode = 'a', format = 't', data_columns = True)
 		blinks.to_hdf(self.combined_h5_filename, key = '/pupil/blinks', mode = 'a', format = 't', data_columns = True)
+		saccades.to_hdf(self.combined_h5_filename, key = '/pupil/saccades', mode = 'a', format = 't', data_columns = True)
 
 		for rii in range(len(run_signals)):
 			run_trials[rii].to_hdf(self.combined_h5_filename, key = '/trials/run%i'%rii, mode = 'a', format = 't', data_columns = True)
 			run_blinks[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_blinks'%rii, mode = 'a', format = 't', data_columns = True)
+			run_saccades[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_saccades'%rii, mode = 'a', format = 't', data_columns = True)
 
 
 	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False):
@@ -511,7 +523,7 @@ class PupilAnalyzer(Analyzer):
 
 		embed()
 
-		
+
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 		blinks = self.read_blink_data(self.combined_h5_filename)
