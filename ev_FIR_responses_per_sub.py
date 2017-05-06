@@ -48,11 +48,11 @@ sbsetting = [False, False, False, False, False, False, False, False, False, Fals
 low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 20
+deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-2, 5])
 stimulus_deconvolution_interval = np.array([-1, 3])
 
-down_fs = 50
+down_fs = 100
 
 pl = Plotter(figure_folder = figfolder)
 
