@@ -68,7 +68,7 @@ power_time_window = [100,600]#[15,30]
 zero_point = 15
 
 # all_ie_scores = []
-all_rts = []
+all_betas = []
 
 for subname in sublist:
 
@@ -131,6 +131,8 @@ for subname in sublist:
 	pe_betas = betas[0]
 	other_betas = betas[1]
 
+	all_betas.append(pe_betas)
+
 	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
 	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
 
@@ -163,3 +165,9 @@ for subname in sublist:
 	plt.tight_layout()
 
 	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
+
+plt.figure()
+plt.plot(np.mean(all_betas, axis=0))
+plt.legend(labels[0])
+sn.despine()
+plt.savefig(os.path.join(figfolder,'over_subs','FIR.pdf'))
