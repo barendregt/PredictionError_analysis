@@ -133,10 +133,10 @@ for subname in sublist:
 	pe_betas = betas[0]
 	other_betas = betas[1]
 
-	response_fir_signals['PU'].extend(pe_betas[:,0])
-	response_fir_signals['PP'].extend(pe_betas[:,1])
-	response_fir_signals['UU'].extend(pe_betas[:,2])
-	response_fir_signals['UP'].extend(pe_betas[:,3])
+	response_fir_signals['PU'].append(pe_betas[:,0])
+	response_fir_signals['PP'].append(pe_betas[:,1])
+	response_fir_signals['UU'].append(pe_betas[:,2])
+	response_fir_signals['UP'].append(pe_betas[:,3])
 
 	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
 	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
