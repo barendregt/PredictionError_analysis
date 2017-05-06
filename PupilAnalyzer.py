@@ -538,7 +538,7 @@ class PupilAnalyzer(Analyzer):
 		events = np.array([blinks['end_block_timestamp'],
 						   saccades['end_block_timestamp'],
 						   trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
-				  		   trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequencytrial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+				  		   trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequency+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
 		nuiss_deconv_interval = [-2, 5]
