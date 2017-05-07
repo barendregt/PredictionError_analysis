@@ -562,7 +562,7 @@ class PupilAnalyzer(Analyzer):
 
 		dm1 = self.FIR1.design_matrix
 
-		resp_deconv_interval = [-2,4]
+		resp_deconv_interval = [-1,2]
 
 		events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']<10]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']<10], # no PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']>40]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']>40], # both PE
