@@ -536,10 +536,10 @@ class PupilAnalyzer(Analyzer):
 		saccades = self.read_saccade_data(self.combined_h5_filename)
 
 		nuiss_events = np.array([blinks['end_block_timestamp'],
-						   saccades['end_block_timestamp'],
-						   trial_parameters['trial_phase_2_full_signal'],   # task cue
-						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
-				  		   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+							   saccades['end_block_timestamp'],
+							   trial_parameters['trial_phase_2_full_signal'],   # task cue
+							   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
+					  		   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
 		nuiss_deconv_interval = [-2, 5]
@@ -594,7 +594,7 @@ class PupilAnalyzer(Analyzer):
 		self.fir_betas = sp.linalg.lstsq(self.design_matrix.T, self.resampled_pupil_signal.T)[0]
 
 		
-		# embed()
+		embed()
 		pe_betas = self.fir_betas[-int(events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
 		other_betas = self.fir_betas[:-int(nuiss_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
