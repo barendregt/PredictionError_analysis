@@ -537,8 +537,9 @@ class PupilAnalyzer(Analyzer):
 
 		events = np.array([blinks['end_block_timestamp'],
 						   saccades['end_block_timestamp'],
-						   trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
-				  		   trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequency+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+						   trial_parameters['trial_phase_2_full_signal'],   # task cue
+						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
+				  		   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
 		nuiss_deconv_interval = [-2, 5]
@@ -549,7 +550,7 @@ class PupilAnalyzer(Analyzer):
 		self.FIR1 = FIRDeconvolution(
 						signal = recorded_pupil_signal,
 						events = events / self.signal_sample_frequency,
-						event_names = ['blinks','saccades','red_stim','green_stim'],
+						event_names = ['blinks','saccades','task_cue','red_stim','green_stim'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
@@ -561,7 +562,7 @@ class PupilAnalyzer(Analyzer):
 
 		dm1 = self.FIR1.design_matrix
 
-		resp_deconv_interval = [-1.5,3]
+		resp_deconv_interval = [-2,4]
 
 		events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']<10]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']<10], # no PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']>40]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']>40], # both PE
