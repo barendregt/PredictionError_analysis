@@ -594,9 +594,9 @@ class PupilAnalyzer(Analyzer):
 		self.fir_betas = sp.linalg.lstsq(self.design_matrix.T, self.resampled_pupil_signal.T)[0]
 
 		
-		embed()
+		# embed()
 		pe_betas = self.fir_betas[-int(events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
-		other_betas = self.fir_betas[:-int(nuiss_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+		other_betas = self.fir_betas[:-int(events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
 		return [[pe_betas, other_betas], [self.FIR2.covariates.keys(), self.FIR1.covariates.keys()]]
 
