@@ -535,7 +535,7 @@ class PupilAnalyzer(Analyzer):
 		blinks = self.read_blink_data(self.combined_h5_filename)
 		saccades = self.read_saccade_data(self.combined_h5_filename)
 
-		events = np.array([blinks['end_block_timestamp'],
+		nuiss_events = np.array([blinks['end_block_timestamp'],
 						   saccades['end_block_timestamp'],
 						   trial_parameters['trial_phase_2_full_signal'],   # task cue
 						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
@@ -549,7 +549,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR1 = FIRDeconvolution(
 						signal = recorded_pupil_signal,
-						events = events / self.signal_sample_frequency,
+						events = nuiss_events / self.signal_sample_frequency,
 						event_names = ['blinks','saccades','task_cue','red_stim','green_stim'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
@@ -596,7 +596,7 @@ class PupilAnalyzer(Analyzer):
 		
 		# embed()
 		pe_betas = self.fir_betas[-int(events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
-		other_betas = self.fir_betas[:-int(events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+		other_betas = self.fir_betas[:-int(nuiss_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
 		return [[pe_betas, other_betas], [self.FIR2.covariates.keys(), self.FIR1.covariates.keys()]]
 
