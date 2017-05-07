@@ -537,7 +537,7 @@ class PupilAnalyzer(Analyzer):
 
 		nuiss_events = np.array([blinks['end_block_timestamp'],
 							   saccades['end_block_timestamp'],
-							   trial_parameters['trial_phase_2_full_signal'],   # task cue
+							   #trial_parameters['trial_phase_2_full_signal'],   # task cue
 							   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
 					  		   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
