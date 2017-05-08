@@ -121,6 +121,6 @@ for subname in sublist_pos:
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_average(data = all_correlations, conditions = ['PP','UP','PU','UU'], show_legend = True, ylabel = 'Correlation (r)', signal_labels = dict(zip(['PU','PP','UU','UP'], tnames)), compute_mean = True, compute_sd = True)
+pl.event_related_pupil_average(data = all_correlations, conditions = ['PP','UP','PU','UU'], show_legend = True, ylabel = 'Correlation (r)', signal_labels = dict(zip(['PU','PP','UU','UP'], tnames)), xticklabels = np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1), compute_mean = True, compute_sd = True)
 pl.save_figure(filename='tc_corr.pdf',sub_folder = 'over_subs/RT')
 
