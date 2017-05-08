@@ -50,8 +50,8 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
-trial_deconvolution_interval = np.array([-.5, 7])
-stimulus_deconvolution_interval = np.array([-1, 3])
+trial_deconvolution_interval = np.array([-.5, 5])
+# stimulus_deconvolution_interval = np.array([-1, 3])
 
 down_fs = 100
 
@@ -59,19 +59,7 @@ pl = Plotter(figure_folder = figfolder)
 
 
 
-#### PLOT AVERAGES OVER SUBS
-
-# pl.open_figure()
-
-# pl.subplot(1,2,2, title= 'Average pupil difference')
-
-power_time_window = [100,600]#[15,30]
-zero_point = 15
-
-# all_ie_scores = []
-all_betas = []
-
-response_fir_signals = {'PP': [],
+all_correlations = {'PP': [],
 						 'UP': [],
 						 'PU': [],
 						 'UU': []}
@@ -99,16 +87,17 @@ for subname in sublist_pos:
 	trial_params = pa.read_trial_data(pa.combined_h5_filename)
 
 	tcodes = [0,10,30,50,70]
+	tnames = ['noPE','PEtr','PEntr','bothPE']
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
 
-	tc_corr = [[]] * (len(tcodes)-1)
+	tc_correlations = dict(zip(tnames,[[]]*4))
 	for tcii in range(len(tcodes)-1):
 		
 		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
 
-		trials = trial_params['trial_phase_1_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
+		trials = trial_params['trial_phase_3_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
 
 		tc_sigs = []
 		for trii,trial in enumerate(trials):
@@ -122,15 +111,17 @@ for subname in sublist_pos:
 		for timep in range(tc_sigs.shape[1]):
 			tc_corr.append(np.corrcoef(tc_sigs[:,timep], tc_rts)[0][1])
 
-		tc_corr = np.array(tc_corr)
+		tc_correlations[tnames[tcii]] = np.array(tc_corr)
+		all_correlations[tnames[tcii]].append(np.array(tc_corr))
 
-		pl.plot(range(int(trial_deconvolution_interval[0]*signal_sample_frequency),int(trial_deconvolution_interval[1]*signal_sample_frequency)), tc_corr)
-	pl.save_figure('tc_corr.pdf')
+	
+	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
+	pl.save_figure('%s-tc_corr.pdf'%subname, sub_folder='per_sub/RT')
 
 	embed()
 
 pl.open_figure(force=1)
 pl.hline(y=0)
-pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
-pl.save_figure(filename='FIR_pos.pdf',sub_folder = 'over_subs')
+pl.event_related_pupil_average(data = all_correlations, conditions = ['PP','UP','PU','UU'], show_legend = True, ylabel = 'Correlation (r)', signal_labels = dict(zip(['PU','PP','UU','UP'], tnames)), compute_mean = True, compute_sd = True)
+pl.save_figure(filename='tc_corr.pdf',sub_folder = 'over_subs/RT')
 
