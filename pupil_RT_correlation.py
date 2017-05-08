@@ -118,7 +118,7 @@ for subname in sublist_pos:
 	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
 	pl.save_figure('%s-tc_corr.pdf'%subname, sub_folder='per_sub/RT')
 
-	embed()
+	# embed()
 
 pl.open_figure(force=1)
 pl.hline(y=0)
