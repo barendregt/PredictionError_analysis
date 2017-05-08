@@ -41,8 +41,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO']
-sublist_neg = ['AC','AF','AH','AI','AK','AN']
+sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -82,7 +81,7 @@ for subname in sublist_pos:
 
 	recorded_pupil_signal = pa.read_pupil_data(pa.combined_h5_filename, signal_type='long_signal')
 
-	resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / signal_sample_frequency)*deconv_sample_frequency), axis = -1)
+	resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / signal_sample_frequency)*deconv_sample_frequency), axis = -1)f
 
 	trial_params = pa.read_trial_data(pa.combined_h5_filename)
 
