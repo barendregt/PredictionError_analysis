@@ -81,7 +81,7 @@ for subname in sublist_pos:
 
 	recorded_pupil_signal = pa.read_pupil_data(pa.combined_h5_filename, signal_type='long_signal')
 
-	resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / signal_sample_frequency)*deconv_sample_frequency), axis = -1)f
+	resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / signal_sample_frequency)*deconv_sample_frequency), axis = -1)
 
 	trial_params = pa.read_trial_data(pa.combined_h5_filename)
 
