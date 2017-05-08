@@ -101,8 +101,8 @@ for subname in sublist_pos:
 
 		tc_sigs = []
 		for trii,trial in enumerate(trials):
-			if (trial+(trial_deconvolution_interval[1]*signal_sample_frequency)) <= resampled_pupil_signal.shape[0]:
-				tc_sigs.append(resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*signal_sample_frequency):trial+(trial_deconvolution_interval[1]*signal_sample_frequency)])
+			if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
+				tc_sigs.append(resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)])
 			# else:
 			# 	tc_rts = tc_rts.delete(trii)
 		tc_sigs = np.vstack(tc_sigs)
