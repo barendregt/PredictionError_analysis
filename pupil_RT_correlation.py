@@ -112,7 +112,7 @@ for subname in sublist_pos:
 			tc_corr.append(np.corrcoef(tc_sigs[:,timep], tc_rts)[0][1])
 
 		tc_correlations[tnames[tcii]] = np.array(tc_corr)
-		all_correlations[tnames[tcii]].append(np.array(tc_corr))
+		all_correlations[['PP','UP','PU','UU'][tcii]].append(np.array(tc_corr))
 
 	
 	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
