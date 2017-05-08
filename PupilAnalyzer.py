@@ -589,7 +589,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.design_matrix = np.vstack([dm1, dm2])
 
-		self.resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int(recorded_pupil_signal.shape[-1] / self.signal_sample_frequency*self.deconv_sample_frequency), axis = -1)
+		self.resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / self.signal_sample_frequency)*self.deconv_sample_frequency), axis = -1)
 
 		self.fir_betas = sp.linalg.lstsq(self.design_matrix.T, self.resampled_pupil_signal.T)[0]
 

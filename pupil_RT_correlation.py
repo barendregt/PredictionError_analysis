@@ -92,9 +92,40 @@ for subname in sublist_pos:
 
 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = trial_deconvolution_interval, verbosity = 0)
 
-	pa.signal_per_trial(reference_phase=1, only_correct = False)
+	recorded_pupil_signal = pa.read_pupil_data(pa.combined_h5_filename, signal_type='long_signal')
+
+	resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / signal_sample_frequency)*deconv_sample_frequency), axis = -1)
 
 	trial_params = pa.read_trial_data(pa.combined_h5_filename)
+
+	tcodes = [0,10,30,50,70]
+
+	pl.open_figure(force=1)
+	pl.hline(y=0)
+
+	tc_corr = [[]] * (len(tcodes)-1)
+	for tcii in range(len(tcodes)-1):
+		
+		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
+
+		trials = trial_params['trial_phase_1_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
+
+		tc_sigs = []
+		for trii,trial in enumerate(trials):
+			if (trial+(trial_deconvolution_interval[1]*signal_sample_frequency)) <= resampled_pupil_signal.shape[0]:
+				tc_sigs.append(resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*signal_sample_frequency):trial+(trial_deconvolution_interval[1]*signal_sample_frequency)])
+			# else:
+			# 	tc_rts = tc_rts.delete(trii)
+		tc_sigs = np.vstack(tc_sigs)
+		tc_rts = tc_rts[:tc_sigs.shape[0]]
+		tc_corr = []
+		for timep in range(tc_sigs.shape[1]):
+			tc_corr.append(np.corrcoef(tc_sigs[:,timep], tc_rts)[0][1])
+
+		tc_corr = np.array(tc_corr)
+
+		pl.plot(range(int(trial_deconvolution_interval[0]*signal_sample_frequency),int(trial_deconvolution_interval[1]*signal_sample_frequency)), tc_corr)
+	pl.save_figure('tc_corr.pdf')
 
 	embed()
 
