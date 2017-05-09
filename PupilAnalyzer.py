@@ -352,10 +352,12 @@ class PupilAnalyzer(Analyzer):
 
 		full_signal = np.array([])
 		full_baseline = np.array([])
+		full_clean = np.array([])
 
 		run_signals = []
 		run_baselines = []
 		run_saccades = []
+		run_cleans = []
 
 		trials = pd.DataFrame()
 		blinks = pd.DataFrame()
@@ -384,6 +386,7 @@ class PupilAnalyzer(Analyzer):
 			# block_event_times = pd.DataFrame()
 
 			this_run_signal = np.array([])
+			this_run_clean = np.array([])
 			this_run_baseline = np.array([])
 
 			# Kick out incomplete trials
@@ -397,12 +400,15 @@ class PupilAnalyzer(Analyzer):
 			for bs,be in zip(blocks['block_start_timestamp'], blocks['block_end_timestamp']):
 
 				this_block_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_zscore', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
+				this_block_clean_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_clean_psc', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
 				this_block_baseline = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_lp', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
 				
 				full_signal = np.append(full_signal, this_block_signal)
+				full_clean = np.append(full_clean, this_block_clean_signal)
 				full_baseline = np.append(full_baseline, this_block_baseline)
 
 				this_run_signal = np.append(this_run_signal, this_block_signal)
+				this_run_clean = np.append(this_run_clean, this_block_clean_signal)
 				this_run_baseline = np.append(this_run_baseline, this_block_baseline)
 				
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
@@ -434,6 +440,7 @@ class PupilAnalyzer(Analyzer):
 
 			run_trials.append(this_trial_parameters)
 			run_signals.append(this_run_signal)
+			run_cleans.append(this_run_clean)
 			run_baselines.append(this_run_baseline)
 			run_blinks.append(this_block_blinks[this_block_blinks['duration']<4000])
 			run_saccades.append(this_block_saccades)
@@ -452,10 +459,12 @@ class PupilAnalyzer(Analyzer):
 		tgroup = output_file.create_group("/","trials","trials")
 
 		output_file.create_array(pgroup, "long_signal", full_signal, "long_signal")
+		output_file.create_array(pgroup, "clean_signal", full_clean, "clean_signal")
 		output_file.create_array(pgroup, "baseline", full_baseline, "baseline")
 
 		for rii in range(len(run_signals)):
 			output_file.create_array(pgroup, "r%i_signal"%rii, run_signals[rii], "r%i_signal"%rii)
+			output_file.create_array(pgroup, "r%i_clean"%rii, run_signals[rii], "r%i_clean"%rii)
 			output_file.create_array(pgroup, "r%i_baseline"%rii, run_baselines[rii], "r%i_baseline"%rii)
 		
 		output_file.close()
@@ -536,10 +545,10 @@ class PupilAnalyzer(Analyzer):
 		saccades = self.read_saccade_data(self.combined_h5_filename)
 
 		nuiss_events = np.array([blinks['end_block_timestamp'],
-							   saccades['end_block_timestamp'],
-							   trial_parameters['trial_phase_2_full_signal'],   # task cue
-							   (trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
-					  		   (trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+							   saccades['end_block_timestamp']])#,
+							   #trial_parameters['trial_phase_2_full_signal']])#,   # task cue
+							   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']<2],   # red stimulus
+					  		   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
 		nuiss_deconv_interval = [-2, 5]
@@ -550,7 +559,7 @@ class PupilAnalyzer(Analyzer):
 		self.FIR1 = FIRDeconvolution(
 						signal = recorded_pupil_signal,
 						events = nuiss_events / self.signal_sample_frequency,
-						event_names = ['blinks','saccades','task_cue','red_stim','green_stim'],
+						event_names = ['blinks','saccades'],#,'task_cue'],#,'red_stim','green_stim'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
@@ -562,7 +571,7 @@ class PupilAnalyzer(Analyzer):
 
 		dm1 = self.FIR1.design_matrix
 
-		resp_deconv_interval = [-1,2]
+		resp_deconv_interval = [-2,2]
 
 		events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']<10]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']<10], # no PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']>40]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']>40], # both PE

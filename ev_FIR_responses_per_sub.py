@@ -41,21 +41,26 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO']
-sublist_neg = ['AC','AF','AH','AI','AK','AN']
+sublist = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AP']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
-low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
+low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-2, 5])
-stimulus_deconvolution_interval = np.array([-1, 3])
+stimulus_deconvolution_interval = np.array([-2, 2])
 
 down_fs = 100
 
-pl = Plotter(figure_folder = figfolder)
+linestylemap = {'PP': ['k-'],
+				 'UP': ['b-'],
+				 'PU': ['k--'],
+				 'UU': ['b--']}
+
+
+pl = Plotter(figure_folder = figfolder, linestylemap = linestylemap)
 
 
 
@@ -76,7 +81,9 @@ response_fir_signals = {'PP': [],
 						 'PU': [],
 						 'UU': []}
 
-for subname in sublist_pos:
+
+
+for subname in sublist:
 
 
 
@@ -141,8 +148,10 @@ for subname in sublist_pos:
 
 	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
 	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
+	r_squared = 1.0 - ((predicted_signal.T -recorded_signal)**2).sum(axis=-1) / (recorded_signal**2).sum(axis=-1)
 
 	plt.figure()
+	plt.title('R^2 = %.2f'%r_squared)
 	plt.plot(recorded_signal, label='pupil_signal')
 	plt.plot(predicted_signal, label='predicted_signal')
 	plt.legend()
@@ -163,6 +172,7 @@ for subname in sublist_pos:
 	ax=plt.subplot(1,2,2)
 	plt.title('PE')
 	plt.plot(pe_betas-pe_betas[:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
 	plt.legend(labels[0])
 	# ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
 
@@ -172,109 +182,125 @@ for subname in sublist_pos:
 
 	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
 
-pl.open_figure(force=1)
-pl.hline(y=0)
-pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
-pl.save_figure(filename='FIR_pos.pdf',sub_folder = 'over_subs')
+# embed()
+
+all_data_ndarray = np.dstack([response_fir_signals['PU'],response_fir_signals['PP'],response_fir_signals['UU'],response_fir_signals['UP']])
+
+plt.figure()
+
+plt.ylabel(r'Pupil size ($\beta$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.despine()
+plt.savefig(os.path.join(figfolder,'over_subs','FIR_all.pdf'))
 
 
-for subname in sublist_neg:
+# pl.open_figure(force=1)
+# pl.hline(y=0)
+# pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
+# pl.save_figure(filename='FIR_all.pdf',sub_folder = 'over_subs')
+
+
+# for subname in sublist_neg:
 
 
 
-	stimulus_pupil_signals = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}				 
-	response_diff_signals  = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}	
-	stimulus_diff_signals  = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}				 
-	power_signals = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}
-	ie_scores 	  = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}
-	rts 	  	  = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}
-	pc 	  	  	  = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}			
-	all_ie_scores = {'PP': [],
-					 'UP': [],
-					 'PU': [],
-					 'UU': []}	
+# 	stimulus_pupil_signals = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}				 
+# 	response_diff_signals  = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}	
+# 	stimulus_diff_signals  = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}				 
+# 	power_signals = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}
+# 	ie_scores 	  = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}
+# 	rts 	  	  = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}
+# 	pc 	  	  	  = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}			
+# 	all_ie_scores = {'PP': [],
+# 					 'UP': [],
+# 					 'PU': [],
+# 					 'UU': []}	
 
-	this_sub_IRF = {'stimulus': [], 'button_press': []}
+# 	this_sub_IRF = {'stimulus': [], 'button_press': []}
 
-	# print subname
-	# Organize filenames
-	rawfolder = os.path.join(raw_data_folder,subname)
-	sharedfolder = os.path.join(shared_data_folder,subname)
-	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
-	h5filename = os.path.join(sharedfolder,subname+'.h5')
+# 	# print subname
+# 	# Organize filenames
+# 	rawfolder = os.path.join(raw_data_folder,subname)
+# 	sharedfolder = os.path.join(shared_data_folder,subname)
+# 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
+# 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	#pl.figure_folder = os.path.join(rawfolder,'results/')
+# 	#pl.figure_folder = os.path.join(rawfolder,'results/')
 
-	# if not os.path.isdir(os.path.join(rawfolder,'results/')):
-	# 	os.makedirs(os.path.join(rawfolder,'results/'))
+# 	# if not os.path.isdir(os.path.join(rawfolder,'results/')):
+# 	# 	os.makedirs(os.path.join(rawfolder,'results/'))
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+# 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
-	betas, labels = pa.get_IRF()
+# 	betas, labels = pa.get_IRF()
 
-	pe_betas = betas[0]
-	other_betas = betas[1]
+# 	pe_betas = betas[0]
+# 	other_betas = betas[1]
 
-	response_fir_signals['PU'].append(pe_betas[:,0])
-	response_fir_signals['PP'].append(pe_betas[:,1])
-	response_fir_signals['UU'].append(pe_betas[:,2])
-	response_fir_signals['UP'].append(pe_betas[:,3])
+# 	response_fir_signals['PU'].append(pe_betas[:,0])
+# 	response_fir_signals['PP'].append(pe_betas[:,1])
+# 	response_fir_signals['UU'].append(pe_betas[:,2])
+# 	response_fir_signals['UP'].append(pe_betas[:,3])
 
-	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
-	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
+# 	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
+# 	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
 
-	plt.figure()
-	plt.plot(recorded_signal, label='pupil_signal')
-	plt.plot(predicted_signal, label='predicted_signal')
-	plt.legend()
+# 	plt.figure()
+# 	plt.plot(recorded_signal, label='pupil_signal')
+# 	plt.plot(predicted_signal, label='predicted_signal')
+# 	plt.legend()
 
-	sn.despine()
-	plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
+# 	sn.despine()
+# 	plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
 
-	plt.figure()
-	ax=plt.subplot(1,2,1)
-	plt.title('Nuissances')
-	plt.plot(other_betas)
-	plt.legend(labels[1])
+# 	plt.figure()
+# 	ax=plt.subplot(1,2,1)
+# 	plt.title('Nuissances')
+# 	plt.plot(other_betas)
+# 	plt.legend(labels[1])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+# 	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine()
+# 	sn.despine()
 
-	ax=plt.subplot(1,2,2)
-	plt.title('PE')
-	plt.plot(pe_betas-pe_betas[:5,:].mean(axis=0))
-	plt.legend(labels[0])
-	# ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
+# 	ax=plt.subplot(1,2,2)
+# 	plt.title('PE')
+# 	plt.plot(pe_betas-pe_betas[:5,:].mean(axis=0))
+# 	plt.legend(labels[0])
+# 	# ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
 
-	sn.despine()
+# 	sn.despine()
 
-	plt.tight_layout()
+# 	plt.tight_layout()
 
-	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
+# 	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
 
-pl.open_figure(force=1)
-pl.hline(y=0)
-pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
-pl.save_figure(filename='FIR_neg.pdf',sub_folder = 'over_subs')
+# pl.open_figure(force=1)
+# pl.hline(y=0)
+# pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
+# pl.save_figure(filename='FIR_neg.pdf',sub_folder = 'over_subs')

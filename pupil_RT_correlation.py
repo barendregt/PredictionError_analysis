@@ -39,9 +39,9 @@ raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reacti
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-#sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
+sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN']
+# sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AO','AP']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -54,6 +54,11 @@ trial_deconvolution_interval = np.array([-.5, 5])
 
 down_fs = 100
 
+# linestylemap = {'PP': ['k-'],
+# 				 'UP': [''],
+# 				 'PU': [''],
+# 				 'UU': ['']}
+
 pl = Plotter(figure_folder = figfolder)
 
 
@@ -63,7 +68,7 @@ all_correlations = {'PP': [],
 						 'PU': [],
 						 'UU': []}
 
-for subname in sublist_pos:
+for subname in sublist:
 
 	# print subname
 	# Organize filenames
@@ -79,7 +84,9 @@ for subname in sublist_pos:
 
 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = trial_deconvolution_interval, verbosity = 0)
 
-	recorded_pupil_signal = pa.read_pupil_data(pa.combined_h5_filename, signal_type='long_signal')
+	#pa.recombine_signal_blocks(force_rebuild=True)
+
+	recorded_pupil_signal = pa.read_pupil_data(pa.combined_h5_filename, signal_type='clean_signal')
 
 	resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / signal_sample_frequency)*deconv_sample_frequency), axis = -1)
 
@@ -90,13 +97,14 @@ for subname in sublist_pos:
 
 	pl.open_figure(force=1)
 	pl.hline(y=0)
+	pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)
 
 	tc_correlations = dict(zip(tnames,[[]]*4))
 	for tcii in range(len(tcodes)-1):
 		
 		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
 
-		trials = trial_params['trial_phase_3_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
+		trials = tc_rts + trial_params['trial_phase_7_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
 
 		tc_sigs = []
 		for trii,trial in enumerate(trials):
@@ -115,12 +123,17 @@ for subname in sublist_pos:
 
 	
 	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
-	pl.save_figure('%s-tc_corr.pdf'%subname, sub_folder='per_sub/RT')
+	pl.save_figure('%s-tc_corr_response.pdf'%subname, sub_folder='per_sub/RT')
 
 	# embed()
 
-pl.open_figure(force=1)
-pl.hline(y=0)
-pl.event_related_pupil_average(data = all_correlations, conditions = ['PP','UP','PU','UU'], show_legend = True, ylabel = 'Correlation (r)', signal_labels = dict(zip(['PU','PP','UU','UP'], tnames)), xticks = np.arange(int(all_correlations['PP'][0].shape[0]/deconv_sample_frequency)), xticklabels = np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1), compute_mean = True, compute_sd = True)
-pl.save_figure(filename='tc_corr.pdf',sub_folder = 'over_subs/RT')
+# embed()
+
+
+
+# pl.open_figure(force=1)
+# pl.hline(y=0)
+# pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)
+# pl.event_related_pupil_average(data = all_correlations, conditions = ['PP','UP','PU','UU'], show_legend = True, ylabel = 'Correlation (r)', signal_labels = dict(zip(['PU','PP','UU','UP'], tnames)), xticks = np.arange(0, all_correlations['PP'][0].shape[0], int(all_correlations['PP'][0].shape[0]/deconv_sample_frequency)), xticklabels = np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1]+1, .5), compute_mean = True, compute_sd = True)
+# pl.save_figure(filename='tc_corr_response.pdf',sub_folder = 'over_subs/RT')
 

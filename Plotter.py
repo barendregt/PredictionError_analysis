@@ -20,7 +20,7 @@ alphabetnum = np.array(list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 
 class Plotter(object):
 
-	def __init__(self, figure_folder = '', sn_style='ticks'):
+	def __init__(self, figure_folder = '', sn_style='ticks', linestylemap = []):
 
 		sn.set(style = sn_style)
 
@@ -29,6 +29,7 @@ class Plotter(object):
 		else:
 			self.figure_folder = os.getcwd()
 
+		self.linestylemap = linestylemap
 
 		self.figure = None
 
@@ -82,12 +83,21 @@ class Plotter(object):
 
 					if compute_sd:
 						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
-						plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)		
+						if len(self.linestylemap)>0:
+							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)#, color=self.linestylemap[label][0])	
+						else:
+							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)		
 
 					if len(signal_labels)==0:
-						self.plot(xtimes, msignal, label=label)
+						if len(self.linestylemap) > 0:
+							self.plot(xtimes, msignal, label=label, fmt = self.linestylemap[label])
+						else:
+							self.plot(xtimes, msignal, label=label)
 					else:
-						self.plot(xtimes, msignal, label=signal_labels[label])
+						if len(self.linestylemap) > 0:
+							self.plot(xtimes, msignal, label=signal_labels[label])
+						else:
+							self.plot(xtimes, msignal, label=signal_labels[label], fmt = self.linestylemap[label])
 
 				
 
@@ -101,12 +111,21 @@ class Plotter(object):
 
 					if compute_sd:	
 						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
-						plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
+						if len(self.linestylemap)>0:
+							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)#, color=self.linestylemap[key][0])	
+						else:
+							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
 
 					if len(signal_labels)==0:
-						self.plot(xtimes, msignal, label=key)
+						if len(self.linestylemap) > 0:
+							self.plot(xtimes, msignal, label=label, fmt = self.linestylemap[key])
+						else:
+							self.plot(xtimes, msignal, label=label)
 					else:
-						self.plot(xtimes, msignal, label=signal_labels[key])
+						if len(self.linestylemap) > 0:
+							self.plot(xtimes, msignal, label=signal_labels[label])
+						else:
+							self.plot(xtimes, msignal, label=signal_labels[label], fmt = self.linestylemap[key])
 
 	
 		
@@ -272,7 +291,7 @@ class Plotter(object):
 		plt.axhline(y = y, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)	
 
 	def vline(self, x = 0, label = None):
-		plt.axhline(x = x, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)
+		plt.axvline(x = x, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)
 
 		if label is not None:
 			plt.text(x, -0.1, label)
