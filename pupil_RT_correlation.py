@@ -137,7 +137,7 @@ plt.ylabel(r'Pupil-RT correlation ($r$)')
 plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
-sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+sn.tsplot(data = all_data_ndarray, condition = tnames, time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
 sn.despine()
 plt.savefig(os.path.join(figfolder,'over_subs','RT_all.pdf'))
