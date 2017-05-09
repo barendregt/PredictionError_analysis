@@ -20,7 +20,19 @@ from pandas import *
 import matplotlib.pyplot as plt 
 import seaborn as sn 
 
-sn.set(style='ticks')
+sn.set(style='ticks', font='Arial', font_scale=1, rc={
+	'axes.linewidth': 0.50, 
+	'axes.labelsize': 7, 
+	'axes.titlesize': 7, 
+	'xtick.labelsize': 6, 
+	'ytick.labelsize': 6, 
+	'legend.fontsize': 6, 
+	'xtick.major.width': 0.25, 
+	'ytick.major.width': 0.25,
+	'text.color': 'Black',
+	'axes.labelcolor':'Black',
+	'xtick.color':'Black',
+	'ytick.color':'Black',} )
 
 from math import *
 import os,glob,sys
