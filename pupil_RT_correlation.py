@@ -39,7 +39,7 @@ raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reacti
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP']#
+sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
 # sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AO','AP']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
@@ -129,7 +129,18 @@ for subname in sublist:
 
 # embed()
 
+all_data_ndarray = np.dstack([all_correlations['PU'],all_correlations['PP'],all_correlations['UU'],all_correlations['UP']])
 
+plt.figure()
+
+plt.ylabel(r'Pupil-RT correlation ($r$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.despine()
+plt.savefig(os.path.join(figfolder,'over_subs','RT_all.pdf'))
 
 # pl.open_figure(force=1)
 # pl.hline(y=0)

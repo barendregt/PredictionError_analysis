@@ -41,7 +41,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AP']
+sublist = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AP','AQ']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
