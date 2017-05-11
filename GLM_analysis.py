@@ -121,11 +121,12 @@ for subname in sublist:
 			# reg_dec_interval = reg_response_phase
 			# reg_response_phase_start = 
 			# reg_button_press = reg_response_phase + tc_rts
-			nr_trials = reg_response_phase.shape[0]
+			nr_trials = 0#reg_response_phase.shape[0]
 
 			tc_sigs = []
 			for trii,trial in enumerate(reg_response_phase):
 				if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
+					nr_trials += 1
 					sig = resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)]
 					sig -= sig[:int(0.5*deconv_sample_frequency)].mean()
 
@@ -139,14 +140,14 @@ for subname in sublist:
 			event_button = np.zeros((nr_trials, 3))
 
 			reg_response_phase_start = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], nr_trials)) - trial_deconvolution_interval[1]
-			reg_button_press = reg_response_phase_start + tc_rts.values#*deconv_sample_frequency
+			reg_button_press = reg_response_phase_start + tc_rts.values[:nr_trials]#*deconv_sample_frequency
 
 			event_cue[:,0] = reg_response_phase_start
 			event_cue[:,1] = 0
 			event_cue[:,2] = 1
 
 			event_decint[:,0] = reg_response_phase_start
-			event_decint[:,1] = tc_rts# * deconv_sample_frequency
+			event_decint[:,1] = tc_rts.values[:nr_trials]# * deconv_sample_frequency
 			event_decint[:,2] = 2
 
 			event_button[:,0] = reg_button_press
