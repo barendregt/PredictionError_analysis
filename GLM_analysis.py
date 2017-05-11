@@ -191,7 +191,7 @@ for subname in sublist:
 
 	# embed()
 
-# embed()
+embed()
 
 all_data_ndarray = np.dstack([all_betas['PU'],all_betas['PP'],all_betas['UU'],all_betas['UP']])
 
