@@ -206,7 +206,7 @@ plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
 sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
-sn.despine()
+sn.despine(5)
 plt.savefig(os.path.join(figfolder,'over_subs','FIR_all.pdf'))
 
 

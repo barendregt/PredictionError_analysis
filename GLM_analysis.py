@@ -7,6 +7,8 @@ import statsmodels.api as sm
 from statsmodels.formula.api import ols
 from statsmodels.stats.anova import anova_lm
 
+from GeneralLinearModel import GeneralLinearModel as GLM
+
 from numpy import *
 import scipy as sp
 from pandas import *
@@ -61,11 +63,13 @@ sbsetting = [False, False, False, False, False, False, False, False, False, Fals
 low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 10
-trial_deconvolution_interval = np.array([-.5, 5])
+deconv_sample_frequency = 20
+trial_deconvolution_interval = np.array([-3, 4])
 # trial_deconvolution_interval = np.array([-1, 3])
 
-down_fs = 100
+down_fs = 50
+
+num_of_events = 3
 
 # linestylemap = {'PP': ['k-'],
 # 				 'UP': [''],
@@ -108,9 +112,56 @@ for subname in sublist:
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
 
-	pl.open_figure(force=1)
-	pl.hline(y=0)
-	pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)
+
+	for tcii in range(len(tcodes)-1):
+		
+		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
+
+		reg_response_phase = trial_params['trial_phase_7_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
+		# reg_dec_interval = reg_response_phase
+		# reg_response_phase_start = 
+		reg_button_press = reg_response_phase + tc_rts
+
+		tc_sigs = []
+		for trii,trial in enumerate(reg_button_press):
+			if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
+				sig = resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)]
+				sig -= sig[:int(0.5*deconv_sample_frequency)].mean()
+			# else:
+			# 	tc_rts = tc_rts.delete(trii)
+		tc_sigs = np.concatenate(tc_sigs)
+
+		events = np.zeros((reg_response_phase.shape[0] * num_of_events, 3))
+
+		embed()
+
+		# reg_response_phase_start = np.arange(trial_deconvolution_interval[0]*deconv_sample_frequency, nr_trials * , np.sum(trial_deconvolution_interval)*deconv_sample_frequency)
+
+
+
+		# create pupil timeseries:
+		choice_timings = [-2999, 3000]
+		pupil_time_series = self.choice_locked_array_joined[:, choice_timings[0]+4000:choice_timings[1]+4000]
+		for i in range(pupil_time_series.shape[0]):
+			pupil_time_series[i,:] = pupil_time_series[i,:] - self.bpd[i]
+		pupil_time_series = pupil_time_series[-self.omissions,:]
+		pupil_time_series = np.concatenate(pupil_time_series)
+		
+		# create events:
+		nr_trials = sum(-self.omissions)
+		
+		event_a = np.zeros((nr_trials, 3))
+		event_a[:,0] = np.cumsum(np.repeat(6, nr_trials)) - 3
+		event_a[:,1] = 0
+		event_a[:,2] = 1
+		
+		events = [event_a]
+		
+		linear_model = GLM(input_object=pupil_time_series, event_object=events, sample_dur=0.001, new_sample_dur=0.05)
+		linear_model.configure(IRF_type='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick'])
+		linear_model.execute()
+
+
 
 	tc_correlations = dict(zip(tnames,[[]]*4))
 	for tcii in range(len(tcodes)-1):
@@ -135,8 +186,7 @@ for subname in sublist:
 		all_correlations[['PP','UP','PU','UU'][tcii]].append(np.array(tc_corr))
 
 	
-	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
-	pl.save_figure('%s-tc_corr_response.pdf'%subname, sub_folder='per_sub/RT')
+
 
 	# embed()
 
