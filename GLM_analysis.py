@@ -112,7 +112,7 @@ for subname in sublist:
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
 
-
+	embed()
 	for tcii in range(len(tcodes)-1):
 		
 		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
@@ -133,7 +133,7 @@ for subname in sublist:
 
 		events = np.zeros((reg_response_phase.shape[0] * num_of_events, 3))
 
-		embed()
+		
 
 		# reg_response_phase_start = np.arange(trial_deconvolution_interval[0]*deconv_sample_frequency, nr_trials * , np.sum(trial_deconvolution_interval)*deconv_sample_frequency)
 
