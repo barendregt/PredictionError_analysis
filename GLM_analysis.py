@@ -161,7 +161,7 @@ for subname in sublist:
 		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
-		all_betas[['PP','UP','PU','UU'][tcii]].append(linear_model.betas)
+		all_betas[['PP','UP','PU','UU'][tcii]].append(abs(linear_model.betas))
 	# except:
 	# 	embed()
 	# tc_correlations = dict(zip(tnames,[[]]*4))
@@ -191,12 +191,12 @@ for subname in sublist:
 
 	# embed()
 
-embed()
+# embed()
 
 all_data_ndarray = np.dstack([all_betas['PU'],all_betas['PP'],all_betas['UU'],all_betas['UP']])
 
-pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['cue','button','sustained'], all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
-					   index = index,#np.arange(all_data_ndarray.shape[0]*all_data_ndarray.shape[1]*all_data_ndarray.shape[2]),
+pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['cue','sustained','button'], all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
+					   index = np.arange(all_data_ndarray.shape[0]*all_data_ndarray.shape[1]*all_data_ndarray.shape[2]),
 					   columns=['beta','param','pp','condition'])
 
 pd_data[['beta','pp']] = pd_data[['beta','pp']].apply(pd.to_numeric) 
