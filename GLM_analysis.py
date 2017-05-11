@@ -162,7 +162,7 @@ for subname in sublist:
 		linear_model.execute()
 
 		bvals = [np.max([b,0]) for b in linear_model.betas]
-		all_betas[['PP','UP','PU','UU'][tcii]].append(linear_model.betas)
+		all_betas[['PP','UP','PU','UU'][tcii]].append(bvals)
 	# except:
 	# 	embed()
 	# tc_correlations = dict(zip(tnames,[[]]*4))
