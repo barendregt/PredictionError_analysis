@@ -161,7 +161,8 @@ for subname in sublist:
 		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
-		all_betas[['PP','UP','PU','UU'][tcii]].append(abs(linear_model.betas))
+		bvals = max([linear_model.betas, 0])
+		all_betas[['PP','UP','PU','UU'][tcii]].append(linear_model.betas)
 	# except:
 	# 	embed()
 	# tc_correlations = dict(zip(tnames,[[]]*4))
