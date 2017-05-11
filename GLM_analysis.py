@@ -80,7 +80,7 @@ pl = Plotter(figure_folder = figfolder)
 
 
 
-all_correlations = {'PP': [],
+all_betas = {'PP': [],
 						 'UP': [],
 						 'PU': [],
 						 'UU': []}
