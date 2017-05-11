@@ -64,7 +64,7 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 20
-trial_deconvolution_interval = np.array([-3, 4])
+trial_deconvolution_interval = np.array([-3, 5])
 # trial_deconvolution_interval = np.array([-1, 3])
 
 down_fs = 50
@@ -112,7 +112,7 @@ for subname in sublist:
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
 
-	embed()
+	# embed()
 	for tcii in range(len(tcodes)-1):
 		
 		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
@@ -120,77 +120,76 @@ for subname in sublist:
 		reg_response_phase = trial_params['trial_phase_7_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
 		# reg_dec_interval = reg_response_phase
 		# reg_response_phase_start = 
-		reg_button_press = reg_response_phase + tc_rts
+		# reg_button_press = reg_response_phase + tc_rts
+		nr_trials = reg_response_phase.shape[0]
 
 		tc_sigs = []
-		for trii,trial in enumerate(reg_button_press):
+		for trii,trial in enumerate(reg_response_phase):
 			if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
 				sig = resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)]
 				sig -= sig[:int(0.5*deconv_sample_frequency)].mean()
+
+				tc_sigs.append(sig)
 			# else:
 			# 	tc_rts = tc_rts.delete(trii)
-		tc_sigs = np.concatenate(tc_sigs)
+		pupil_time_series = np.concatenate(tc_sigs)
 
-		events = np.zeros((reg_response_phase.shape[0] * num_of_events, 3))
+		event_cue = np.zeros((nr_trials, 3))
+		event_decint = np.zeros((nr_trials, 3))
+		event_button = np.zeros((nr_trials, 3))
 
-		
+		reg_response_phase_start = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], nr_trials)) - trial_deconvolution_interval[1]
+		reg_button_press = reg_response_phase_start + tc_rts.values#*deconv_sample_frequency
 
+		event_cue[:,0] = reg_response_phase_start
+		event_cue[:,1] = 0
+		event_cue[:,2] = 1
+
+		event_decint[:,0] = reg_response_phase_start
+		event_decint[:,1] = tc_rts# * deconv_sample_frequency
+		event_decint[:,2] = 2
+
+		event_button[:,0] = reg_button_press
+		event_button[:,1] = 0
+		event_button[:,2] = 3
 		# reg_response_phase_start = np.arange(trial_deconvolution_interval[0]*deconv_sample_frequency, nr_trials * , np.sum(trial_deconvolution_interval)*deconv_sample_frequency)
 
-
-
-		# create pupil timeseries:
-		choice_timings = [-2999, 3000]
-		pupil_time_series = self.choice_locked_array_joined[:, choice_timings[0]+4000:choice_timings[1]+4000]
-		for i in range(pupil_time_series.shape[0]):
-			pupil_time_series[i,:] = pupil_time_series[i,:] - self.bpd[i]
-		pupil_time_series = pupil_time_series[-self.omissions,:]
-		pupil_time_series = np.concatenate(pupil_time_series)
+		events = [event_cue, event_decint, event_button]
 		
-		# create events:
-		nr_trials = sum(-self.omissions)
-		
-		event_a = np.zeros((nr_trials, 3))
-		event_a[:,0] = np.cumsum(np.repeat(6, nr_trials)) - 3
-		event_a[:,1] = 0
-		event_a[:,2] = 1
-		
-		events = [event_a]
-		
-		linear_model = GLM(input_object=pupil_time_series, event_object=events, sample_dur=0.001, new_sample_dur=0.05)
-		linear_model.configure(IRF_type='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick'])
+		linear_model = GLM(input_object=pupil_time_series, event_object=events, sample_dur=0.05, new_sample_dur=0.05)
+		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
+		all_betas[['PP','UP','PU','UU'][tcii]] = linear_model.betas
 
-
-	tc_correlations = dict(zip(tnames,[[]]*4))
-	for tcii in range(len(tcodes)-1):
+	# tc_correlations = dict(zip(tnames,[[]]*4))
+	# for tcii in range(len(tcodes)-1):
 		
-		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
+	# 	tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
 
-		trials = tc_rts + trial_params['trial_phase_7_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
+	# 	trials = tc_rts + trial_params['trial_phase_7_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
 
-		tc_sigs = []
-		for trii,trial in enumerate(trials):
-			if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
-				tc_sigs.append(resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)])
-			# else:
-			# 	tc_rts = tc_rts.delete(trii)
-		tc_sigs = np.vstack(tc_sigs)
-		tc_rts = tc_rts[:tc_sigs.shape[0]]
-		tc_corr = []
-		for timep in range(tc_sigs.shape[1]):
-			tc_corr.append(np.corrcoef(tc_sigs[:,timep], tc_rts)[0][1])
+	# 	tc_sigs = []
+	# 	for trii,trial in enumerate(trials):
+	# 		if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
+	# 			tc_sigs.append(resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)])
+	# 		# else:
+	# 		# 	tc_rts = tc_rts.delete(trii)
+	# 	tc_sigs = np.vstack(tc_sigs)
+	# 	tc_rts = tc_rts[:tc_sigs.shape[0]]
+	# 	tc_corr = []
+	# 	for timep in range(tc_sigs.shape[1]):
+	# 		tc_corr.append(np.corrcoef(tc_sigs[:,timep], tc_rts)[0][1])
 
-		tc_correlations[tnames[tcii]] = np.array(tc_corr)
-		all_correlations[['PP','UP','PU','UU'][tcii]].append(np.array(tc_corr))
+	# 	tc_correlations[tnames[tcii]] = np.array(tc_corr)
+	# 	all_correlations[['PP','UP','PU','UU'][tcii]].append(np.array(tc_corr))
 
 	
 
 
 	# embed()
 
-# embed()
+embed()
 
 all_data_ndarray = np.dstack([all_correlations['PU'],all_correlations['PP'],all_correlations['UU'],all_correlations['UP']])
 
