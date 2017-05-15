@@ -172,13 +172,13 @@ for subname in sublist:
 
 		
 
-		plt.subplot(4,2,(tcii+1)+(tcii*2))
+		plt.subplot(4,2,(tcii+1)+(tcii*1))
 
 		plt.plot(np.arange(0,pupil_time_series.size),np.vstack([pupil_time_series, linear_model.predicted, linear_model.residuals]).T)
 
 		sn.despine(offset=2)
 
-		ax=plt.subplot(4,2,(tcii+2)+(tcii*2))
+		ax=plt.subplot(4,2,(tcii+2)+(tcii*1))
 
 		plt.plot(linear_model.betas,'o-')
 		ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
