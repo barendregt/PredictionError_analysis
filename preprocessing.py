@@ -24,7 +24,7 @@ raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reacti
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS']#,'AZ','AX','AY','AW','AV','AU']#
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#,'AZ','AX','AY','AW','AV','AU']#
 # sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
@@ -89,7 +89,7 @@ def run_analysis(subname):
 	pa.get_aliases()
 
 	#if not os.path.isdir(os.path.join(pa.edf_folder,'report/')):
-	reference_phase = 1
+	reference_phase = 7
 
 	for ii,alias in enumerate(pa.aliases):
 
@@ -145,7 +145,7 @@ def run_analysis(subname):
 
 			trial_inds = this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] - bs
 
-			plt.plot(np.mean([selected_signals['pupil_bp_clean'].values[int(tii):int(tii)+1000*6] for tii in trial_inds[:-1]], axis=0))
+			plt.plot(np.mean([selected_signals['pupil_bp_clean'].values[int(tii)-1000*3:int(tii)+1000*3] for tii in trial_inds[:-1]], axis=0))
 
 			plt.savefig(os.path.join(pa.edf_folder,'report',alias + '_signal.jpg'))
 			plt.close()
@@ -174,9 +174,9 @@ def run_analysis(subname):
 
 			splt.set_title('RT correct')
 
-			splt.bar([0.5,1.5,2.5,3.5], [np.median(PP_rt), np.median(PU_rt), np.median(UP_rt), np.median(UU_rt)], color='w', edgecolor='k')
+			splt.bar([0.5,1.5,2.5,3.5], [np.median(PP_rt), np.median(UP_rt), np.median(PU_rt), np.median(UU_rt)], color='w', edgecolor='k')
 
-			splt.set(xticklabels = ['PP','PU','UP','UU'])
+			splt.set(xticklabels = ['PP','UP','PU','UU'])
 
 			PP_rt = []
 			PU_rt = []
