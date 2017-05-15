@@ -208,7 +208,8 @@ pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['stim'
 					   index = np.arange(all_data_ndarray.shape[0]*all_data_ndarray.shape[1]*all_data_ndarray.shape[2]),
 					   columns=['beta','param','pp','condition'])
 
-pd_data[['beta','pp']] = pd_data[['beta','pp']].apply(pd.to_numeric(errors='coerce')) 
+pd.to_numeric(pd_data['beta'],errors='coerce') 
+pd.to_numeric(pd_data['pp'],errors='coerce') 
 
 
 plt.figure()
