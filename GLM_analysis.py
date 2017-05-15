@@ -169,7 +169,7 @@ for subname in sublist:
 		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
-		bvals = [Null if b < 0 else b for b in linear_model.betas]
+		bvals = [null if b < 0 else b for b in linear_model.betas]
 		all_betas[['PP','UP','PU','UU'][tcii]].append(bvals)
 	# except:
 	# 	embed()
