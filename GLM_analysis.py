@@ -169,9 +169,29 @@ for subname in sublist:
 		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
-		betas = linear_model.betas[[0,2,1]]
-		betas = [np.NaN if b < 0 else b for b in betas]
+		plt.figure()
+
+		plt.subplot(1,2,1)
+
+		plt.plot([pupil_time_series, linear_model.predicted, linear_model.residuals])
+
+		sn.despine(offset=2)
+
+		plt.subplot(1,2,2)
+
+		plt.plot(linear_model.betas,'o-')
+		sn.despine()
+
+		plt.tight_layout()
+
+		plt.savefig(os.path.join(figfolder,'per_sub','GLM','%s-GLM.pdf'%subname))
+
+		betas = linear_model.betas
+		# betas = [np.NaN if b < 0 else b for b in betas]
 		all_betas[['PP','UP','PU','UU'][tcii]].append(betas)
+
+
+
 	# except:
 	# 	embed()
 	# tc_correlations = dict(zip(tnames,[[]]*4))
@@ -222,7 +242,7 @@ sn.factorplot(data = pd_data.dropna(subset=['beta']), x = 'param', y='beta', hue
 
 
 # sn.despine(5)
-plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_onlypos.pdf'))
+plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_all.pdf'))
 
 plt.close()
 # pl.open_figure(force=1)
