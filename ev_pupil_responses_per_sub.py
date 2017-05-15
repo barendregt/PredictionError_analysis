@@ -284,12 +284,12 @@ for subname in sublist:
 	pe_betas = dict(zip(labels[0], betas[0]))
 	other_betas = dict(zip(labels[1], betas[1]))
 
-	pl.open_figure(force=1)
-	pl.hline(y=0)
-	pl.event_related_pupil_average(data = pe_betas, conditions=labels[0], signal_labels = {'noPE': 'Predicted', 'PEtr': 'Task relevant','PEntr':'Task irrelevant','bothPE':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
+	# pl.open_figure(force=1)
+	# pl.hline(y=0)
+	# pl.event_related_pupil_average(data = pe_betas, conditions=labels[0], signal_labels = {'noPE': 'Predicted', 'PEtr': 'Task relevant','PEntr':'Task irrelevant','bothPE':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 
 
-	all_data_ndarray = np.dstack([all_correlations['PU'],all_correlations['PP'],all_correlations['UU'],all_correlations['UP']])
+	# all_data_ndarray = np.dstack([all_correlations['PU'],all_correlations['PP'],all_correlations['UU'],all_correlations['UP']])
 
 	plt.figure()
 
@@ -297,7 +297,7 @@ for subname in sublist:
 	plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 	plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
-	sn.tsplot(data = np.dstack([pe_betas]), condition = labels[0], time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+	sn.tsplot(data = np.dstack([pe_betas]), condition = labels[0], time = pd.Series(data=np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), name= 'Time(s)'), ci=[68], legend=True)
 
 	sn.despine(5)
 	plt.savefig(os.path.join(figfolder,'over_subs','RT_all.pdf'))
