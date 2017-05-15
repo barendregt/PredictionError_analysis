@@ -217,8 +217,10 @@ plt.figure()
 # plt.ylabel(r'Pupil-RT correlation ($r$)')
 # plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 # plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
-
-sn.factorplot(data = pd_data, x = 'param', y='beta', hue = 'condition', estimator = np.nanmean)
+try:
+	sn.factorplot(data = pd_data, x = 'param', y='beta', hue = 'condition', estimator = np.nanmean)
+except:
+	embed()
 
 # sn.despine(5)
 plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_all.pdf'))
