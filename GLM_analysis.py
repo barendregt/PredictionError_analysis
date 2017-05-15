@@ -170,7 +170,7 @@ for subname in sublist:
 		linear_model.execute()
 
 		betas = linear_model.betas[[0,2,1]]
-		# betas = [np.NaN if b < 0 else b for b in betas]
+		betas = [np.NaN if b < 0 else b for b in betas]
 		all_betas[['PP','UP','PU','UU'][tcii]].append(betas)
 	# except:
 	# 	embed()
@@ -222,7 +222,7 @@ sn.factorplot(data = pd_data.dropna(subset=['beta']), x = 'param', y='beta', hue
 
 
 # sn.despine(5)
-plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_all.pdf'))
+plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_onlypos.pdf'))
 
 plt.close()
 # pl.open_figure(force=1)
