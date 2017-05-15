@@ -218,7 +218,7 @@ plt.figure()
 # plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 # plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
-sn.factorplot(data = pd_data[pd_data.beta.notnull()], x = 'param', y='beta', hue = 'condition')
+sn.factorplot(data = pd_data[~np.isnan(pd_data.beta)], x = 'param', y='beta', hue = 'condition')
 
 # sn.despine(5)
 plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_all.pdf'))
