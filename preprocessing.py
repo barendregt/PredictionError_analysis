@@ -34,7 +34,7 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 8
-deconvolution_interval = np.array([-0.5, 4.5])
+deconvolution_interval = np.array([-3, 3])
 
 down_fs = 10
 winlength = 4500#6500
@@ -233,7 +233,7 @@ def run_analysis(subname):
 
 	
 
-	pa.signal_per_trial(only_correct = True, reference_phase = 1, with_rt = False, baseline_type = None, baseline_period = [-2.5, 0.0], force_rebuild=False)
+	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = False, baseline_type = None, baseline_period = [-2.5, 0.0], force_rebuild=False)
 
 	response_pupil_signals = []
 
