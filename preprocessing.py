@@ -24,7 +24,7 @@ raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reacti
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ']#,'AZ','AX','AY','AW','AV','AU']#
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS']#,'AZ','AX','AY','AW','AV','AU']#
 # sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
