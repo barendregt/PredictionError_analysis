@@ -140,7 +140,7 @@ for subname in sublist:
 	
 	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
 	pl.save_figure('%s-tc_corr_response.pdf'%subname, sub_folder='per_sub/RT')
-
+	pl.close()
 	# embed()
 
 # embed()
@@ -157,7 +157,7 @@ sn.tsplot(data = all_data_ndarray, condition = tnames, time = pd.Series(data=np.
 
 sn.despine(offset=5)
 plt.savefig(os.path.join(figfolder,'over_subs','RT_all.pdf'))
-
+plt.close()
 # pl.open_figure(force=1)
 # pl.hline(y=0)
 # pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)

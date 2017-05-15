@@ -56,7 +56,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#
+sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS']#,'DA','DB','DC','DD','DE','DF']#
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -197,6 +197,8 @@ for subname in sublist:
 
 	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
 
+	plt.close()
+
 # embed()
 
 all_data_ndarray = np.dstack([response_fir_signals['PU'],response_fir_signals['PP'],response_fir_signals['UU'],response_fir_signals['UP']])
@@ -209,10 +211,10 @@ plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
 sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
-sn.despine(5)
+sn.despine(offset=5)
 plt.savefig(os.path.join(figfolder,'over_subs','FIR_all.pdf'))
 
-
+plt.close()
 # pl.open_figure(force=1)
 # pl.hline(y=0)
 # pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
