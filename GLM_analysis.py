@@ -169,7 +169,7 @@ for subname in sublist:
 		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
-		bvals = [np.NaN if b < 0 else b for b in linear_model.betas]
+		bvals = [np.NaN if b < 0 else b for b in linear_model.betas[[0,2,1]]]
 		all_betas[['PP','UP','PU','UU'][tcii]].append(bvals)
 	# except:
 	# 	embed()
@@ -221,7 +221,7 @@ sn.factorplot(data = pd_data.dropna(subset=['beta']), x = 'param', y='beta', hue
 
 
 # sn.despine(5)
-plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_all.pdf'))
+plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_onlypos.pdf'))
 
 plt.close()
 # pl.open_figure(force=1)
