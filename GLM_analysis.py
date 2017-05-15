@@ -178,11 +178,10 @@ for subname in sublist:
 
 		sn.despine(offset=2)
 
-		plt.subplot(4,2,(tcii+2)+(tcii*2))
+		ax=plt.subplot(4,2,(tcii+2)+(tcii*2))
 
 		plt.plot(linear_model.betas,'o-')
-		plt.set_xticks([0,1,2])
-		plt.set_xticklabels(['stim','int','button'])
+		ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
 		sn.despine()
 
 
