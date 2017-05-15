@@ -180,7 +180,7 @@ for subname in sublist:
 
 		plt.subplot(4,2,(tcii+2)+(tcii*2))
 
-		plt.plot(linear_model.betas,'o-','filled')
+		plt.plot(linear_model.betas,'o-')
 		plt.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
 		sn.despine()
 
