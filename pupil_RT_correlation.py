@@ -36,7 +36,7 @@ sn.set(style='ticks', font='Arial', font_scale=1, rc={
 	'ytick.color':'Black',} )
 
 from math import *
-import os,glob,sys
+import os,glob,sys,platform
 
 import cPickle as pickle
 import pandas as pd
@@ -48,11 +48,14 @@ from BehaviorAnalyzer import BehaviorAnalyzer
 from Plotter import Plotter
 
 
-raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'#/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
+if platform.node()=="aeneas":
+	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
+else:
+	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ']#
+sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
 # sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AO','AP']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']

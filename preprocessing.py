@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 
 from math import *
-import os,glob,sys
+import os,glob,sys,platform
 
 from joblib import Parallel, delayed
 import multiprocessing
@@ -20,7 +20,10 @@ from IPython import embed
 from BehaviorAnalyzer import BehaviorAnalyzer
 
 
-raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'#'/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
+if platform.node()=="aeneas":
+	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
+else:
+	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
