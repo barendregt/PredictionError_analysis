@@ -169,8 +169,9 @@ for subname in sublist:
 		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
-		bvals = [np.NaN if b < 0 else b for b in linear_model.betas[[0,2,1]]]
-		all_betas[['PP','UP','PU','UU'][tcii]].append(bvals)
+		betas = linear_model.betas[[0,2,1]]
+		# betas = [np.NaN if b < 0 else b for b in betas]
+		all_betas[['PP','UP','PU','UU'][tcii]].append(betas)
 	# except:
 	# 	embed()
 	# tc_correlations = dict(zip(tnames,[[]]*4))
@@ -204,7 +205,7 @@ for subname in sublist:
 
 all_data_ndarray = np.dstack([all_betas['PU'],all_betas['PP'],all_betas['UU'],all_betas['UP']])
 
-pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['stim','sustained','button'], all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
+pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['stim','button','sustained'], all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
 					   index = np.arange(all_data_ndarray.shape[0]*all_data_ndarray.shape[1]*all_data_ndarray.shape[2]),
 					   columns=['beta','param','pp','condition'])
 
@@ -221,7 +222,7 @@ sn.factorplot(data = pd_data.dropna(subset=['beta']), x = 'param', y='beta', hue
 
 
 # sn.despine(5)
-plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_onlypos.pdf'))
+plt.savefig(os.path.join(figfolder,'over_subs','GLM_betas_all.pdf'))
 
 plt.close()
 # pl.open_figure(force=1)
