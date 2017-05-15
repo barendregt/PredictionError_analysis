@@ -18,10 +18,13 @@ from pandas import *
 # base = importr('base')
 
 from math import *
-import os,glob,sys
+import os,glob,sys,platform
 
 import cPickle as pickle
 import pandas as pd
+
+import matplotlib.pyplot as plt 
+import seaborn as sn
 
 from IPython import embed
 
@@ -30,13 +33,16 @@ from BehaviorAnalyzer import BehaviorAnalyzer
 from Plotter import Plotter
 
 
-raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'#/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
+if platform.node()=="aeneas":
+	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
+else:
+	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO']
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -45,7 +51,7 @@ low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-1, 4.5])
-stimulus_deconvolution_interval = np.array([-0.5, 4.5])
+stimulus_deconvolution_interval = np.array([-1, 4.5])
 
 down_fs = 50
 
@@ -119,7 +125,7 @@ for subname in sublist:
 	# if not os.path.isdir(os.path.join(rawfolder,'results/')):
 	# 	os.makedirs(os.path.join(rawfolder,'results/'))
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, sort_by_date = sbsetting[sublist.index(subname)], signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
 	# redo signal extraction
 	# pa.recombine_signal_blocks(force_rebuild = True)
@@ -201,7 +207,7 @@ for subname in sublist:
 			power_signals['PU'].extend(power_signal)
 
 	pa.deconvolution_interval = stimulus_deconvolution_interval
-	pa.signal_per_trial(only_correct = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False)
+	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False)
 
 	# pa.get_IRF()
 
@@ -282,6 +288,19 @@ for subname in sublist:
 	pl.hline(y=0)
 	pl.event_related_pupil_average(data = pe_betas, conditions=labels[0], signal_labels = {'noPE': 'Predicted', 'PEtr': 'Task relevant','PEntr':'Task irrelevant','bothPE':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0, 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,4.5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 
+
+	all_data_ndarray = np.dstack([all_correlations['PU'],all_correlations['PP'],all_correlations['UU'],all_correlations['UP']])
+
+	plt.figure()
+
+	plt.ylabel(r'Pupil-RT correlation ($r$)')
+	plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+	plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+	sn.tsplot(data = np.dstack([pe_betas]), condition = labels[0], time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+	sn.despine(5)
+	plt.savefig(os.path.join(figfolder,'over_subs','RT_all.pdf'))
 
 # # embed()
 
