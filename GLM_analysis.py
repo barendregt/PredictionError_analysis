@@ -174,7 +174,9 @@ for subname in sublist:
 
 		plt.subplot(4,2,(tcii+1)+(tcii*1))
 
-		plt.plot(np.arange(0,pupil_time_series.size),np.vstack([pupil_time_series, linear_model.predicted, linear_model.residuals]).T)
+		plt.plot(np.arange(0,pupil_time_series.size),pupil_time_series,color='k',alpha=0.5)
+		plt.plot(np.arange(0,pupil_time_series.size),linear_model.predicted, color='g',alpha=0.75)
+		plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
 
 		sn.despine(offset=2)
 
