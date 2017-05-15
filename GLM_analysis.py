@@ -115,6 +115,7 @@ for subname in sublist:
 	tnames = ['noPE','PEtr','PEntr','bothPE']
 
 	#try:
+	plt.figure()
 	for tcii in range(len(tcodes)-1):
 		
 		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
@@ -169,28 +170,31 @@ for subname in sublist:
 		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
 		linear_model.execute()
 
-		plt.figure()
+		
 
-		plt.subplot(1,2,1)
+		plt.subplot(4,2,(tcii+1)+(tcii*2))
 
-		plt.plot([pupil_time_series, linear_model.predicted, linear_model.residuals])
+		plt.plot(np.arange(0,pupil_time_series.size),[pupil_time_series, linear_model.predicted, linear_model.residuals])
 
 		sn.despine(offset=2)
 
-		plt.subplot(1,2,2)
+		plt.subplot(4,2,(tcii+2)+(tcii*2))
 
-		plt.plot(linear_model.betas,'o-')
+		plt.plot(linear_model.betas,'o-','filled')
+		plt.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
 		sn.despine()
 
-		plt.tight_layout()
 
-		plt.savefig(os.path.join(figfolder,'per_sub','GLM','%s-GLM.pdf'%subname))
 
 		betas = linear_model.betas
 		# betas = [np.NaN if b < 0 else b for b in betas]
 		all_betas[['PP','UP','PU','UU'][tcii]].append(betas)
 
+	plt.tight_layout()
 
+	plt.savefig(os.path.join(figfolder,'per_sub','GLM','%s-GLM.pdf'%subname))
+
+	plt.close()
 
 	# except:
 	# 	embed()
