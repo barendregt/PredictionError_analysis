@@ -153,6 +153,8 @@ for subname in sublist:
 
 	betas, labels = pa.get_IRF()
 
+	embed()
+
 	pe_betas = betas[0]
 	other_betas = betas[1]
 

@@ -579,7 +579,7 @@ class PupilAnalyzer(Analyzer):
 
 		stim_deconv_interval = [-0.5,3]
 
-		events = np.array([trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==0], # no PE
+		stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==0], # no PE
 						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==50], # both PE
 						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==10], # PE TR
 						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==30]  # PE ~TR
@@ -589,7 +589,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR_stim_color = FIRDeconvolution(
 						signal = recorded_pupil_signal,
-						events = events / self.signal_sample_frequency,
+						events = stim_events / self.signal_sample_frequency,
 						event_names = ['noPE','bothPE','PEtr','PEntr'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
@@ -606,7 +606,7 @@ class PupilAnalyzer(Analyzer):
 		# One stimulus-locked, ori task		
 		stim_deconv_interval = [-0.5,3]
 
-		events = np.array([trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==1], # no PE
+		stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==1], # no PE
 						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==60], # both PE
 						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==20], # PE TR
 						   trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_codes']==40]  # PE ~TR
@@ -616,7 +616,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR_stim_ori = FIRDeconvolution(
 						signal = recorded_pupil_signal,
-						events = events / self.signal_sample_frequency,
+						events = stim_events / self.signal_sample_frequency,
 						event_names = ['noPE','bothPE','PEtr','PEntr'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
@@ -633,7 +633,7 @@ class PupilAnalyzer(Analyzer):
 
 		resp_deconv_interval = [-2,2]
 
-		events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']==0]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==0], # no PE
+		resp_events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']==0]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==0], # no PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']==50]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==50], # both PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']==10]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==10], # PE TR
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']==30]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==30]  # PE ~TR
@@ -642,7 +642,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR_resp_color = FIRDeconvolution(
 						signal = recorded_pupil_signal,
-						events = events / self.signal_sample_frequency,
+						events = resp_events / self.signal_sample_frequency,
 						event_names = ['noPE','bothPE','PEtr','PEntr'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
@@ -655,7 +655,7 @@ class PupilAnalyzer(Analyzer):
 
 		# dm3 = self.FIR_resp_color.design_matrix
 
-		events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']==1]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==1], # no PE
+		resp_events = np.array([(trial_parameters['reaction_time'][trial_parameters['trial_codes']==1]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==1], # no PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']==60]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==60], # both PE
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']==20]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==20], # PE TR
 						   (trial_parameters['reaction_time'][trial_parameters['trial_codes']==40]*self.signal_sample_frequency)+trial_parameters['trial_phase_7_full_signal'][trial_parameters['trial_codes']==40]  # PE ~TR
@@ -664,7 +664,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR_resp_ori = FIRDeconvolution(
 						signal = recorded_pupil_signal,
-						events = events / self.signal_sample_frequency,
+						events = resp_events / self.signal_sample_frequency,
 						event_names = ['noPE','bothPE','PEtr','PEntr'],
 						#durations = {'response': self.events['durations']['response']},
 						sample_frequency = self.signal_sample_frequency,
@@ -683,12 +683,34 @@ class PupilAnalyzer(Analyzer):
 	
 		self.FIR_betas_stim = sp.linalg.lstsq(self.dm_stim.T, self.FIR_resampled_pupil_signal.T)[0]
 
-		
-		embed()
-		stim_color_betas = self.fir_betas[-int(events.shape[0]*(stim_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
-		other_betas = self.fir_betas[:-int(events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+		self.dm_resp = np.vstack([self.FIR_nuiss.design_matrix, self.FIR_resp_color.design_matrix, self.FIR_resp_ori.design_matrix])
 
-		return [[pe_betas, other_betas], [self.FIR2.covariates.keys(), self.FIR1.covariates.keys()]]
+		self.FIR_betas_resp = sp.linalg.lstsq(self.dm_resp.T, self.FIR_resampled_pupil_signal.T)[0]
+
+
+		self.dm_all = np.vstack([self.FIR_nuiss.design_matrix, self.FIR_stim_color.design_matrix, self.FIR_stim_ori.design_matrix, self.FIR_resp_color.design_matrix, self.FIR_resp_ori.design_matrix])
+
+		self.FIR_betas_all = sp.linalg.lstsq(self.dm_all.T, self.FIR_resampled_pupil_signal.T)[0]	
+		
+		# embed()
+		stim_betas = self.FIR_betas_stim[-int(2*stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*stim_events.shape[0],(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)).T
+		stim_color_betas = stim_betas[:,0:3]
+		stim_ori_betas = stim_betas[:,4:]
+		stim_nuiss_betas = self.FIR_betas_stim[:-int(2*stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+
+
+		resp_betas = self.FIR_betas_resp[-int(2*resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*resp_events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
+		resp_color_betas = resp_betas[:,0:3]
+		resp_ori_betas = resp_betas[:,4:]
+		resp_nuiss_betas = self.FIR_betas_resp[:-int(2*resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+
+
+		all_betas = self.FIR_betas_all[-int(2*all_events.shape[0]*(all_deconv_interval[1]-all_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*all_events.shape[0],(all_deconv_interval[1]-all_deconv_interval[0])*self.deconv_sample_frequency)).T
+		all_color_betas = all_betas[:,0:3]
+		all_ori_betas = all_betas[:,4:]
+		all_nuiss_betas = self.FIR_betas_all[:-int(2*all_events.shape[0]*(all_deconv_interval[1]-all_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+
+		return [[stim_color_betas, stim_ori_betas, stim_nuiss_betas, resp_color_betas, resp_ori_betas, resp_nuiss_betas, all_color_betas, all_ori_betas, all_nuiss_betas], [self.FIR_nuiss.covariates.keys(),self.FIR_stim_color.covariates.keys(), self.FIR_stim_ori.covariates.keys(), self.FIR_resp_color.covariates.keys(),self.FIR_resp_ori.covariates.keys()]]
 
 		# figure()
 		# ax=subplot(1,2,1)
