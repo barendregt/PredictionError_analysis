@@ -261,7 +261,7 @@ plt.figure()
 
 all_data_ndarray = np.dstack([stimulus_fir_signals['color']['PU'],stimulus_fir_signals['color']['PP'],stimulus_fir_signals['color']['UU'],stimulus_fir_signals['color']['UP']])
 ax=plt.subplot(2,2,1)
-plt._title('Stimulus-locked - color')
+plt.title('Stimulus-locked - color')
 plt.ylabel(r'Pupil size ($\beta$)')
 plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
