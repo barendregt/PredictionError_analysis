@@ -705,12 +705,12 @@ class PupilAnalyzer(Analyzer):
 		resp_nuiss_betas = self.FIR_betas_resp[:-int(2*resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
 
-		all_betas = self.FIR_betas_all[-int(2*all_events.shape[0]*(all_deconv_interval[1]-all_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*all_events.shape[0],(all_deconv_interval[1]-all_deconv_interval[0])*self.deconv_sample_frequency)).T
-		all_color_betas = all_betas[:,0:3]
-		all_ori_betas = all_betas[:,4:]
-		all_nuiss_betas = self.FIR_betas_all[:-int(2*all_events.shape[0]*(all_deconv_interval[1]-all_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+		all_betas = self.FIR_betas_all[-int(2*stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency+2*resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*stim_events.shape[0]+2*resp_events.shape[0],((stim_deconv_interval[1]-stim_deconv_interval[0])+(resp_deconv_interval[1]-resp_deconv_interval[0]))*self.deconv_sample_frequency)).T
+		all_stim_betas = all_betas[:,0:7]
+		all_resp_betas = all_betas[:,8:]
+		all_nuiss_betas = self.FIR_betas_all[:-int(2*stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency+2*resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
-		return [[stim_color_betas, stim_ori_betas, stim_nuiss_betas, resp_color_betas, resp_ori_betas, resp_nuiss_betas, all_color_betas, all_ori_betas, all_nuiss_betas], [self.FIR_nuiss.covariates.keys(),self.FIR_stim_color.covariates.keys(), self.FIR_stim_ori.covariates.keys(), self.FIR_resp_color.covariates.keys(),self.FIR_resp_ori.covariates.keys()]]
+		return [[stim_color_betas, stim_ori_betas, stim_nuiss_betas, resp_color_betas, resp_ori_betas, resp_nuiss_betas, all_stim_betas, all_resp_betas, all_nuiss_betas], [self.FIR_nuiss.covariates.keys(),self.FIR_stim_color.covariates.keys(), self.FIR_stim_ori.covariates.keys(), self.FIR_resp_color.covariates.keys(),self.FIR_resp_ori.covariates.keys()]]
 
 		# figure()
 		# ax=subplot(1,2,1)
