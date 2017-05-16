@@ -91,10 +91,26 @@ zero_point = 15
 # all_ie_scores = []
 all_betas = []
 
-response_fir_signals = {'PP': [],
+
+stimulus_fir_signals = {'color': {'PP': [],
+						 'UP': [],
+						 'PU': [],
+						 'UU': []},
+						'ori': {'PP': [],
 						 'UP': [],
 						 'PU': [],
 						 'UU': []}
+						 }
+
+response_fir_signals = {'color': {'PP': [],
+						 'UP': [],
+						 'PU': [],
+						 'UU': []},
+						'ori': {'PP': [],
+						 'UP': [],
+						 'PU': [],
+						 'UU': []}
+						 }
 
 
 
@@ -153,47 +169,83 @@ for subname in sublist:
 
 	betas, labels = pa.get_IRF()
 
-	embed()
+	# embed()
 
-	pe_betas = betas[0]
-	other_betas = betas[1]
 
-	response_fir_signals['PU'].append(pe_betas[:,0])
-	response_fir_signals['PP'].append(pe_betas[:,1])
-	response_fir_signals['UU'].append(pe_betas[:,2])
-	response_fir_signals['UP'].append(pe_betas[:,3])
+	stimulus_fir_signals['color']['PU'].append(betas[0][:,0])
+	stimulus_fir_signals['color']['PP'].append(betas[0][:,1])
+	stimulus_fir_signals['color']['UU'].append(betas[0][:,2])
+	stimulus_fir_signals['color']['UP'].append(betas[0][:,3])
 
-	recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
-	predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
-	r_squared = 1.0 - ((predicted_signal.T -recorded_signal)**2).sum(axis=-1) / (recorded_signal**2).sum(axis=-1)
+	stimulus_fir_signals['ori']['PU'].append(betas[1][:,0])
+	stimulus_fir_signals['ori']['PP'].append(betas[1][:,1])
+	stimulus_fir_signals['ori']['UU'].append(betas[1][:,2])
+	stimulus_fir_signals['ori']['UP'].append(betas[1][:,3])	
+
+	response_fir_signals['color']['PU'].append(betas[3][:,0])
+	response_fir_signals['color']['PP'].append(betas[3][:,1])
+	response_fir_signals['color']['UU'].append(betas[3][:,2])
+	response_fir_signals['color']['UP'].append(betas[3][:,3])
+
+	response_fir_signals['ori']['PU'].append(betas[4][:,0])
+	response_fir_signals['ori']['PP'].append(betas[4][:,1])
+	response_fir_signals['ori']['UU'].append(betas[4][:,2])
+	response_fir_signals['ori']['UP'].append(betas[4][:,3])	
+
+
+	# recorded_signal = pa.resampled_pupil_signal#pa.read_pupil_data(pa.combined_h5_filename, signal_type = 'long_signal')
+	# predicted_signal = np.dot(pa.fir_betas.T.astype(float32), pa.design_matrix.astype(float32))
+	# r_squared = 1.0 - ((predicted_signal.T -recorded_signal)**2).sum(axis=-1) / (recorded_signal**2).sum(axis=-1)
+
+	# plt.figure()
+	# plt.title('R^2 = %.2f'%r_squared)
+	# plt.plot(recorded_signal, label='pupil_signal')
+	# plt.plot(predicted_signal, label='predicted_signal')
+	# plt.legend()
+
+	# sn.despine()
+	# plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
 
 	plt.figure()
-	plt.title('R^2 = %.2f'%r_squared)
-	plt.plot(recorded_signal, label='pupil_signal')
-	plt.plot(predicted_signal, label='predicted_signal')
-	plt.legend()
-
-	sn.despine()
-	plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
-
-	plt.figure()
-	ax=plt.subplot(1,2,1)
-	plt.title('Nuissances')
-	plt.plot(other_betas)
+	ax=plt.subplot(2,2,1)
+	plt.title('Stimulus-locked - color')
+	plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
 	plt.legend(labels[1])
 
 	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine()
+	sn.despine(offset=5)
 
-	ax=plt.subplot(1,2,2)
-	plt.title('PE')
-	plt.plot(pe_betas-pe_betas[:5,:].mean(axis=0))
+	ax=plt.subplot(2,2,2)
+	plt.title('Response-locked - color')
+	plt.plot(betas[3]-betas[3][:5,:].mean(axis=0))
 	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
-	plt.legend(labels[0])
-	# ax.set(xticks=np.arange(0,100,20), xticklabels=np.arange(-1,4))
+	plt.legend(labels[3])
 
-	sn.despine()
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+
+	sn.despine(offset=5)
+
+	ax=plt.subplot(2,2,3)
+	plt.title('Stimulus-locked - ori')
+	plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+	plt.legend(labels[2])
+
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+
+	sn.despine(offset=5)	
+
+	ax=plt.subplot(2,2,4)
+	plt.title('Response-locked - ori')
+	plt.plot(betas[4]-betas[4][:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+	plt.legend(labels[4])
+
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+
+	sn.despine(offset=5)	
 
 	plt.tight_layout()
 
@@ -203,17 +255,54 @@ for subname in sublist:
 
 # embed()
 
-all_data_ndarray = np.dstack([response_fir_signals['PU'],response_fir_signals['PP'],response_fir_signals['UU'],response_fir_signals['UP']])
+
 
 plt.figure()
 
-plt.ylabel(r'Pupil size ($\beta$)')
-plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
-plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+all_data_ndarray = np.dstack([stimulus_fir_signals['color']['PU'],stimulus_fir_signals['color']['PP'],stimulus_fir_signals['color']['UU'],stimulus_fir_signals['color']['UP']])
+ax=plt.subplot(2,2,1)
+ax.title('Stimulus-locked - color')
+ax.ylabel(r'Pupil size ($\beta$)')
+ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
 sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
 sn.despine(offset=5)
+
+all_data_ndarray = np.dstack([response_fir_signals['color']['PU'],response_fir_signals['color']['PP'],response_fir_signals['color']['UU'],response_fir_signals['color']['UP']])
+ax=plt.subplot(2,2,2)
+ax.title('Response-locked - color')
+ax.ylabel(r'Pupil size ($\beta$)')
+ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.despine(offset=5)
+
+all_data_ndarray = np.dstack([stimulus_fir_signals['ori']['PU'],stimulus_fir_signals['ori']['PP'],stimulus_fir_signals['ori']['UU'],stimulus_fir_signals['ori']['UP']])
+ax=plt.subplot(2,2,3)
+ax.title('Stimulus-locked - ori')
+ax.ylabel(r'Pupil size ($\beta$)')
+ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.despine(offset=5)
+
+all_data_ndarray = np.dstack([response_fir_signals['ori']['PU'],response_fir_signals['ori']['PP'],response_fir_signals['ori']['UU'],response_fir_signals['ori']['UP']])
+ax=plt.subplot(2,2,4)
+ax.title('Response-locked - ori')
+ax.ylabel(r'Pupil size ($\beta$)')
+ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.despine(offset=5)
+
 plt.savefig(os.path.join(figfolder,'over_subs','FIR_all.pdf'))
 
 plt.close()

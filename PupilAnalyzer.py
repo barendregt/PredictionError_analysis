@@ -694,13 +694,13 @@ class PupilAnalyzer(Analyzer):
 		
 		# embed()
 		stim_betas = self.FIR_betas_stim[-int(2*stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*stim_events.shape[0],(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)).T
-		stim_color_betas = stim_betas[:,0:3]
+		stim_color_betas = stim_betas[:,0:4]
 		stim_ori_betas = stim_betas[:,4:]
 		stim_nuiss_betas = self.FIR_betas_stim[:-int(2*stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
 
 		resp_betas = self.FIR_betas_resp[-int(2*resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*resp_events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
-		resp_color_betas = resp_betas[:,0:3]
+		resp_color_betas = resp_betas[:,0:4]
 		resp_ori_betas = resp_betas[:,4:]
 		resp_nuiss_betas = self.FIR_betas_resp[:-int(2*resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
