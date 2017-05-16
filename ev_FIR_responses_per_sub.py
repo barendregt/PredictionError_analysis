@@ -206,52 +206,52 @@ for subname in sublist:
 	# sn.despine()
 	# plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
 
-	plt.figure()
-	ax=plt.subplot(2,2,1)
-	plt.title('Stimulus-locked - color')
-	plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
-	plt.legend(labels[1])
+	# plt.figure()
+	# ax=plt.subplot(2,2,1)
+	# plt.title('Stimulus-locked - color')
+	# plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
+	# ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+	# plt.legend(labels[1])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)
+	# sn.despine(offset=5)
 
-	ax=plt.subplot(2,2,2)
-	plt.title('Response-locked - color')
-	plt.plot(betas[3]-betas[3][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
-	plt.legend(labels[3])
+	# ax=plt.subplot(2,2,2)
+	# plt.title('Response-locked - color')
+	# plt.plot(betas[3]-betas[3][:5,:].mean(axis=0))
+	# ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+	# plt.legend(labels[3])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)
+	# sn.despine(offset=5)
 
-	ax=plt.subplot(2,2,3)
-	plt.title('Stimulus-locked - ori')
-	plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
-	plt.legend(labels[2])
+	# ax=plt.subplot(2,2,3)
+	# plt.title('Stimulus-locked - ori')
+	# plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
+	# ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+	# plt.legend(labels[2])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)	
+	# sn.despine(offset=5)	
 
-	ax=plt.subplot(2,2,4)
-	plt.title('Response-locked - ori')
-	plt.plot(betas[4]-betas[4][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
-	plt.legend(labels[4])
+	# ax=plt.subplot(2,2,4)
+	# plt.title('Response-locked - ori')
+	# plt.plot(betas[4]-betas[4][:5,:].mean(axis=0))
+	# ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+	# plt.legend(labels[4])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)	
+	# sn.despine(offset=5)	
 
-	plt.tight_layout()
+	# plt.tight_layout()
 
-	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
+	# plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
 
-	plt.close()
+	# plt.close()
 
 # embed()
 
@@ -261,10 +261,10 @@ plt.figure()
 
 all_data_ndarray = np.dstack([stimulus_fir_signals['color']['PU'],stimulus_fir_signals['color']['PP'],stimulus_fir_signals['color']['UU'],stimulus_fir_signals['color']['UP']])
 ax=plt.subplot(2,2,1)
-ax.title('Stimulus-locked - color')
-ax.ylabel(r'Pupil size ($\beta$)')
-ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
-ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+plt._title('Stimulus-locked - color')
+plt.ylabel(r'Pupil size ($\beta$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
 sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
@@ -272,10 +272,10 @@ sn.despine(offset=5)
 
 all_data_ndarray = np.dstack([response_fir_signals['color']['PU'],response_fir_signals['color']['PP'],response_fir_signals['color']['UU'],response_fir_signals['color']['UP']])
 ax=plt.subplot(2,2,2)
-ax.title('Response-locked - color')
-ax.ylabel(r'Pupil size ($\beta$)')
-ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
-ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+plt.title('Response-locked - color')
+plt.ylabel(r'Pupil size ($\beta$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
 sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
@@ -283,10 +283,10 @@ sn.despine(offset=5)
 
 all_data_ndarray = np.dstack([stimulus_fir_signals['ori']['PU'],stimulus_fir_signals['ori']['PP'],stimulus_fir_signals['ori']['UU'],stimulus_fir_signals['ori']['UP']])
 ax=plt.subplot(2,2,3)
-ax.title('Stimulus-locked - ori')
-ax.ylabel(r'Pupil size ($\beta$)')
-ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
-ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+plt.title('Stimulus-locked - ori')
+plt.ylabel(r'Pupil size ($\beta$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
 sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
@@ -294,10 +294,10 @@ sn.despine(offset=5)
 
 all_data_ndarray = np.dstack([response_fir_signals['ori']['PU'],response_fir_signals['ori']['PP'],response_fir_signals['ori']['UU'],response_fir_signals['ori']['UP']])
 ax=plt.subplot(2,2,4)
-ax.title('Response-locked - ori')
-ax.ylabel(r'Pupil size ($\beta$)')
-ax.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
-ax.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+plt.title('Response-locked - ori')
+plt.ylabel(r'Pupil size ($\beta$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
 sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
@@ -392,7 +392,7 @@ plt.close()
 # 	plt.plot(other_betas)
 # 	plt.legend(labels[1])
 
-# 	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+# 	# plt.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
 # 	sn.despine()
 
