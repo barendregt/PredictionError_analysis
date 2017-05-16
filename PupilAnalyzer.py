@@ -678,7 +678,7 @@ class PupilAnalyzer(Analyzer):
 		# dm3 = self.FIR_resp_ori.design_matrix		
 
 
-		self.dm_stim = np.vstack([self.FIR_nuiss.design_matrix, self.FIR_stim_color, self.FIR_stim_ori])
+		self.dm_stim = np.vstack([self.FIR_nuiss.design_matrix, self.FIR_stim_color.design_matrix, self.FIR_stim_ori.design_matrix])
 
 	
 		self.FIR_betas_stim = sp.linalg.lstsq(self.dm_stim.T, self.FIR_resampled_pupil_signal.T)[0]
