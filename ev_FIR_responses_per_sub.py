@@ -253,7 +253,7 @@ for subname in sublist:
 
 	# plt.close()
 
-# embed()
+embed()
 
 
 
