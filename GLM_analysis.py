@@ -147,6 +147,8 @@ for subname in sublist:
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
 
+	embed()
+
 	#try:
 	plt.figure()
 	all_events = []
@@ -186,7 +188,7 @@ for subname in sublist:
 	linear_model.execute()
 
 		
-	embed()
+
 	plt.subplot(4,2,(tcii+1)+(tcii*1))
 
 	plt.plot(np.arange(0,pupil_time_series.size),pupil_time_series,color='k',alpha=0.5)
