@@ -266,7 +266,7 @@ plt.ylabel(r'Pupil size ($\beta$)')
 plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
-sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+sn.tsplot(data = all_data_ndarray, condition = labels[1], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency).squeeze(), name= 'Time(s)'), ci=[68], legend=True)
 
 sn.despine(offset=5)
 
@@ -277,7 +277,7 @@ plt.ylabel(r'Pupil size ($\beta$)')
 plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
-sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+sn.tsplot(data = all_data_ndarray, condition = labels[1], time = pd.Series(data=np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
 sn.despine(offset=5)
 
@@ -288,7 +288,8 @@ plt.ylabel(r'Pupil size ($\beta$)')
 plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
-sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[1], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
 sn.despine(offset=5)
 
@@ -299,9 +300,11 @@ plt.ylabel(r'Pupil size ($\beta$)')
 plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
 plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
 
-sn.tsplot(data = all_data_ndarray, condition = labels[0], time = pd.Series(data=np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+sn.tsplot(data = all_data_ndarray, condition = labels[1], time = pd.Series(data=np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
 
 sn.despine(offset=5)
+
+plt.tight_layout()
 
 plt.savefig(os.path.join(figfolder,'over_subs','FIR_all.pdf'))
 

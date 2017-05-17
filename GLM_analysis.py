@@ -66,7 +66,7 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 20
-trial_deconvolution_interval = np.array([-3, 5])
+trial_deconvolution_interval = np.array([-2, 2])
 # trial_deconvolution_interval = np.array([-1, 3])
 
 down_fs = 50
@@ -111,86 +111,101 @@ for subname in sublist:
 
 	trial_params = pa.read_trial_data(pa.combined_h5_filename)
 
+
+		
+	tc_rts = trial_params['reaction_time']
+
+	#reg_stimulus_phase = trial_params['trial_phase_4_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
+	reg_response_phase = trial_params['trial_phase_7_full_signal'] / signal_sample_frequency*deconv_sample_frequency
+	# reg_dec_interval = reg_response_phase
+	# reg_response_phase_start = 
+	# reg_button_press = reg_response_phase + tc_rts
+	nr_trials = 0#reg_response_phase.shape[0]
+
+	# tc_sigs = []
+	# for trii,trial in enumerate(reg_response_phase):
+	# 	# if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
+	# 	# 	nr_trials += 1
+	# 	sig = resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)]
+	# 	sig -= sig[:int(0.5*deconv_sample_frequency)].mean()
+
+	# 	tc_sigs.append(sig)
+	# 	# else:
+	# 	# 	tc_rts = tc_rts.delete(trii)
+	# pupil_time_series = np.concatenate(tc_sigs)
+
+	tstart = int(trial_deconvolution_interval[0]*deconv_sample_frequency)
+	tend = int(trial_deconvolution_interval[1]*deconv_sample_frequency)
+	bstart = int(0.5*deconv_sample_frequency)
+
+	pupil_time_series = np.concatenate([resampled_pupil_signal[trial+tstart:trial+tend]-resampled_pupil_signal[trial+tstart-bstart:trial+tstart].mean() for trial in reg_response_phase])
+
+
+	all_resp_events = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], reg_response_phase.size)) - trial_deconvolution_interval[1]
+	all_button_events = all_resp_events + tc_rts.values
+
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
 
 	#try:
 	plt.figure()
+	all_events = []
 	for tcii in range(len(tcodes)-1):
+
+		trial_iis = (trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])
+
+		event_cue = np.zeros((trial_iis.sum(), 3))
+		event_decint = np.zeros((trial_iis.sum(), 3))
+		event_button = np.zeros((trial_iis.sum(), 3))
+
 		
-		tc_rts = trial_params['reaction_time'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
-
-		#reg_stimulus_phase = trial_params['trial_phase_4_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
-		reg_response_phase = trial_params['trial_phase_7_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
-		# reg_dec_interval = reg_response_phase
-		# reg_response_phase_start = 
-		# reg_button_press = reg_response_phase + tc_rts
-		nr_trials = 0#reg_response_phase.shape[0]
-
-		tc_sigs = []
-		for trii,trial in enumerate(reg_response_phase):
-			if (trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)) <= resampled_pupil_signal.shape[0]:
-				nr_trials += 1
-				sig = resampled_pupil_signal[trial+(trial_deconvolution_interval[0]*deconv_sample_frequency):trial+(trial_deconvolution_interval[1]*deconv_sample_frequency)]
-				sig -= sig[:int(0.5*deconv_sample_frequency)].mean()
-
-				tc_sigs.append(sig)
-			# else:
-			# 	tc_rts = tc_rts.delete(trii)
-		pupil_time_series = np.concatenate(tc_sigs)
-
-		event_cue = np.zeros((nr_trials, 3))
-		event_decint = np.zeros((nr_trials, 3))
-		event_button = np.zeros((nr_trials, 3))
-
-		reg_response_phase_start = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], nr_trials)) - trial_deconvolution_interval[1]
 		# reg_stimulus_phase_start = reg_response_phase_start - 0.33#np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], nr_trials)) - trial_deconvolution_interval[1]
-		reg_button_press = reg_response_phase_start + tc_rts.values[:nr_trials]#*deconv_sample_frequency
+		# reg_button_press = reg_response_phase_start + tc_rts.values[:nr_trials]#*deconv_sample_frequency
 
 		# event_cue[:,0] = reg_stimulus_phase_start
 		# event_cue[:,1] = 0.33
 		# event_cue[:,2] = 1
 
-		event_cue[:,0] = reg_response_phase_start
+		event_cue[:,0] = all_resp_events[trial_iis]
 		event_cue[:,1] = 0
 		event_cue[:,2] = 1
 
-		event_decint[:,0] = reg_response_phase_start
-		event_decint[:,1] = tc_rts.values[:nr_trials]# * deconv_sample_frequency
+		event_decint[:,0] = all_resp_events[trial_iis]
+		event_decint[:,1] = tc_rts.values[trial_iis]# * deconv_sample_frequency
 		event_decint[:,2] = 2
 
-		event_button[:,0] = reg_button_press
+		event_button[:,0] = all_button_events[trial_iis]
 		event_button[:,1] = 0
 		event_button[:,2] = 3
 		# reg_response_phase_start = np.arange(trial_deconvolution_interval[0]*deconv_sample_frequency, nr_trials * , np.sum(trial_deconvolution_interval)*deconv_sample_frequency)
 
-		events = [event_cue, event_decint, event_button]
+		all_events.append([event_cue, event_decint, event_button])
 		
-		linear_model = GLM(input_object=pupil_time_series, event_object=events, sample_dur=0.05, new_sample_dur=0.05)
-		linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'])
-		linear_model.execute()
+	linear_model = GLM(input_object=pupil_time_series, event_object=events, sample_dur=0.05, new_sample_dur=0.05)
+	linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'], normalize_sustained = True)
+	linear_model.execute()
 
 		
+	embed()
+	plt.subplot(4,2,(tcii+1)+(tcii*1))
 
-		plt.subplot(4,2,(tcii+1)+(tcii*1))
+	plt.plot(np.arange(0,pupil_time_series.size),pupil_time_series,color='k',alpha=0.5)
+	plt.plot(np.arange(0,pupil_time_series.size),linear_model.predicted, color='g',alpha=0.75)
+	plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
 
-		plt.plot(np.arange(0,pupil_time_series.size),pupil_time_series,color='k',alpha=0.5)
-		plt.plot(np.arange(0,pupil_time_series.size),linear_model.predicted, color='g',alpha=0.75)
-		plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
+	sn.despine(offset=2)
 
-		sn.despine(offset=2)
+	ax=plt.subplot(4,2,(tcii+2)+(tcii*1))
 
-		ax=plt.subplot(4,2,(tcii+2)+(tcii*1))
-
-		plt.plot(linear_model.betas,'o-')
-		ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
-		sn.despine()
+	plt.plot(linear_model.betas,'o-')
+	ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
+	sn.despine()
 
 
 
-		betas = linear_model.betas
-		# betas = [np.NaN if b < 0 else b for b in betas]
-		all_betas[['PP','UP','PU','UU'][tcii]].append(betas)
+	betas = linear_model.betas
+	# betas = [np.NaN if b < 0 else b for b in betas]
+	all_betas[['PP','UP','PU','UU'][tcii]].append(betas)
 
 	plt.tight_layout()
 
