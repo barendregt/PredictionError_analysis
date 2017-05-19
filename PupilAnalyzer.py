@@ -259,9 +259,12 @@ class PupilAnalyzer(Analyzer):
 			if params['trial_cue']==params['trial_stimulus_label']:
 				return np.array(params['task']==2, dtype=int)
 
+			if 'trial_cue_label' not in params.keys():
+				params['trial_cue'] = stimulus_types[params['trial_cue']]
+
 			else:
 				if np.array(params['task'] == 1): # color task
-					if np.array(stimulus_types[params['trial_cue']] == 0): # red45
+					if np.array(params['trial_cue'] == 0): # red45
 						
 						if np.array(params['base_color_a'] > 0):
 							return 10
@@ -271,7 +274,7 @@ class PupilAnalyzer(Analyzer):
 								return 30
 							else:
 								return 50
-					if np.array(stimulus_types[params['trial_cue']] == 1): # red135
+					if np.array(params['trial_cue'] == 1): # red135
 						if np.array(params['base_color_a'] > 0):
 							return 10
 
@@ -280,7 +283,7 @@ class PupilAnalyzer(Analyzer):
 								return 30
 							else:
 								return 50
-					if np.array(stimulus_types[params['trial_cue']] == 2): # green45
+					if np.array(params['trial_cue'] == 2): # green45
 						if np.array(params['base_color_a'] < 0):
 							return 10
 
@@ -289,7 +292,7 @@ class PupilAnalyzer(Analyzer):
 								return 30
 							else:
 								return 50	
-					if np.array(stimulus_types[params['trial_cue']] == 3): # green135
+					if np.array(params['trial_cue'] == 3): # green135
 						if np.array(params['base_color_a'] < 0):
 							return 10
 
@@ -300,7 +303,7 @@ class PupilAnalyzer(Analyzer):
 								return 50
 
 				else: # orientation task
-					if np.array(stimulus_types[params['trial_cue']] == 0): # red45
+					if np.array(params['trial_cue'] == 0): # red45
 						if np.array(params['base_ori'] == 45):
 							return 20
 
@@ -309,7 +312,7 @@ class PupilAnalyzer(Analyzer):
 								return 40
 							else:
 								return 60
-					if np.array(stimulus_types[params['trial_cue']] == 1): # red135
+					if np.array(params['trial_cue'] == 1): # red135
 						if np.array(params['base_ori'] == 135):
 							return 20
 
@@ -318,7 +321,7 @@ class PupilAnalyzer(Analyzer):
 								return 40
 							else:
 								return 60
-					if np.array(stimulus_types[params['trial_cue']] == 2): # green45
+					if np.array(params['trial_cue'] == 2): # green45
 						if np.array(params['base_ori'] == 45):
 							return 20
 
@@ -327,7 +330,7 @@ class PupilAnalyzer(Analyzer):
 								return 40
 							else:
 								return 60
-					if np.array(stimulus_types[params['trial_cue']] == 3): # green135
+					if np.array(params['trial_cue'] == 3): # green135
 						if np.array(params['base_ori'] == 135):
 							return 20
 
