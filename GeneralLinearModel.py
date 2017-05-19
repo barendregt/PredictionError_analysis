@@ -124,9 +124,10 @@ class GeneralLinearModel(object):
 		"""
 		regressors are vectors identical to custom EV files in FSL
 		"""
+		# shell()
 		regressor_values = np.zeros(self.timepoints.shape[0])
 		for event in regressor:
-			start_time = np.floor((event[0]+event[1])/self.new_sample_dur)
+			start_time = int(np.floor((event[0]+event[1])/self.new_sample_dur))
 			regressor_values[start_time] = event[2]
 		self.raw_design_matrix.append(regressor_values)
 	
@@ -136,8 +137,8 @@ class GeneralLinearModel(object):
 		"""
 		regressor_values = np.zeros(self.timepoints.shape[0])
 		for event in regressor:
-			start_time = np.floor(event[0]/self.new_sample_dur)
-			end_time = np.floor((event[0]+event[1])/self.new_sample_dur)
+			start_time = int(np.floor(event[0]/self.new_sample_dur))
+			end_time = int(np.floor((event[0]+event[1])/self.new_sample_dur))
 			dur = end_time - start_time
 			if normalize_sustained:
 				height = event[2] / float(dur)
@@ -152,8 +153,8 @@ class GeneralLinearModel(object):
 		"""
 		regressor_values = np.zeros(self.timepoints.shape[0])
 		for event in regressor:
-			start_time = np.floor(event[0]/self.new_sample_dur)
-			end_time = np.floor((event[0]+event[1])/self.new_sample_dur)
+			start_time =int(np.floor(event[0]/self.new_sample_dur))
+			end_time = int(np.floor((event[0]+event[1])/self.new_sample_dur))
 			dur = end_time - start_time
 			if normalize_sustained:
 				height = np.linspace(0, (event[2]*2/float(dur)), dur)
@@ -168,8 +169,8 @@ class GeneralLinearModel(object):
 		"""
 		regressor_values = np.zeros(self.timepoints.shape[0])
 		for event in regressor:
-			start_time = np.floor(event[0]/self.new_sample_dur)
-			end_time = np.floor((event[0]+event[1])/self.new_sample_dur)
+			start_time = int(np.floor(event[0]/self.new_sample_dur))
+			end_time = int(np.floor((event[0]+event[1])/self.new_sample_dur))
 			dur = end_time - start_time
 			if normalize_sustained:
 				height = np.linspace((event[2]*2/float(dur)), 0, dur)

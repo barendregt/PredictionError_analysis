@@ -56,7 +56,7 @@ else:
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS']#,'DA','DB','DC','DD','DE','DF']#
+sublist = ['AG','AO']#,'AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS']#,'DA','DB','DC','DD','DE','DF']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
 # sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AO','AP']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
@@ -66,7 +66,7 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 20
-trial_deconvolution_interval = np.array([-2, 2])
+trial_deconvolution_interval = np.array([-2, 7])
 # trial_deconvolution_interval = np.array([-1, 3])
 
 down_fs = 50
@@ -113,10 +113,10 @@ for subname in sublist:
 
 
 		
-	tc_rts = trial_params['reaction_time']
+	tc_rts = trial_params['reaction_time'][:-1] 
 
 	#reg_stimulus_phase = trial_params['trial_phase_4_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
-	reg_response_phase = trial_params['trial_phase_7_full_signal'] / signal_sample_frequency*deconv_sample_frequency
+	reg_response_phase = trial_params['trial_phase_7_full_signal'][:-1] / signal_sample_frequency*deconv_sample_frequency
 	# reg_dec_interval = reg_response_phase
 	# reg_response_phase_start = 
 	# reg_button_press = reg_response_phase + tc_rts
@@ -138,7 +138,7 @@ for subname in sublist:
 	tend = int(trial_deconvolution_interval[1]*deconv_sample_frequency)
 	bstart = int(0.5*deconv_sample_frequency)
 
-	pupil_time_series = np.concatenate([resampled_pupil_signal[trial+tstart:trial+tend]-resampled_pupil_signal[trial+tstart-bstart:trial+tstart].mean() for trial in reg_response_phase])
+	pupil_time_series = np.concatenate([resampled_pupil_signal[int(trial+tstart):int(trial+tend)]-resampled_pupil_signal[int(trial+tstart-bstart):int(trial+tstart)].mean() for trial in reg_response_phase])
 
 
 	all_resp_events = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], reg_response_phase.size)) - trial_deconvolution_interval[1]
@@ -146,15 +146,16 @@ for subname in sublist:
 
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
-
-	embed()
+	tcolors = ['k','r','g','b']
+	# embed()
 
 	#try:
-	plt.figure()
+	
 	all_events = []
+	all_event_types = []
 	for tcii in range(len(tcodes)-1):
 
-		trial_iis = (trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])
+		trial_iis = np.array((trial_params['trial_codes'][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][:-1] < tcodes[tcii+1]), dtype=bool)
 
 		event_cue = np.zeros((trial_iis.sum(), 3))
 		event_decint = np.zeros((trial_iis.sum(), 3))
@@ -181,26 +182,34 @@ for subname in sublist:
 		event_button[:,2] = 3
 		# reg_response_phase_start = np.arange(trial_deconvolution_interval[0]*deconv_sample_frequency, nr_trials * , np.sum(trial_deconvolution_interval)*deconv_sample_frequency)
 
-		all_events.append([event_cue, event_decint, event_button])
+		all_events.extend([event_cue, event_decint, event_button])
+		all_event_types.extend(['stick','upramp','stick'])
 		
-	linear_model = GLM(input_object=pupil_time_series, event_object=events, sample_dur=0.05, new_sample_dur=0.05)
-	linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=['stick','box','stick'], normalize_sustained = True)
+	linear_model = GLM(input_object=pupil_time_series, event_object=all_events, sample_dur=0.05, new_sample_dur=0.05)
+	linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=all_event_types, normalize_sustained = True)
 	linear_model.execute()
 
 		
+	plt.figure()
+	plt.subplot(1,2,1)
 
-	plt.subplot(4,2,(tcii+1)+(tcii*1))
+	for tcii in range(len(tcodes)-1):
 
-	plt.plot(np.arange(0,pupil_time_series.size),pupil_time_series,color='k',alpha=0.5)
-	plt.plot(np.arange(0,pupil_time_series.size),linear_model.predicted, color='g',alpha=0.75)
-	plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
+		trial_iis = np.array((trial_params['trial_codes'][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][:-1] < tcodes[tcii+1]), dtype=bool)	
+
+		avg_time_series = pupil_time_series.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
+		avg_pred_series = linear_model.predicted.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
+
+		sn.tsplot(avg_time_series, condition = tnames[tcii], legend=True, color=tcolors[tcii], ls='solid', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
+		sn.tsplot(avg_pred_series, condition = tnames[tcii], legend=True, color=tcolors[tcii], ls='dashed', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
+	# plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
 
 	sn.despine(offset=2)
 
-	ax=plt.subplot(4,2,(tcii+2)+(tcii*1))
+	ax=plt.subplot(1,2,2)
 
-	plt.plot(linear_model.betas,'o-')
-	ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
+	plt.bar(np.arange(len(linear_model.betas)), linear_model.betas)
+	# ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
 	sn.despine()
 
 
@@ -214,6 +223,8 @@ for subname in sublist:
 	plt.savefig(os.path.join(figfolder,'per_sub','GLM','%s-GLM.pdf'%subname))
 
 	plt.close()
+
+	embed()
 
 	# except:
 	# 	embed()

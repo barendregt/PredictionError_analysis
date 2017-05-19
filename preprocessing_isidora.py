@@ -21,14 +21,15 @@ from BehaviorAnalyzer import BehaviorAnalyzer
 
 
 if platform.node()=="aeneas":
-	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
+	#raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
+	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Isidora/'
 else:
 	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV']#,'AZ','AX','AY','AW','AV','AU']#
-
+#sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#,'AZ','AX','AY','AW','AV','AU']#
+sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ']
 # sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
