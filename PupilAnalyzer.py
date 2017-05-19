@@ -256,11 +256,11 @@ class PupilAnalyzer(Analyzer):
 							  'green45': 2,
 							  'green135': 3}
 
-			if params['trial_cue']==params['trial_stimulus_label']:
-				return np.array(params['task']==2, dtype=int)
-
 			if 'trial_cue_label' not in params.keys():
 				params['trial_cue'] = stimulus_types[params['trial_cue']]
+
+			if params['trial_cue']==params['trial_stimulus']:
+				return np.array(params['task']==2, dtype=int)
 
 			else:
 				if np.array(params['task'] == 1): # color task

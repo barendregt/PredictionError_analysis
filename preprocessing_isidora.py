@@ -238,7 +238,7 @@ def run_analysis(subname):
 
 	
 
-	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = False, baseline_correction = False, force_rebuild=False)
+	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild=False)
 
 	response_pupil_signals = []
 
