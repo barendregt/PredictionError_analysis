@@ -206,54 +206,54 @@ for subname in sublist:
 	# sn.despine()
 	# plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
 
-	# plt.figure()
-	# ax=plt.subplot(2,2,1)
-	# plt.title('Stimulus-locked - color')
-	# plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
-	# ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
-	# plt.legend(labels[1])
+	plt.figure()
+	ax=plt.subplot(2,2,1)
+	plt.title('Stimulus-locked - color')
+	plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+	plt.legend(labels[1])
 
-	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	# sn.despine(offset=5)
+	sn.despine(offset=5)
 
-	# ax=plt.subplot(2,2,2)
-	# plt.title('Response-locked - color')
-	# plt.plot(betas[3]-betas[3][:5,:].mean(axis=0))
-	# ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
-	# plt.legend(labels[3])
+	ax=plt.subplot(2,2,2)
+	plt.title('Response-locked - color')
+	plt.plot(betas[3]-betas[3][:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+	plt.legend(labels[3])
 
-	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	# sn.despine(offset=5)
+	sn.despine(offset=5)
 
-	# ax=plt.subplot(2,2,3)
-	# plt.title('Stimulus-locked - ori')
-	# plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
-	# ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
-	# plt.legend(labels[2])
+	ax=plt.subplot(2,2,3)
+	plt.title('Stimulus-locked - ori')
+	plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+	plt.legend(labels[2])
 
-	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	# sn.despine(offset=5)	
+	sn.despine(offset=5)	
 
-	# ax=plt.subplot(2,2,4)
-	# plt.title('Response-locked - ori')
-	# plt.plot(betas[4]-betas[4][:5,:].mean(axis=0))
-	# ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
-	# plt.legend(labels[4])
+	ax=plt.subplot(2,2,4)
+	plt.title('Response-locked - ori')
+	plt.plot(betas[4]-betas[4][:5,:].mean(axis=0))
+	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+	plt.legend(labels[4])
 
-	# # ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	# sn.despine(offset=5)	
+	sn.despine(offset=5)	
 
-	# plt.tight_layout()
+	plt.tight_layout()
 
-	# plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
+	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
 
-	# plt.close()
+	plt.close()
 
-embed()
+# embed()
 
 
 

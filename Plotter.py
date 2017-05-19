@@ -83,18 +83,18 @@ class Plotter(object):
 
 					if compute_sd:
 						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
-						if len(self.linestylemap)>0:
+						if not self.linestylemap:
 							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)#, color=self.linestylemap[label][0])	
 						else:
 							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)		
 
-					if len(signal_labels)==0:
-						if len(self.linestylemap) > 0:
+					if not signal_labels:
+						if not self.linestylemap:
 							self.plot(xtimes, msignal, label=label, fmt = self.linestylemap[label])
 						else:
 							self.plot(xtimes, msignal, label=label)
 					else:
-						if len(self.linestylemap) > 0:
+						if not self.linestylemap:
 							self.plot(xtimes, msignal, label=signal_labels[label])
 						else:
 							self.plot(xtimes, msignal, label=signal_labels[label], fmt = self.linestylemap[label])
@@ -111,18 +111,18 @@ class Plotter(object):
 
 					if compute_sd:	
 						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
-						if len(self.linestylemap)>0:
+						if not self.linestylemap:
 							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)#, color=self.linestylemap[key][0])	
 						else:
 							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
 
-					if len(signal_labels)==0:
-						if len(self.linestylemap) > 0:
+					if not signal_labels:
+						if not self.linestylemap:
 							self.plot(xtimes, msignal, label=label, fmt = self.linestylemap[key])
 						else:
 							self.plot(xtimes, msignal, label=label)
 					else:
-						if len(self.linestylemap) > 0:
+						if not self.linestylemap:
 							self.plot(xtimes, msignal, label=signal_labels[key])
 						else:
 							self.plot(xtimes, msignal, label=signal_labels[key], fmt = self.linestylemap[key])
