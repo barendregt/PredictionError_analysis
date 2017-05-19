@@ -123,9 +123,9 @@ class Plotter(object):
 							self.plot(xtimes, msignal, label=label)
 					else:
 						if len(self.linestylemap) > 0:
-							self.plot(xtimes, msignal, label=signal_labels[label])
+							self.plot(xtimes, msignal, label=signal_labels[key])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[label], fmt = self.linestylemap[key])
+							self.plot(xtimes, msignal, label=signal_labels[key], fmt = self.linestylemap[key])
 
 	
 		
