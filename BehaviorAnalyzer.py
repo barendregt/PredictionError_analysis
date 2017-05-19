@@ -52,7 +52,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 					self.csv_data_runs.append(pd.read_csv(self.csv_file[ii], dtype={'trial_cue':'str', 'trial_stimulus_label': 'str'}))
 
 
-		if 'trial_cue' in self.csv_data.keys():
+		if ('trial_cue' in self.csv_data.keys()) and ('trial_cue_label' not in self.csv_data.keys()):
 			stimulus_types = {'red45': 0,
 							  'red135': 1,
 							  'green45': 2,
