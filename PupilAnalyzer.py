@@ -537,7 +537,7 @@ class PupilAnalyzer(Analyzer):
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
 
 
-	def get_IRF(self, deconv_interval = None):
+	def get_IRF(self, deconv_interval = None, only_correct = False):
 
 		self.load_combined_data()
 
@@ -582,11 +582,195 @@ class PupilAnalyzer(Analyzer):
 
 			stim_deconv_interval = [-0.5,3]
 
-			stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==0)], # no PE
-							   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==50)], # both PE
-							   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==10)], # PE TR
-							   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==30)]  # PE ~TR
-							  ])
+			if only_correct:
+				stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] < 10)], # no PE
+								   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
+								   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
+								   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
+								  ])
+			else:
+				stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] < 10)], # no PE
+								   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
+								   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
+								   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
+								  ])
+
+			# covariates = {''}
+
+			self.FIR_stim = FIRDeconvolution(
+							signal = recorded_pupil_signal,
+							events = stim_events / self.signal_sample_frequency,
+							event_names = ['noPE','bothPE','PEtr','PEntr'],
+							#durations = {'response': self.events['durations']['response']},
+							sample_frequency = self.signal_sample_frequency,
+				            deconvolution_frequency = self.deconv_sample_frequency,
+				        	deconvolution_interval = stim_deconv_interval,
+				        	#covariates = self.events['covariates']
+						)
+
+			self.FIR_stim.create_design_matrix(intercept=False)
+
+			# dm_stim_color = self.FIR_stim_color.design_matrix
+
+			# One response-locked
+
+			resp_deconv_interval = [-2,2]
+
+
+			if only_correct:
+				resp_events = np.array([trial_parameters['trial_phase_8_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] < 10)], # no PE
+								   trial_parameters['trial_phase_8_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
+								   trial_parameters['trial_phase_8_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
+								   trial_parameters['trial_phase_8_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
+								  ])
+			else:
+				resp_events = np.array([trial_parameters['trial_phase_8_full_signal'][(~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] < 10)], # no PE
+								   trial_parameters['trial_phase_8_full_signal'][(~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
+								   trial_parameters['trial_phase_8_full_signal'][(~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
+								   trial_parameters['trial_phase_8_full_signal'][(~np.isnan(trial_parameters['trial_phase_8_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
+								  ])
+
+
+			self.FIR_resp = FIRDeconvolution(
+							signal = recorded_pupil_signal,
+							events = resp_events / self.signal_sample_frequency,
+							event_names = ['noPE','bothPE','PEtr','PEntr'],
+							#durations = {'response': self.events['durations']['response']},
+							sample_frequency = self.signal_sample_frequency,
+				            deconvolution_frequency = self.deconv_sample_frequency,
+				        	deconvolution_interval = resp_deconv_interval,
+				        	#covariates = self.events['covariates']
+						)
+
+			self.FIR_resp.create_design_matrix(intercept=False)
+
+		except:
+			embed()
+
+		# dm3 = self.FIR_resp_ori.design_matrix		
+
+
+		self.dm_stim = np.vstack([self.FIR_nuiss.design_matrix, self.FIR_stim.design_matrix])
+
+	
+		self.FIR_betas_stim = sp.linalg.lstsq(self.dm_stim.T, self.FIR_resampled_pupil_signal.T)[0]
+
+		self.dm_resp = np.vstack([self.FIR_nuiss.design_matrix, self.FIR_resp.design_matrix])
+
+		self.FIR_betas_resp = sp.linalg.lstsq(self.dm_resp.T, self.FIR_resampled_pupil_signal.T)[0]
+
+
+		self.dm_all = np.vstack([self.FIR_nuiss.design_matrix, self.FIR_stim.design_matrix, self.FIR_resp.design_matrix])
+
+		self.FIR_betas_all = sp.linalg.lstsq(self.dm_all.T, self.FIR_resampled_pupil_signal.T)[0]	
+		
+		# embed()
+		stim_betas = self.FIR_betas_stim[-int(stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency):].reshape((stim_events.shape[0],(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)).T
+
+		stim_nuiss_betas = self.FIR_betas_stim[:-int(stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+
+
+		resp_betas = self.FIR_betas_resp[-int(resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((resp_events.shape[0],(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)).T
+		resp_nuiss_betas = self.FIR_betas_resp[:-int(resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+
+
+		all_betas = self.FIR_betas_all[-int(stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency+resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency):].reshape((2*stim_events.shape[0]+2*resp_events.shape[0],((stim_deconv_interval[1]-stim_deconv_interval[0])+(resp_deconv_interval[1]-resp_deconv_interval[0]))*self.deconv_sample_frequency)).T
+		all_stim_betas = afll_betas[:,0:4]
+		all_resp_betas = all_betas[:,4:]
+		all_nuiss_betas = self.FIR_betas_all[:-int(stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency+resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
+
+		return [[stim_betas, resp_betas, stim_nuiss_betas, resp_nuiss_betas, all_stim_betas, all_resp_betas, all_nuiss_betas], [self.FIR_stim.covariates.keys(), self.FIR_resp.covariates.keys(),self.FIR_nuiss.covariates.keys()]]
+
+		# figure()
+		# ax=subplot(1,2,1)
+		# title('Nuissances')
+		# plot(other_betas)
+		# legend(self.FIR1.covariates.keys())
+
+		# ax.set(xticks=np.arange(0,100,10), xticklabels=np.arange(-2,8))
+
+		# sn.despine()
+
+		# ax=subplot(1,2,2)
+		# title('PE')
+		# plot(pe_betas)
+		# legend(self.FIR2.covariates.keys())
+		# ax.set(xticks=np.arange(0,40,10), xticklabels=np.arange(-1,3))
+
+		# sn.despine()
+
+		# tight_layout()
+
+		# savefig('fir_example.pdf')
+
+
+		# print '[%s] Fitting IRF' % (self.__class__.__name__)
+		# self.FIRo.regress(method = 'lstsq')
+		# self.FIRo.betas_for_events()
+		# self.FIRo.calculate_rsq()	
+
+		# self.sub_IRF = {'stimulus': [], 'button_press': []}
+
+		# self.sub_IRF['stimulus'] = self.FIRo.betas_per_event_type[0].ravel() - self.FIRo.betas_per_event_type[0].ravel().mean()
+		# self.sub_IRF['button_press'] = self.FIRo.betas_per_event_type[1].ravel() - self.FIRo.betas_per_event_type[1].ravel().mean()
+
+	def get_IRF_per_task(self, deconv_interval = None, only_correct = False):
+
+		self.load_combined_data()
+
+
+		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
+
+		self.FIR_resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / self.signal_sample_frequency)*self.deconv_sample_frequency), axis = -1)
+
+
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		blinks = self.read_blink_data(self.combined_h5_filename)
+		saccades = self.read_saccade_data(self.combined_h5_filename)
+
+		nuiss_events = np.array([blinks['end_block_timestamp'],
+							   saccades['end_block_timestamp']])#,
+							   #trial_parameters['trial_phase_2_full_signal']])#,   # task cue
+							   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_stimulus']<2],   # red stimulus
+					  		   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+
+		#if deconv_interval is None:
+		nuiss_deconv_interval = [-2, 5]
+
+
+		print('[%s] Starting FIR deconvolution' % (self.__class__.__name__))
+
+		self.FIR_nuiss = FIRDeconvolution(
+						signal = recorded_pupil_signal,
+						events = nuiss_events / self.signal_sample_frequency,
+						event_names = ['blinks','saccades'],#,'task_cue'],#,'red_stim','green_stim'],
+						#durations = {'response': self.events['durations']['response']},
+						sample_frequency = self.signal_sample_frequency,
+			            deconvolution_frequency = self.deconv_sample_frequency,
+			        	deconvolution_interval = nuiss_deconv_interval,
+			        	#covariates = self.events['covariates']
+					)
+
+		self.FIR_nuiss.create_design_matrix(intercept=False)
+		# dm_nuiss = self.FIR_nuiss.design_matrix
+
+		try:
+			# One stimulus-locked, color tas
+
+			stim_deconv_interval = [-0.5,3]
+
+			if only_correct:
+				stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==0)], # no PE
+								   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==50)], # both PE
+								   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==10)], # PE TR
+								   trial_parameters['trial_phase_4_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==30)]  # PE ~TR
+								  ])
+			else:
+				stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==0)], # no PE
+								   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==50)], # both PE
+								   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==10)], # PE TR
+								   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==30)]  # PE ~TR
+								  ])
 
 			# covariates = {''}
 
@@ -609,6 +793,7 @@ class PupilAnalyzer(Analyzer):
 			# One stimulus-locked, ori task		
 			stim_deconv_interval = [-0.5,3]
 
+			# if only_correct
 			stim_events = np.array([trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==1)], # no PE
 							   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==60)], # both PE
 							   trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_codes']==20)], # PE TR
