@@ -257,12 +257,15 @@ for subname in sublist:
 	all_rts.extend(sub_rts[0])
 	all_rts.extend(sub_rts[1])
 
-	rts['UP'].extend(sub_rts[10] / np.median(sub_rts[0]))
-	rts['UP'].extend(sub_rts[20] / np.median(sub_rts[1]))
-	rts['PU'].extend(sub_rts[30] / np.median(sub_rts[0]))
-	rts['PU'].extend(sub_rts[40] / np.median(sub_rts[1]))
-	rts['UU'].extend(sub_rts[50] / np.median(sub_rts[0]))
-	rts['UU'].extend(sub_rts[60] / np.median(sub_rts[1]))
+	rts['PP'].extend(sub_rts[0])
+	rts['PP'].extend(sub_rts[1])
+
+	rts['UP'].extend(sub_rts[10])# / np.median(sub_rts[0]))
+	rts['UP'].extend(sub_rts[20])# / np.median(sub_rts[1]))
+	rts['PU'].extend(sub_rts[30])# / np.median(sub_rts[0]))
+	rts['PU'].extend(sub_rts[40])# / np.median(sub_rts[1]))
+	rts['UU'].extend(sub_rts[50])# / np.median(sub_rts[0]))
+	rts['UU'].extend(sub_rts[60])# / np.median(sub_rts[1]))
 
 
 	sub_pc = pa.compute_percent_correct()
@@ -408,7 +411,7 @@ for subname in sublist:
 
 
 	pl.open_figure(force=1)
-	pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative reaction time (% of predicted)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
+	pl.bar_plot(data = rts, conditions = ['PP','UP','PU','UU'], ylabel='Reaction time (ms)', with_error = True, x_lim = [0.5, None],xticklabels = ['None','Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
 	pl.save_figure('%s-reaction_times.pdf'%subname, sub_folder = 'per_sub/task')
 
