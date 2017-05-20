@@ -113,7 +113,7 @@ for subname in sublist:
 
 
 		
-	tc_rts = trial_params['reaction_time'][:-1] 
+	tc_rts = trial_params['reaction_time'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1]
 
 	#reg_stimulus_phase = trial_params['trial_phase_4_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
 	reg_response_phase = trial_params['trial_phase_7_full_signal'][~np.isnan(trial_params['trial_phase_7_full_signal'])][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] / signal_sample_frequency*deconv_sample_frequency
