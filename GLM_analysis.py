@@ -116,7 +116,7 @@ for subname in sublist:
 	tc_rts = trial_params['reaction_time'][:-1] 
 
 	#reg_stimulus_phase = trial_params['trial_phase_4_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
-	reg_response_phase = trial_params['trial_phase_7_full_signal'][:-1] / signal_sample_frequency*deconv_sample_frequency
+	reg_response_phase = trial_params['trial_phase_7_full_signal'][~np.isnan(trial_params['trial_phase_7_full_signal'])][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] / signal_sample_frequency*deconv_sample_frequency
 	# reg_dec_interval = reg_response_phase
 	# reg_response_phase_start = 
 	# reg_button_press = reg_response_phase + tc_rts
@@ -155,7 +155,7 @@ for subname in sublist:
 	all_event_types = []
 	for tcii in range(len(tcodes)-1):
 
-		trial_iis = np.array((trial_params['trial_codes'][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][:-1] < tcodes[tcii+1]), dtype=bool)
+		trial_iis = np.array((trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] < tcodes[tcii+1]), dtype=bool)
 
 		event_cue = np.zeros((trial_iis.sum(), 3))
 		event_decint = np.zeros((trial_iis.sum(), 3))
@@ -195,7 +195,7 @@ for subname in sublist:
 
 	for tcii in range(len(tcodes)-1):
 
-		trial_iis = np.array((trial_params['trial_codes'][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][:-1] < tcodes[tcii+1]), dtype=bool)	
+		trial_iis = np.array((trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] < tcodes[tcii+1]), dtype=bool)	
 
 		avg_time_series = pupil_time_series.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
 		avg_pred_series = linear_model.predicted.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
