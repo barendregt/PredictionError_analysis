@@ -57,7 +57,7 @@ def run_analysis(subname):
 
 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 3, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval, verbosity= 1)
 
-	pa.recombine_signal_blocks(force_rebuild = False)
+	pa.recombine_signal_blocks(force_rebuild = True)
 
 	signal_types = ['gaze_x',
 					'gaze_y',
