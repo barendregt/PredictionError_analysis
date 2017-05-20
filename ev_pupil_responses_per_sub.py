@@ -411,7 +411,7 @@ for subname in sublist:
 
 
 	pl.open_figure(force=1)
-	pl.bar_plot(data = rts, conditions = ['PP','UP','PU','UU'], ylabel='Reaction time (ms)', with_error = True, x_lim = [0.5, None],xticklabels = ['None','Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
+	pl.bar_plot(data = rts, conditions = ['PP','UP','PU','UU'], ylabel='Reaction time (ms)', with_error = True, x_lim = [0.5, None],xticklabels = ['None','Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [0.0, None])#, yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
 	pl.save_figure('%s-reaction_times.pdf'%subname, sub_folder = 'per_sub/task')
 
