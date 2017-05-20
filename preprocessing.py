@@ -27,7 +27,7 @@ else:
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV']#,'AZ','AX','AY','AW','AV','AU']#
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','BA','BB','BC','BD','BE','BF','BG','BH','BI','BJ']#
 
 # sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
@@ -55,9 +55,9 @@ def run_analysis(subname):
 
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 3, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval, verbosity= 1)
+	`pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 3, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = deconvolution_interval, verbosity= 1)
 
-	pa.recombine_signal_blocks(force_rebuild = True)
+	pa.recombine_signal_blocks(force_rebuild = False)
 
 	signal_types = ['gaze_x',
 					'gaze_y',
