@@ -140,7 +140,7 @@ for subname in sublist:
 	
 	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
 	pl.save_figure('%s-tc_corr_response.pdf'%subname, sub_folder='per_sub/RT')
-	pl.close()
+	plt.close('all')
 	# embed()
 
 # embed()
