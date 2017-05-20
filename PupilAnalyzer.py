@@ -577,7 +577,7 @@ class PupilAnalyzer(Analyzer):
 		self.FIR_nuiss.create_design_matrix(intercept=False)
 		# dm_nuiss = self.FIR_nuiss.design_matrix
 
-
+		embed()
 		# One stimulus-locked, color tas
 
 		stim_deconv_interval = [-0.5,3]
