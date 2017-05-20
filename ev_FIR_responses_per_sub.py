@@ -315,7 +315,7 @@ plt.close()
 
 plt.figure()
 
-all_data_ndarray = np.dstack([np.vstack([stimulus_fir_signals['color']['PU'], stimulus_fir_signals['orientation']['PU']]), np.vstack([stimulus_fir_signals['color']['PP'], stimulus_fir_signals['orientation']['PP']]),np.vstack([stimulus_fir_signals['color']['UU'],stimulus_fir_signals['orientation']['UU']]),np.vstack([stimulus_fir_signals['color']['UP'], stimulus_fir_signals['orientation']['UP']])])
+all_data_ndarray = np.dstack([np.vstack([stimulus_fir_signals['color']['PU'], stimulus_fir_signals['ori']['PU']]), np.vstack([stimulus_fir_signals['color']['PP'], stimulus_fir_signals['ori']['PP']]),np.vstack([stimulus_fir_signals['color']['UU'],stimulus_fir_signals['ori']['UU']]),np.vstack([stimulus_fir_signals['color']['UP'], stimulus_fir_signals['ori']['UP']])])
 ax=plt.subplot(1,2,1)
 plt.title('Stimulus-locked - color')
 plt.ylabel(r'Pupil size ($\beta$)')
@@ -326,7 +326,7 @@ sn.tsplot(data = all_data_ndarray, condition = labels[1], time = pd.Series(data=
 
 sn.despine(offset=5)
 
-all_data_ndarray = np.dstack([np.vstack([response_fir_signals['color']['PU'], response_fir_signals['orientation']['PU']]), np.vstack([response_fir_signals['color']['PP'], response_fir_signals['orientation']['PP']]),np.vstack([response_fir_signals['color']['UU'],response_fir_signals['orientation']['UU']]),np.vstack([response_fir_signals['color']['UP'], response_fir_signals['orientation']['UP']])])
+all_data_ndarray = np.dstack([np.vstack([response_fir_signals['color']['PU'], response_fir_signals['ori']['PU']]), np.vstack([response_fir_signals['color']['PP'], response_fir_signals['ori']['PP']]),np.vstack([response_fir_signals['color']['UU'],response_fir_signals['ori']['UU']]),np.vstack([response_fir_signals['color']['UP'], response_fir_signals['ori']['UP']])])
 ax=plt.subplot(1,2,2)
 plt.title('Response-locked - color')
 plt.ylabel(r'Pupil size ($\beta$)')
