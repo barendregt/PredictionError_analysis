@@ -258,6 +258,6 @@ def run_analysis(subname):
 
 # [run_analysis(sub) for sub in sublist]
 #Run everything in parallel for speed 
-# num_cores = multiprocessing.cpu_count()
+num_cores = multiprocessing.cpu_count()
 
 Parallel(n_jobs=8)(delayed(run_analysis)(subname) for subname in sublist)
