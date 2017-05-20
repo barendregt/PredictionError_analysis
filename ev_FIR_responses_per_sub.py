@@ -112,7 +112,7 @@ response_fir_signals = {'color': {'PP': [],
 						 'UU': []}
 						 }
 
-
+plot_indiv = False
 
 for subname in sublist:
 
@@ -206,52 +206,53 @@ for subname in sublist:
 	# sn.despine()
 	# plt.savefig(os.path.join(figfolder, 'per_sub','FIR','%s-timecourse.pdf'%subname))
 
-	plt.figure()
-	ax=plt.subplot(2,2,1)
-	plt.title('Stimulus-locked - color')
-	plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
-	plt.legend(labels[1])
+	if plot_indiv:
+		plt.figure()
+		ax=plt.subplot(2,2,1)
+		plt.title('Stimulus-locked - color')
+		plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
+		ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+		plt.legend(labels[1])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+		# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)
+		sn.despine(offset=5)
 
-	ax=plt.subplot(2,2,2)
-	plt.title('Response-locked - color')
-	plt.plot(betas[3]-betas[3][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
-	plt.legend(labels[3])
+		ax=plt.subplot(2,2,2)
+		plt.title('Response-locked - color')
+		plt.plot(betas[3]-betas[3][:5,:].mean(axis=0))
+		ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+		plt.legend(labels[3])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+		# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)
+		sn.despine(offset=5)
 
-	ax=plt.subplot(2,2,3)
-	plt.title('Stimulus-locked - ori')
-	plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
-	plt.legend(labels[2])
+		ax=plt.subplot(2,2,3)
+		plt.title('Stimulus-locked - ori')
+		plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
+		ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+		plt.legend(labels[2])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+		# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)	
+		sn.despine(offset=5)	
 
-	ax=plt.subplot(2,2,4)
-	plt.title('Response-locked - ori')
-	plt.plot(betas[4]-betas[4][:5,:].mean(axis=0))
-	ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
-	plt.legend(labels[4])
+		ax=plt.subplot(2,2,4)
+		plt.title('Response-locked - ori')
+		plt.plot(betas[4]-betas[4][:5,:].mean(axis=0))
+		ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+		plt.legend(labels[4])
 
-	# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
+		# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
 
-	sn.despine(offset=5)	
+		sn.despine(offset=5)	
 
-	plt.tight_layout()
+		plt.tight_layout()
 
-	plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
+		plt.savefig(os.path.join(figfolder,'per_sub','FIR','%s-FIR.pdf'%subname))
 
-	plt.close()
+		plt.close()
 
 # embed()
 
@@ -306,9 +307,43 @@ sn.despine(offset=5)
 
 plt.tight_layout()
 
-plt.savefig(os.path.join(figfolder,'over_subs','FIR_all.pdf'))
+plt.savefig(os.path.join(figfolder,'over_subs','FIR_sep.pdf'))
 
 plt.close()
+
+
+
+plt.figure()
+
+all_data_ndarray = np.dstack([np.vstack([stimulus_fir_signals['color']['PU'], stimulus_fir_signals['orientation']['PU']]), np.vstack([stimulus_fir_signals['color']['PP'], stimulus_fir_signals['orientation']['PP']]),np.vstack([stimulus_fir_signals['color']['UU'],stimulus_fir_signals['orientation']['UU']]),np.vstack([stimulus_fir_signals['color']['UP'], stimulus_fir_signals['orientation']['UP']])])
+ax=plt.subplot(1,2,1)
+plt.title('Stimulus-locked - color')
+plt.ylabel(r'Pupil size ($\beta$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[1], time = pd.Series(data=np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1], 1/deconv_sample_frequency).squeeze(), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.despine(offset=5)
+
+all_data_ndarray = np.dstack([np.vstack([response_fir_signals['color']['PU'], response_fir_signals['orientation']['PU']]), np.vstack([response_fir_signals['color']['PP'], response_fir_signals['orientation']['PP']]),np.vstack([response_fir_signals['color']['UU'],response_fir_signals['orientation']['UU']]),np.vstack([response_fir_signals['color']['UP'], response_fir_signals['orientation']['UP']])])
+ax=plt.subplot(1,2,2)
+plt.title('Response-locked - color')
+plt.ylabel(r'Pupil size ($\beta$)')
+plt.axvline(x=0, color='k', linestyle='solid', alpha=0.15)
+plt.axhline(y=0, color='k', linestyle='dashed', alpha=0.25)
+
+sn.tsplot(data = all_data_ndarray, condition = labels[1], time = pd.Series(data=np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'), ci=[68], legend=True)
+
+sn.despine(offset=5)
+
+plt.tight_layout()
+
+plt.savefig(os.path.join(figfolder,'over_subs','FIR_comb.pdf'))
+
+plt.close()
+
+
 # pl.open_figure(force=1)
 # pl.hline(y=0)
 # pl.event_related_pupil_average(data = response_fir_signals, conditions = ['PP','UP','PU','UU'], show_legend = True, signal_labels = dict(zip(['PU','PP','UU','UP'], labels[0])), compute_mean = True, compute_sd = True)
