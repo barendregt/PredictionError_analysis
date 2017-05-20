@@ -224,7 +224,7 @@ for subname in sublist:
 
 	plt.close()
 
-	embed()
+	# embed()
 
 	# except:
 	# 	embed()
@@ -259,7 +259,7 @@ for subname in sublist:
 
 all_data_ndarray = np.dstack([all_betas['PU'],all_betas['PP'],all_betas['UU'],all_betas['UP']])
 
-pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['stim','button','sustained'], all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
+pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['stim','button','sustained']*4, all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
 					   index = np.arange(all_data_ndarray.shape[0]*all_data_ndarray.shape[1]*all_data_ndarray.shape[2]),
 					   columns=['beta','param','pp','condition'])
 
