@@ -90,14 +90,14 @@ class Plotter(object):
 
 					if not signal_labels:
 						if not self.linestylemap:
-							self.plot(xtimes, msignal, label=label, fmt = self.linestylemap[label])
+							self.plot(xtimes, msignal, label=label)
 						else:
 							self.plot(xtimes, msignal, label=label)
 					else:
 						if not self.linestylemap:
 							self.plot(xtimes, msignal, label=signal_labels[label])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[label], fmt = self.linestylemap[label])
+							self.plot(xtimes, msignal, label=signal_labels[label])
 
 				
 
@@ -118,14 +118,14 @@ class Plotter(object):
 
 					if not signal_labels:
 						if not self.linestylemap:
-							self.plot(xtimes, msignal, label=label, fmt = self.linestylemap[key])
+							self.plot(xtimes, msignal, label=label)
 						else:
 							self.plot(xtimes, msignal, label=label)
 					else:
 						if not self.linestylemap:
 							self.plot(xtimes, msignal, label=signal_labels[key])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[key], fmt = self.linestylemap[key])
+							self.plot(xtimes, msignal, label=signal_labels[key])
 
 	
 		

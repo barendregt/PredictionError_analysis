@@ -167,10 +167,7 @@ for subname in sublist:
 
 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
-	try:
-		betas, labels = pa.get_IRF()
-	except:
-		embed()
+	betas, labels = pa.get_IRF()
 
 	# embed()
 
