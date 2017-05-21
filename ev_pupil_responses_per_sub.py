@@ -420,7 +420,7 @@ for subname in sublist:
 
 	pl.open_figure(force=1)
 	# pl.figure.suptitle('Performance')
-	pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', with_error = True, x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
+	pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', with_data_points = True, x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
 
 	pl.save_figure('%s-percent_correct.pdf'%subname, sub_folder = 'per_sub/task')
 

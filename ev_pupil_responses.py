@@ -39,16 +39,16 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AA','AB','AC','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','BA','BB','BC','BD','BE','BF','BG','BH']#
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
-low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
+low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-1, 4.5])
-stimulus_deconvolution_interval = np.array([-0.5, 4.5])
+stimulus_deconvolution_interval = np.array([-1, 4.5])
 
 down_fs = 50
 
@@ -86,6 +86,10 @@ ie_scores 	  = {'PP': [],
 				 'UP': [],
 				 'PU': [],
 				 'UU': []}
+all_rts 	  = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}				 
 rts 	  	  = {'PP': [],
 				 'UP': [],
 				 'PU': [],
@@ -105,7 +109,7 @@ power_time_window = [int(0.5*(signal_sample_frequency/down_fs)),int(5*(signal_sa
 zero_point = 15
 
 # all_ie_scores = []
-all_rts = []
+# all_rts = []
 
 for subname in sublist:
 
@@ -126,9 +130,9 @@ for subname in sublist:
 	# # Get pupil data (ev)
 	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False)
 
-	pa.get_IRF()
+	# pa.get_IRF()
 
-	all_sub_IRF['button_press'].append(pa.sub_IRF['button_press'])
+	# all_sub_IRF['button_press'].append(pa.sub_IRF['button_press'])
 
 
 	# embed()
@@ -201,9 +205,9 @@ for subname in sublist:
 	pa.deconvolution_interval = stimulus_deconvolution_interval
 	pa.signal_per_trial(only_correct = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False)
 
-	pa.get_IRF()
+	# pa.get_IRF()
 
-	all_sub_IRF['stimulus'].append(pa.sub_IRF['stimulus'])
+	# all_sub_IRF['stimulus'].append(pa.sub_IRF['stimulus'])
 
 	# embed()
 	ref_signals = []
@@ -245,8 +249,14 @@ for subname in sublist:
 
 	sub_rts = pa.compute_reaction_times()
 
-	all_rts.append(sub_rts[0])
-	all_rts.append(sub_rts[1])
+	all_rts['PP'].append(sub_rts[0])
+	all_rts['PP'].append(sub_rts[1])
+	all_rts['UP'].append(sub_rts[10])
+	all_rts['UP'].append(sub_rts[20])
+	all_rts['PU'].append(sub_rts[30])
+	all_rts['PU'].append(sub_rts[40])
+	all_rts['UU'].append(sub_rts[50])
+	all_rts['UU'].append(sub_rts[60])
 
 	rts['UP'].append(np.mean(sub_rts[10] / np.median(sub_rts[0])))
 	rts['UP'].append(np.mean(sub_rts[20] / np.median(sub_rts[1])))
