@@ -120,7 +120,7 @@ for subname in sublist:
 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, sort_by_date = sbsetting[sublist.index(subname)], signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
 	# redo signal extraction
 	# pa.recombine_signal_blocks(force_rebuild = True)
