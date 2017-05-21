@@ -334,11 +334,11 @@ pl.event_related_pupil_difference(data = stimulus_pupil_signals, conditions = ['
 pl.save_figure('pupil_difference-stimulus.pdf', sub_folder = 'over_subs')
 
 
-pl.open_figure(force=1)
-pl.hline(y=0)
-pl.event_related_pupil_average(data = all_sub_IRF, conditions = ['stimulus','button_press'], show_legend=True, ylabel = 'Pupil size', compute_mean = True, compute_sd = True)
+# pl.open_figure(force=1)
+# pl.hline(y=0)
+# pl.event_related_pupil_average(data = all_sub_IRF, conditions = ['stimulus','button_press'], show_legend=True, ylabel = 'Pupil size', compute_mean = True, compute_sd = True)
 
-pl.save_figure('pupil_IRF.pdf', sub_folder = 'over_subs')
+# pl.save_figure('pupil_IRF.pdf', sub_folder = 'over_subs')
 
 
 # pl.open_figure(force=1)
@@ -387,7 +387,7 @@ pl.save_figure('reaction_times.pdf', sub_folder = 'over_subs')
 
 pl.open_figure(force=1)
 # pl.figure.suptitle('Performance')
-pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', with_error = True, x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
+pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', with_data_points = True, x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
 
 pl.save_figure('percent_correct.pdf', sub_folder = 'over_subs')
 
