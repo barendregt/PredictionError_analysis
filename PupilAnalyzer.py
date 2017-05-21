@@ -614,7 +614,7 @@ class PupilAnalyzer(Analyzer):
 
 			# One response-locked
 
-			resp_deconv_interval = [-2,2]
+			resp_deconv_interval = [-2,3]
 
 
 			if only_correct:
