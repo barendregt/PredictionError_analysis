@@ -249,14 +249,14 @@ for subname in sublist:
 
 	sub_rts = pa.compute_reaction_times()
 
-	all_rts['PP'].append(sub_rts[0])
-	all_rts['PP'].append(sub_rts[1])
-	all_rts['UP'].append(sub_rts[10])
-	all_rts['UP'].append(sub_rts[20])
-	all_rts['PU'].append(sub_rts[30])
-	all_rts['PU'].append(sub_rts[40])
-	all_rts['UU'].append(sub_rts[50])
-	all_rts['UU'].append(sub_rts[60])
+	all_rts['PP'].append(np.median(sub_rts[0]))
+	all_rts['PP'].append(np.median(sub_rts[1]))
+	all_rts['UP'].append(np.median(sub_rts[10]))
+	all_rts['UP'].append(np.median(sub_rts[20]))
+	all_rts['PU'].append(np.median(sub_rts[30]))
+	all_rts['PU'].append(np.median(sub_rts[40]))
+	all_rts['UU'].append(np.median(sub_rts[50]))
+	all_rts['UU'].append(np.median(sub_rts[60]))
 
 	rts['UP'].append(np.mean(sub_rts[10] / np.median(sub_rts[0])))
 	rts['UP'].append(np.mean(sub_rts[20] / np.median(sub_rts[1])))
