@@ -378,14 +378,14 @@ pl.save_figure('pupil_amplitude_bar.pdf', sub_folder = 'over_subs')
 pl.open_figure(force=1)
 # pl.figure.suptitle('Reaction time')
 # pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
-pl.bar_plot(data = all_rts, conditions = ['PP','UP','PU','UU'], ylabel='Reaction time (ms)', with_error = True, with_data_points = True, x_lim = [0.5, None],xticklabels = ['None','Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [0.0, None])#, yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
+pl.bar_plot(data = all_rts, conditions = ['PP','UP','PU','UU'], ylabel='Reaction time (ms)', with_error = True, x_lim = [0.5, None],xticklabels = ['None','Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [0.0, None])#, yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
 pl.save_figure('reaction_times.pdf', sub_folder = 'over_subs')
 
 pl.open_figure(force=1)
 # pl.figure.suptitle('Reaction time')
 # pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
-pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative RT (% of predicted)', with_error = True, with_data_points = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
+pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative RT (% of predicted)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
 pl.save_figure('reaction_times_norm.pdf', sub_folder = 'over_subs')
 
