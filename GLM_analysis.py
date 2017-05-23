@@ -192,8 +192,8 @@ for subname in sublist:
 		
 	plt.figure()
 	
-	main_sub_inds = [1 3 4 6]
-	inset_sub_inds = [2 4 6 8]
+	main_sub_inds = [1, 3, 4, 6]
+	inset_sub_inds = [2, 4, 6, 8]
 	beta_inds = [np.arange(3),np.arange(3,6),np.arange(6,9),np.arange(9,12)]
 
 	for tcii in range(len(tcodes)-1):
