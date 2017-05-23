@@ -93,10 +93,10 @@ class PupilAnalyzer(Analyzer):
 
 		return blinks
 
-	def read_saccade_data(self, input_file):
+	def read_saccade_data(self, input_file, run = 'saccades'):
 
 		with pd.get_store(input_file) as tfile:
-			saccades = tfile['pupil/saccades/table']
+			saccades = tfile['pupil/%s/table'%run]
 
 		return saccades
 
@@ -415,11 +415,13 @@ class PupilAnalyzer(Analyzer):
 				this_run_baseline = np.append(this_run_baseline, this_block_baseline)
 				
 				this_phase_times[(this_phase_times >= bs) & (this_phase_times < be)] -= bs
-				this_block_blinks['start_block_timestamp'] = pd.Series(this_block_blinks['start_timestamp'].values - bs + prev_signal_size)
-				this_block_blinks['end_block_timestamp'] = pd.Series(this_block_blinks['end_timestamp'].values - bs + prev_signal_size)
+				this_block_blinks['start_block_timestamp'] = pd.Series(this_block_blinks['start_timestamp'].values - bs)
+				this_block_blinks['end_block_timestamp'] = pd.Series(this_block_blinks['end_timestamp'].values - bs)
 
-				this_block_saccades['start_block_timestamp'] = pd.Series(this_block_saccades['start_timestamp'].values - bs + prev_signal_size)
-				this_block_saccades['end_block_timestamp'] = pd.Series(this_block_saccades['end_timestamp'].values - bs + prev_signal_size)
+				# this_run_blinks = np.append(this_run_blinks, this_)
+
+				this_block_saccades['start_block_timestamp'] = pd.Series(this_block_saccades['start_timestamp'].values - bs)
+				this_block_saccades['end_block_timestamp'] = pd.Series(this_block_saccades['end_timestamp'].values - bs)
 
 			this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
 			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
@@ -713,6 +715,39 @@ class PupilAnalyzer(Analyzer):
 
 		# self.sub_IRF['stimulus'] = self.FIRo.betas_per_event_type[0].ravel() - self.FIRo.betas_per_event_type[0].ravel().mean()
 		# self.sub_IRF['button_press'] = self.FIRo.betas_per_event_type[1].ravel() - self.FIRo.betas_per_event_type[1].ravel().mean()
+
+	def microsaccades_per_run(self, block_length = 5):
+		
+
+		self.get_aliases()
+
+		block_length_samples = block_length * self.down_fs
+
+		
+		ms_per_run = []
+		signal_per_run = []
+		for run_ii in range(len(self.aliases)):
+			saccades = self.read_saccade_data(self.combined_h5_filename, run = 'r%i_saccades'%run_ii)
+
+			signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'r%i_signal'%run_ii)
+
+			block_times = np.arange(0, signal.size, block_length_samples)
+
+			ms_per_block = np.array([])
+			pupil_per_block = np.array([])
+
+			for t in range(1,len(block_times)):
+				ms_per_block = np.append(ms_per_block, np.sum(((saccades['start_block_timestamp']/self.signal_sample_frequency*self.down_fs) >= block_times[t-1]) * ((saccades['start_block_timestamp']/self.signal_sample_frequency*self.down_fs) < block_times[t]) * (saccades['length'] < 1.0)))
+				pupil_per_block = np.append(pupil_per_block, np.mean(signal[block_times[t-1]:block_times[t]]))
+
+			ms_per_run.append(ms_per_block)
+			signal_per_run.append(pupil_per_block)
+
+		return  ms_per_run, signal_per_run
+
+
+
+
 
 	def get_IRF_per_task(self, deconv_interval = None, only_correct = False):
 

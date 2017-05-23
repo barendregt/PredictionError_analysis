@@ -66,7 +66,7 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 20
-trial_deconvolution_interval = np.array([-2, 7])
+trial_deconvolution_interval = np.array([-2, 5])
 # trial_deconvolution_interval = np.array([-1, 3])
 
 down_fs = 50
@@ -257,7 +257,7 @@ for subname in sublist:
 
 	# embed()
 
-# embed()
+embed()
 
 all_data_ndarray = np.dstack([all_betas['PU'],all_betas['PP'],all_betas['UU'],all_betas['UP']])
 
