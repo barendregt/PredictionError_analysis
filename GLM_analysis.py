@@ -199,14 +199,15 @@ for subname in sublist:
 	for tcii in range(len(tcodes)-1):
 
 		plt.subplot(2,4,main_sub_inds[tcii])
+		title(tnames[tcii])
 
 		trial_iis = np.array((trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] < tcodes[tcii+1]), dtype=bool)	
 
 		avg_time_series = pupil_time_series.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
 		avg_pred_series = linear_model.predicted.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
 
-		sn.tsplot(avg_time_series, condition = tnames[tcii], legend=True, color=tcolors[tcii], ls='solid', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
-		sn.tsplot(avg_pred_series, condition = tnames[tcii], legend=True, color=tcolors[tcii], ls='dashed', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
+		sn.tsplot(avg_time_series, condition = tnames[tcii], legend=False, color=tcolors[tcii], ls='solid', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
+		sn.tsplot(avg_pred_series, condition = tnames[tcii], legend=False, color=tcolors[tcii], ls='dashed', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
 	# plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
 
 		sn.despine(offset=2)
@@ -214,7 +215,7 @@ for subname in sublist:
 		ax=plt.subplot(2,4,inset_sub_inds[tcii])
 
 		plt.bar([0.5,1.5,2.5], linear_model.betas[beta_inds[tcii]])
-		ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
+		ax.set(xticks=[0.5,1.5,2.5],xticklabels=['stim','int','button'])
 		sn.despine()
 
 
@@ -226,7 +227,7 @@ for subname in sublist:
 	all_betas['PU'].append(betas[6:9])
 	all_betas['UU'].append(betas[9:])
 
-	# plt.tight_layout()
+	plt.tight_layout()
 
 	plt.savefig(os.path.join(figfolder,'per_sub','GLM','%s-GLM.pdf'%subname))
 
