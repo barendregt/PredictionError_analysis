@@ -192,13 +192,13 @@ for subname in sublist:
 		
 	plt.figure()
 	
-	main_sub_inds = [1, 3, 4, 6]
+	main_sub_inds = [1, 3, 5, 7]
 	inset_sub_inds = [2, 4, 6, 8]
 	beta_inds = [np.arange(3),np.arange(3,6),np.arange(6,9),np.arange(9,12)]
 
 	for tcii in range(len(tcodes)-1):
 
-		plt.subplot(2,3,main_sub_inds[tcii])
+		plt.subplot(2,4,main_sub_inds[tcii])
 
 		trial_iis = np.array((trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] < tcodes[tcii+1]), dtype=bool)	
 
@@ -211,7 +211,7 @@ for subname in sublist:
 
 		sn.despine(offset=2)
 
-		ax=plt.subplot(4,4,inset_sub_inds[tcii])
+		ax=plt.subplot(2,4,inset_sub_inds[tcii])
 
 		plt.bar([0.5,1.5,2.5], linear_model.betas[beta_inds[tcii]])
 		ax.set(xticks=[0,1,2],xticklabels=['stim','int','button'])
