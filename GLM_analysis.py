@@ -185,7 +185,7 @@ for subname in sublist:
 		all_events.extend([event_cue, event_decint, event_button])
 		all_event_types.extend(['stick','box','stick'])
 		
-	linear_model = GLM(input_object=pupil_time_series, event_object=all_events, sample_dur=0.05, new_sample_dur=0.05)
+	linear_model = GLM(input_object=pupil_time_series, event_object=all_events, sample_dur=1/deconv_sample_frequency, new_sample_dur=1/deconv_sample_frequency)
 	linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=all_event_types, normalize_sustained = True)
 	linear_model.execute()
 
