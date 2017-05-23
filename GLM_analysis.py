@@ -215,7 +215,7 @@ for subname in sublist:
 		ax=plt.subplot(2,4,inset_sub_inds[tcii])
 
 		plt.bar([0.5,1.5,2.5], linear_model.betas[beta_inds[tcii]])
-		ax.set(xticks=[0.5,1.5,2.5],xticklabels=['stim','int','button'], ylim=[-1.6 ,1.6])
+		ax.set(xticks=[0.5,1.5,2.5],xticklabels=['stim','int','button'], ylim=[-1.6, 1.6])
 		sn.despine()
 
 
