@@ -115,8 +115,8 @@ for subname in sublist:
 		
 	tc_rts = trial_params['reaction_time'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1]
 
-	#reg_stimulus_phase = trial_params['trial_phase_4_full_signal'][(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])] / signal_sample_frequency*deconv_sample_frequency
-	reg_response_phase = trial_params['trial_phase_7_full_signal'][~np.isnan(trial_params['trial_phase_7_full_signal'])][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] / signal_sample_frequency*deconv_sample_frequency
+	#reg_stimulus_phase = trial_params['trial_phase_4_full_signal'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] / signal_sample_frequency*deconv_sample_frequency
+	reg_response_phase = tc_rts * deconv_sample_frequency + trial_params['trial_phase_7_full_signal'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] / signal_sample_frequency*deconv_sample_frequency
 	# reg_dec_interval = reg_response_phase
 	# reg_response_phase_start = 
 	# reg_button_press = reg_response_phase + tc_rts
@@ -140,9 +140,9 @@ for subname in sublist:
 
 	pupil_time_series = np.concatenate([resampled_pupil_signal[int(trial+tstart):int(trial+tend)]-resampled_pupil_signal[int(trial+tstart-bstart):int(trial+tstart)].mean() for trial in reg_response_phase])
 
-
+	all_stim_events = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], reg_response_phase.size)) - trial_deconvolution_interval[1] - tc_rts
 	all_resp_events = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], reg_response_phase.size)) - trial_deconvolution_interval[1]
-	all_button_events = all_resp_events + tc_rts.values
+	# all_button_events = all_resp_events + tc_rts.values
 
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
@@ -169,21 +169,21 @@ for subname in sublist:
 		# event_cue[:,1] = 0.33
 		# event_cue[:,2] = 1
 
-		event_cue[:,0] = all_resp_events[trial_iis]
+		event_cue[:,0] = all_stim_events[trial_iis]
 		event_cue[:,1] = 0
 		event_cue[:,2] = 1
 
-		event_decint[:,0] = all_resp_events[trial_iis]
+		event_decint[:,0] = all_stim_events[trial_iis]
 		event_decint[:,1] = tc_rts.values[trial_iis]# * deconv_sample_frequency
 		event_decint[:,2] = 2
 
-		event_button[:,0] = all_button_events[trial_iis]
+		event_button[:,0] = all_resp_events[trial_iis]
 		event_button[:,1] = 0
 		event_button[:,2] = 3
 		# reg_response_phase_start = np.arange(trial_deconvolution_interval[0]*deconv_sample_frequency, nr_trials * , np.sum(trial_deconvolution_interval)*deconv_sample_frequency)
 
 		all_events.extend([event_cue, event_decint, event_button])
-		all_event_types.extend(['stick','upramp','stick'])
+		all_event_types.extend(['stick','box','stick'])
 		
 	linear_model = GLM(input_object=pupil_time_series, event_object=all_events, sample_dur=0.05, new_sample_dur=0.05)
 	linear_model.configure(IRF='pupil', IRF_params={'dur':3, 's':1.0/(10**26), 'n':10.1, 'tmax':0.93}, regressor_types=all_event_types, normalize_sustained = True)
@@ -218,7 +218,10 @@ for subname in sublist:
 
 	betas = linear_model.betas
 	# betas = [np.NaN if b < 0 else b for b in betas]
-	all_betas[['PP','UP','PU','UU'][tcii]].append(betas)
+	all_betas['PP'].append(betas[0:3])
+	all_betas['UP'].append(betas[3:6])
+	all_betas['PU'].append(betas[6:9])
+	all_betas['UU'].append(betas[9:])
 
 	plt.tight_layout()
 
@@ -257,11 +260,11 @@ for subname in sublist:
 
 	# embed()
 
-embed()
+# embed()
 
 all_data_ndarray = np.dstack([all_betas['PU'],all_betas['PP'],all_betas['UU'],all_betas['UP']])
 
-pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['stim','button','sustained']*4, all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
+pd_data = pd.DataFrame(data=np.vstack([all_data_ndarray.ravel(), np.tile(['stim','decint','button'], all_data_ndarray.shape[0]*all_data_ndarray.shape[2]), np.tile(np.repeat(np.arange(0,all_data_ndarray.shape[0]), all_data_ndarray.shape[1]), all_data_ndarray.shape[2]), np.repeat(['PEntr','noPE','bothPE','PEtr'], all_data_ndarray.shape[0]*all_data_ndarray.shape[1])]).T,
 					   index = np.arange(all_data_ndarray.shape[0]*all_data_ndarray.shape[1]*all_data_ndarray.shape[2]),
 					   columns=['beta','param','pp','condition'])
 
