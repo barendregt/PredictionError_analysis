@@ -226,7 +226,7 @@ for subname in sublist:
 	all_betas['PU'].append(betas[6:9])
 	all_betas['UU'].append(betas[9:])
 
-	plt.tight_layout()
+	# plt.tight_layout()
 
 	plt.savefig(os.path.join(figfolder,'per_sub','GLM','%s-GLM.pdf'%subname))
 
