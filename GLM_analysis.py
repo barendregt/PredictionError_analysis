@@ -199,7 +199,7 @@ for subname in sublist:
 	for tcii in range(len(tcodes)-1):
 
 		plt.subplot(2,4,main_sub_inds[tcii])
-		title(tnames[tcii])
+		plt.title(tnames[tcii])
 
 		trial_iis = np.array((trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] < tcodes[tcii+1]), dtype=bool)	
 
