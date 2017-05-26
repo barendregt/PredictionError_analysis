@@ -31,8 +31,8 @@ class PupilAnalyzer(Analyzer):
 	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7,verbosity = 0, **kwargs):
 
 		# Setup default parameter values
-		self.default_parameters = {'low_pass_pupil_f': 4.0,
-								   'high_pass_pupil_f': 0.05}
+		self.default_parameters = {'low_pass_pupil_f': 6.0,
+								   'high_pass_pupil_f': 0.01}
 
 		super(PupilAnalyzer, self).__init__(subID, filename, verbosity=verbosity, **kwargs)
 
