@@ -31,8 +31,8 @@ class PupilAnalyzer(Analyzer):
 	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7,verbosity = 0, **kwargs):
 
 		# Setup default parameter values
-		self.default_parameters = {'low_pass_pupil_f': 6.0,
-								   'high_pass_pupil_f': 0.01}
+		self.default_parameters = {'low_pass_pupil_f': 4.0,
+								   'high_pass_pupil_f': 0.05}
 
 		super(PupilAnalyzer, self).__init__(subID, filename, verbosity=verbosity, **kwargs)
 
@@ -721,7 +721,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.get_aliases()
 
-		block_length_samples = block_length * self.down_fs
+		block_length_samples = block_length * self.signal_downsample_factor
 
 		
 		ms_per_run = []
@@ -737,7 +737,7 @@ class PupilAnalyzer(Analyzer):
 			pupil_per_block = np.array([])
 
 			for t in range(1,len(block_times)):
-				ms_per_block = np.append(ms_per_block, np.sum(((saccades['start_block_timestamp']/self.signal_sample_frequency*self.down_fs) >= block_times[t-1]) * ((saccades['start_block_timestamp']/self.signal_sample_frequency*self.down_fs) < block_times[t]) * (saccades['length'] < 1.0)))
+				ms_per_block = np.append(ms_per_block, np.sum(((saccades['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) >= block_times[t-1]) * ((saccades['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) < block_times[t]) * (saccades['length'] < 1.0)))
 				pupil_per_block = np.append(pupil_per_block, np.mean(signal[block_times[t-1]:block_times[t]]))
 
 			ms_per_run.append(ms_per_block)
