@@ -106,7 +106,7 @@ for subname in sublist:
 
 	# pa.recombine_signal_blocks(force_rebuild=True)
 
-	msacs, rsigs = pa.microsaccades_per_run(block_length = 5)
+	msacs, rsigs = pa.microsaccades_per_run(block_length = 10)
 
 	# embed()
 
