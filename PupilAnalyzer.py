@@ -484,7 +484,7 @@ class PupilAnalyzer(Analyzer):
 			run_saccades[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_saccades'%rii, mode = 'a', format = 't', data_columns = True)
 
 
-	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False):
+	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
 		trial_start_offset = 0#0.5+.15+.03+.15 # hack for this dataset only
 
@@ -492,7 +492,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.load_combined_data(force_rebuild=force_rebuild)
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
+		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = signal_type)
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
 		self.trial_signals =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
@@ -532,9 +532,10 @@ class PupilAnalyzer(Analyzer):
 					# sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 8))?
 
 					# self.trial_signals[tcode].append(resample(trial_pupil_signal, round(len(trial_pupil_signal)/self.signal_downsample_factor)))
-					dsignal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 1)
-					
-					self.trial_signals[tcode].append(dsignal)
+					if down_sample:
+						trial_pupil_signal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 1)
+
+					self.trial_signals[tcode].append(trial_pupil_signal)
 					
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
 
