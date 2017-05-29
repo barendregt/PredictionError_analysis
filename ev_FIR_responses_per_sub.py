@@ -50,24 +50,24 @@ from Plotter import Plotter
 if platform.node()=="aeneas":
 	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
 else:
-	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/small_BP/' #raw_data'
+	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
+sublist = ['AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
 # low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 10
-response_deconvolution_interval = np.array([-2, 3])
-stimulus_deconvolution_interval = np.array([-.5, 3])
+deconv_sample_frequency = 100
+response_deconvolution_interval = np.array([-0.5, 4.5])
+stimulus_deconvolution_interval = np.array([-0.5, 4.5])
 
-down_fs = 100
+down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
 linestylemap = {'PP': ['k-'],
 				 'UP': ['b-'],
@@ -211,7 +211,7 @@ for subname in sublist:
 		ax=plt.subplot(1,2,1)
 		plt.title('Stimulus-locked')
 		plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
-		ax.set(xticks = np.arange(0,45,5), xticklabels = np.arange(-.5,4,0.5))
+		ax.set(xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 		plt.legend(labels[0])
 
 		# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))
@@ -221,7 +221,7 @@ for subname in sublist:
 		ax=plt.subplot(1,2,2)
 		plt.title('Response-locked')
 		plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
-		ax.set(xticks = np.arange(0,50,5), xticklabels = np.arange(-2,3,0.5))
+		ax.set(xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 		plt.legend(labels[1])
 
 		# ax.set(xticks=np.arange(0,160,20), xticklabels=np.arange(-2,6))

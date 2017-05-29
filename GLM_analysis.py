@@ -56,7 +56,7 @@ else:
 shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
+sublist = ['AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
 # sublist_pos = ['AA','AB','AG','AJ','AL','AM','AO','AC','AF','AH','AI','AK','AN','AO','AP']
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
@@ -65,11 +65,11 @@ sbsetting = [False, False, False, False, False, False, False, False, False, Fals
 low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 10
-trial_deconvolution_interval = np.array([-3, 5])
+deconv_sample_frequency = 100
+trial_deconvolution_interval = np.array([-2, 3])
 # trial_deconvolution_interval = np.array([-1, 3])
 
-down_fs = 100
+down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
 num_of_events = 3
 
