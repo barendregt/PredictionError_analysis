@@ -260,4 +260,4 @@ def run_analysis(subname):
 #Run everything in parallel for speed 
 num_cores = multiprocessing.cpu_count()
 
-Parallel(n_jobs=8)(delayed(run_analysis)(subname) for subname in sublist)
+Parallel(n_jobs=16)(delayed(run_analysis)(subname) for subname in sublist)
