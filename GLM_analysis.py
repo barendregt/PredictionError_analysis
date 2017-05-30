@@ -66,7 +66,7 @@ low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 100
-trial_deconvolution_interval = np.array([-2, 3])
+trial_deconvolution_interval = np.array([-1, 3])
 # trial_deconvolution_interval = np.array([-1, 3])
 
 down_fs = int(signal_sample_frequency / deconv_sample_frequency)
