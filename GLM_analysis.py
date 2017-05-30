@@ -140,6 +140,9 @@ for subname in sublist:
 
 	pupil_time_series = np.concatenate([resampled_pupil_signal[int(trial+tstart):int(trial+tend)]-resampled_pupil_signal[int(trial+tstart-bstart):int(trial+tstart)].mean() for trial in reg_response_phase])
 
+	if pupil_time_series.shape[0]%2==1:
+		pupil_time_series = pupil_time_series[:-1]
+
 	all_stim_events = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], reg_response_phase.size)) - trial_deconvolution_interval[1] - tc_rts
 	all_resp_events = np.cumsum(np.repeat(trial_deconvolution_interval[1]-trial_deconvolution_interval[0], reg_response_phase.size)) - trial_deconvolution_interval[1]
 	# all_button_events = all_resp_events + tc_rts.values
