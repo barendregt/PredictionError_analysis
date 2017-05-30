@@ -543,7 +543,7 @@ class PupilAnalyzer(Analyzer):
 	def get_IRF(self, deconv_interval = None, only_correct = False):
 
 		self.load_combined_data()
-
+		embed()
 
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 
