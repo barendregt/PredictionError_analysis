@@ -196,29 +196,31 @@ for subname in sublist:
 	inset_sub_inds = [2, 4, 6, 8]
 	beta_inds = [np.arange(3),np.arange(3,6),np.arange(6,9),np.arange(9,12)]
 
-	for tcii in range(len(tcodes)-1):
+	try:
+		for tcii in range(len(tcodes)-1):
 
-		plt.subplot(2,4,main_sub_inds[tcii])
-		plt.title(tnames[tcii])
+			plt.subplot(2,4,main_sub_inds[tcii])
+			plt.title(tnames[tcii])
 
-		trial_iis = np.array((trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] < tcodes[tcii+1]), dtype=bool)	
+			trial_iis = np.array((trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] >= tcodes[tcii]) * (trial_params['trial_codes'][~np.isnan(trial_params['trial_phase_7_full_signal'])][:-1] < tcodes[tcii+1]), dtype=bool)	
 
-		avg_time_series = pupil_time_series.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
-		avg_pred_series = linear_model.predicted.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
+			avg_time_series = pupil_time_series.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
+			avg_pred_series = linear_model.predicted.reshape((int(all_resp_events.shape[0]), int(pupil_time_series.shape[0]/all_resp_events.shape[0])))[trial_iis,:]
 
-		sn.tsplot(avg_time_series, condition = tnames[tcii], legend=False, color=tcolors[tcii], ls='solid', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
-		sn.tsplot(avg_pred_series, condition = tnames[tcii], legend=False, color=tcolors[tcii], ls='dashed', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
-	# plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
+			sn.tsplot(avg_time_series, condition = tnames[tcii], legend=False, color=tcolors[tcii], ls='solid', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
+			sn.tsplot(avg_pred_series, condition = tnames[tcii], legend=False, color=tcolors[tcii], ls='dashed', time = pd.Series(data=np.arange(trial_deconvolution_interval[0], trial_deconvolution_interval[1], 1/deconv_sample_frequency), name= 'Time(s)'))
+		# plt.plot(np.arange(0,pupil_time_series.size), linear_model.residuals, color='r',alpha=1)
 
-		sn.despine(offset=2)
+			sn.despine(offset=2)
 
-		ax=plt.subplot(2,4,inset_sub_inds[tcii])
+			ax=plt.subplot(2,4,inset_sub_inds[tcii])
 
-		plt.bar([0.5,1.5,2.5], linear_model.betas[beta_inds[tcii]])
-		ax.set(xticks=[0.5,1.5,2.5],xticklabels=['stim','int','button'], ylim=[-1.6, 1.6])
-		sn.despine()
+			plt.bar([0.5,1.5,2.5], linear_model.betas[beta_inds[tcii]])
+			ax.set(xticks=[0.5,1.5,2.5],xticklabels=['stim','int','button'], ylim=[-1.6, 1.6])
+			sn.despine()
 
-
+	except:
+		embed()
 
 	betas = linear_model.betas
 	# betas = [np.NaN if b < 0 else b for b in betas]
