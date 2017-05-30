@@ -668,7 +668,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR_betas_all = sp.linalg.lstsq(self.dm_all.T, self.FIR_resampled_pupil_signal.T)[0]	
 		
-		# embed()
+		embed()
 		stim_betas = self.FIR_betas_stim[-int(stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency):].reshape((stim_events.shape[0],(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)).T
 
 		stim_nuiss_betas = self.FIR_betas_stim[:-int(stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
