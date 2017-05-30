@@ -543,7 +543,7 @@ class PupilAnalyzer(Analyzer):
 	def get_IRF(self, deconv_interval = None, only_correct = False):
 
 		self.load_combined_data()
-		embed()
+		# embed()
 
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 
@@ -648,7 +648,8 @@ class PupilAnalyzer(Analyzer):
 			self.FIR_resp.create_design_matrix(intercept=False)
 
 		except:
-			embed()
+			print('Well, that didnt work...')
+			
 
 		# dm3 = self.FIR_resp_ori.design_matrix		
 
