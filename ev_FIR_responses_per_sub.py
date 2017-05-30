@@ -56,7 +56,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
 # sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
+sublist = ['AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
 # sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
 sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
 
@@ -213,7 +213,7 @@ for subname in sublist:
 		plt.figure()
 		ax=plt.subplot(1,2,1)
 		plt.title('Stimulus-locked')
-		plt.plot(betas[0]-betas[0][:5,:].mean(axis=0))
+		plt.plot(betas[0]-betas[0][:int(0.5*(signal_sample_frequency/down_fs)),:].mean(axis=0))
 		ax.set(xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 		plt.legend(labels[0])
 
@@ -223,7 +223,7 @@ for subname in sublist:
 
 		ax=plt.subplot(1,2,2)
 		plt.title('Response-locked')
-		plt.plot(betas[1]-betas[1][:5,:].mean(axis=0))
+		plt.plot(betas[1]-betas[1][:int(0.5*(signal_sample_frequency/down_fs)),:].mean(axis=0))
 		ax.set(xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5))
 		plt.legend(labels[1])
 
