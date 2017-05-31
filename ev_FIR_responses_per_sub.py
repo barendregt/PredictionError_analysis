@@ -63,7 +63,7 @@ sbsetting = [False, False, False, False, False, False, False, False, False, Fals
 # low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 100
+deconv_sample_frequency = 20
 response_deconvolution_interval = np.array([-0.5, 4.5])
 stimulus_deconvolution_interval = np.array([-0.5, 4.5])
 
@@ -112,7 +112,7 @@ response_fir_signals = {'color': {'PP': [],
 						 'UU': []}
 						 }
 
-plot_indiv = False
+plot_indiv = True
 
 for subname in sublist:
 
