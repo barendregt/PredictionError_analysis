@@ -484,11 +484,14 @@ class PupilAnalyzer(Analyzer):
 			run_saccades[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_saccades'%rii, mode = 'a', format = 't', data_columns = True)
 
 
-	def signal_per_trial(self, reference_phase = 1, only_correct = True, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+	def signal_per_trial(self, reference_phase = 1, only_correct = True, only_incorrect = False, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
 		trial_start_offset = 0#0.5+.15+.03+.15 # hack for this dataset only
 
-		
+		if only_correct==True and only_incorrect==True:
+			display('Error: incompatible trial selection!!')
+			# embed()
+			return
 
 		self.load_combined_data(force_rebuild=force_rebuild)
 
@@ -503,6 +506,8 @@ class PupilAnalyzer(Analyzer):
 
 			if only_correct:
 				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==1), dtype=bool)
+			if only_incorrect:
+				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==0), dtype=bool)				
 			else:
 				selected_trials = np.array(trial_parameters['trial_codes']==tcode, dtype=bool)			
 

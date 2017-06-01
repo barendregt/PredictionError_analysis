@@ -442,7 +442,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 		percent_correct = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
-			percent_correct[tcode] = np.random.normal(0.79,0.01,1)#np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode])
+			percent_correct[tcode] = np.random.normal(0.79,0.025,1)#np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode])
 
 		return percent_correct
 
