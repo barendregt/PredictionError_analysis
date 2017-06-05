@@ -424,6 +424,25 @@ class BehaviorAnalyzer(PupilAnalyzer):
 		return ie_scores
 
 
+	def compute_dprime(self):
+	
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+
+		hit_rates = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		fa_rates  = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		d_prime   = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		criterion = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
+		for tcode in np.unique(trial_parameters['trial_codes']):
+			hit_rates[tcode] = np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['response']==1) & (trial_parameters['direction']==1)) / np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['direction']==1))
+			fa_rates[tcode] = np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['response']==1) & (trial_parameters['direction']==-1)) / np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['direction']==-1))
+
+			d_prime[tcode] = (sp.stats.norm.ppf(hit_rates[tcode]) - sp.stats.norm.ppf(fa_rates[tcode]))/np.sqrt(2)
+			criterion[tcode] = -(sp.stats.norm.ppf(hit_rates[tcode]) + sp.stats.norm.ppf(fa_rates[tcode]))/np.sqrt(2)
+
+		return d_prime,criterion,hit_rates,fa_rates
+
+
 	def compute_error_rates(self):
 
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)

@@ -128,7 +128,7 @@ for subname in sublist:
 	#sub_rts = pa.compute_reaction_times()
 
 	# # Get pupil data (ev)
-	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
+	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 7, with_rt = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
 
 	# pa.get_IRF()
 
@@ -205,7 +205,7 @@ for subname in sublist:
 	# 		power_signals['PU'].extend(power_signal)
 
 	pa.deconvolution_interval = stimulus_deconvolution_interval
-	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = True)
+	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = True)
 
 	# pa.get_IRF()
 
@@ -309,7 +309,7 @@ pl.open_figure(force=1)
 pl.hline(y=0)
 pl.event_related_pupil_average(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-pl.save_figure('pupil_response_button-press.pdf', sub_folder = 'over_subs/pupil')
+pl.save_figure('pupil_response_button-press.pdf', sub_folder = 'over_subs/pupil/incorrect')
 
 # pl.open_figure(force=1)
 # pl.hline(y=0)
@@ -327,7 +327,7 @@ pl.open_figure(force=1)
 pl.hline(y=0)
 pl.event_related_pupil_average(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'over_subs/pupil')
+pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'over_subs/pupil/incorrect')
 
 # pl.open_figure(force=1)
 # pl.hline(y=0)

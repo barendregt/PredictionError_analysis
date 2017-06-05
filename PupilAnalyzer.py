@@ -544,6 +544,56 @@ class PupilAnalyzer(Analyzer):
 					
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
 
+	def compute_TPR(self, reference_phase = 1, only_correct = False, only_incorrect = False, time_window = None, baseline_period = [-0.5, 0.0], with_rt = False, force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+
+		if only_correct==True and only_incorrect==True:
+			display('Error: incompatible trial selection!!')
+			# embed()
+			return
+
+		trial_start_offset = 0
+
+		if time_window is None:
+			time_window = self.deconvolution_interval
+
+		self.load_combined_data(force_rebuild=force_rebuild)
+
+		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = signal_type)
+		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+
+		self.TPR =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
+
+		for tcode in np.unique(trial_parameters['trial_codes']):
+		
+
+			if only_correct:
+				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==1), dtype=bool)
+			if only_incorrect:
+				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==0), dtype=bool)				
+			else:
+				selected_trials = np.array(trial_parameters['trial_codes']==tcode, dtype=bool)			
+
+
+			if with_rt:
+				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
+			else:
+				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[1])
+
+
+			baseline_times =  np.vstack([trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
+
+			for tii,(ts,te) in enumerate(trial_times):
+				if (ts > 0) & (te < recorded_pupil_signal.size):
+
+					trial_pupil_response = np.mean(recorded_pupil_signal[int(ts):int(te)]) - np.mean(recorded_pupil_signal[int(baseline_times[0, int(tii)]):int(baseline_times[1,int(tii)])])
+					# trial_puresponsegnal = np.mean(recorded_pupil_signal[int(ts):int(te)]) - 
+
+					self.TPR[tcode].append(trial_pupil_response)
+					
+			self.TPR[tcode] = np.array(self.TPR[tcode])
+
+
 
 	def get_IRF(self, deconv_interval = None, only_correct = False):
 
