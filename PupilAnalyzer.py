@@ -131,7 +131,8 @@ class PupilAnalyzer(Analyzer):
 	def get_aliases(self):
 
 		edf_files = glob.glob(self.edf_folder + '/*.edf')
-		edf_files.sort(key=lambda x: os.path.getmtime(x))
+		#edf_files.sort(key=lambda x: os.path.getmtime(x))
+		edf_files.sort()
 
 		self.aliases = ['%s%d' % (self.subID, i) for i in range(0, len(edf_files))]			
 

@@ -33,27 +33,7 @@ from BehaviorAnalyzer import BehaviorAnalyzer
 from Plotter import Plotter
 
 
-if platform.node()=="aeneas":
-	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
-else:
-	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
-shared_data_folder = raw_data_folder #'raw_data'
-figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
-
-#sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN']#
-# sublist = ['AA','AB','AC','AD','AF','AG','AH','AI','AJ','AM']
-sublist = ['AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
-# sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AD','AE','AK','AL','AM','AN']
-sbsetting = [False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]
-
-low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
-
-signal_sample_frequency = 1000
-deconv_sample_frequency = 100
-response_deconvolution_interval = np.array([-1.5, 4.5])
-stimulus_deconvolution_interval = np.array([-1, 4.5])
-
-down_fs = int(signal_sample_frequency / deconv_sample_frequency)
+from analysis_parameters import *
 
 pl = Plotter(figure_folder = figfolder)
 
