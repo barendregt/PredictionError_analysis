@@ -108,7 +108,7 @@ for subname in sublist:
 	#sub_rts = pa.compute_reaction_times()
 
 	# # Get pupil data (ev)
-	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 7, with_rt = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
+	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
 
 	# pa.get_IRF()
 
@@ -185,7 +185,7 @@ for subname in sublist:
 	# 		power_signals['PU'].extend(power_signal)
 
 	pa.deconvolution_interval = stimulus_deconvolution_interval
-	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = True)
+	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 4, with_rt = False, baseline_type = 'absolute', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = True)
 
 	# pa.get_IRF()
 
