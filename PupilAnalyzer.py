@@ -424,6 +424,10 @@ class PupilAnalyzer(Analyzer):
 				this_block_saccades['end_block_timestamp'] = pd.Series(this_block_saccades['end_timestamp'].values - bs)
 
 			this_trial_parameters['trial_codes'] = pd.Series(self.recode_trial_code(this_trial_parameters))
+			phases = np.unique(this_trial_phase_times['trial_phase_index'])
+			if phases.size>9:
+				phases = phases[:9]
+
 			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
 				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)])
 				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)] + prev_signal_size)	
@@ -473,7 +477,7 @@ class PupilAnalyzer(Analyzer):
 			output_file.create_array(pgroup, "r%i_baseline"%rii, run_baselines[rii], "r%i_baseline"%rii)
 		
 		output_file.close()
-		embed()
+		# embed()
 		trials.to_hdf(self.combined_h5_filename, key = '/trials/full', mode = 'a', format = 't', data_columns = True)
 		blinks.to_hdf(self.combined_h5_filename, key = '/pupil/blinks', mode = 'a', format = 't', data_columns = True)
 		saccades.to_hdf(self.combined_h5_filename, key = '/pupil/saccades', mode = 'a', format = 't', data_columns = True)
