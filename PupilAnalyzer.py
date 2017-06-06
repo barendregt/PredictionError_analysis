@@ -428,7 +428,7 @@ class PupilAnalyzer(Analyzer):
 			if phases.size>9:
 				phases = phases[:9]
 
-			for phase_index in np.unique(this_trial_phase_times['trial_phase_index']):
+			for phase_index in phases:
 				this_trial_parameters['trial_phase_%i_within_run'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)])
 				this_trial_parameters['trial_phase_%i_full_signal'%phase_index] = pd.Series(this_phase_times[np.array(this_trial_phase_times['trial_phase_index']==phase_index, dtype=bool)] + prev_signal_size)	
 			
