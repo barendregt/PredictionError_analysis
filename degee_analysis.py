@@ -120,7 +120,7 @@ for subname in sublist:
 	for key, tpr in pa.TPR.items():
 		if key < 10:
 
-			all_data[]
+			all_data[all_data_index] = np.hstack([tpr, trial_parameters['response'][trial_parameters['trial_codes']==key], trial_parameters['trial_direction'][trial_parameters['trial_codes']==key], 'PP'])
 
 			all_tprs['PP'].extend(tpr)
 			all_responses['PP'].extend(trial_parameters['response'][trial_parameters['trial_codes']==key])

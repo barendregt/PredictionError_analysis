@@ -289,7 +289,7 @@ pl.open_figure(force=1)
 pl.hline(y=0)
 pl.event_related_pupil_average(data = response_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(response_deconvolution_interval[0], response_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-pl.save_figure('pupil_response_button-press.pdf', sub_folder = 'over_subs/pupil/incorrect')
+pl.save_figure('pupil_response_button-press.pdf', sub_folder = 'over_subs/pupil')
 
 # pl.open_figure(force=1)
 # pl.hline(y=0)
@@ -307,7 +307,7 @@ pl.open_figure(force=1)
 pl.hline(y=0)
 pl.event_related_pupil_average(data = stimulus_pupil_signals, conditions = ['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), compute_mean = True, compute_sd = True)
 
-pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'over_subs/pupil/incorrect')
+pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'over_subs/pupil')
 
 # pl.open_figure(force=1)
 # pl.hline(y=0)
@@ -364,21 +364,21 @@ pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'over_subs/pupil/inco
 
 # # pl.save_figure('reaction_times.pdf', sub_folder = 'over_subs/task')
 
-# pl.open_figure(force=1)
-# # pl.figure.suptitle('Reaction time')
-# # pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
-# pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative RT (% of predicted)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
+pl.open_figure(force=1)
+# pl.figure.suptitle('Reaction time')
+# pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
+pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative RT (% of predicted)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
-# pl.save_figure('reaction_times.pdf', sub_folder = 'over_subs/task/incorrect')
+pl.save_figure('reaction_times.pdf', sub_folder = 'over_subs/task')
 
 # # # rtdata = pd.DataFrame(data = np.vstack([np.hstack([rts['UP'], rts['PU'], rts['UU']]), np.hstack([['PU']*len(rts['PU']), ['UP']*len(rts['UP']), ['UU']*len(rts['UU'])])]).T, columns = ['RT','PE_type'])
 # # # rtdata.to_csv('rt.csv')
 
-# # pl.open_figure(force=1)
-# # # pl.figure.suptitle('Performance')
-# pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
+pl.open_figure(force=1)
+# # pl.figure.suptitle('Performance')
+pl.bar_plot(data = pc, conditions = ['PP','UP','PU','UU'],xticklabels = ['None','Task relevant','Task irrelevant','Both'],xlabel='Prediction error', ylabel='Performance (% correct)', x_lim = [0.5, None], y_lim = [0.5, 1.0], yticks = np.arange(0.0,1.1,.1), yticklabels = np.arange(0,110,10))
 
-# pl.save_figure('percent_correct.pdf', sub_folder = 'over_subs/task/incorrect')
+pl.save_figure('percent_correct.pdf', sub_folder = 'over_subs/task')
 
 
 # # # pl.save_figure('all-ev_pupil_summary-things.pdf', sub_folder = 'summary')
