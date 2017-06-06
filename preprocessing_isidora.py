@@ -29,7 +29,7 @@ shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#,'AZ','AX','AY','AW','AV','AU']#
-sublist = ['AL']#['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AM','AN','AO','AP','AQ','AR','AS'] #'AA','AB',
+sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS'] #'AA','AB',
 # sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
@@ -64,7 +64,7 @@ def run_analysis(subname):
 		pa.recombine_signal_blocks(force_rebuild = True)
 	except:
 		embed()
-		
+
 	signal_types = ['gaze_x',
 					'gaze_y',
 					'pupil',
@@ -242,7 +242,7 @@ def run_analysis(subname):
 
 
 	
-
+	# embed()
 	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild=False)
 
 	response_pupil_signals = []
