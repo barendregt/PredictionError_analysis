@@ -60,8 +60,11 @@ def run_analysis(subname):
 
 	pa.load_data()
 
-	pa.recombine_signal_blocks(force_rebuild = True)
-
+	try:
+		pa.recombine_signal_blocks(force_rebuild = True)
+	except:
+		embed()
+		
 	signal_types = ['gaze_x',
 					'gaze_y',
 					'pupil',
