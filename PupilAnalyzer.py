@@ -473,7 +473,7 @@ class PupilAnalyzer(Analyzer):
 			output_file.create_array(pgroup, "r%i_baseline"%rii, run_baselines[rii], "r%i_baseline"%rii)
 		
 		output_file.close()
-
+		embed()
 		trials.to_hdf(self.combined_h5_filename, key = '/trials/full', mode = 'a', format = 't', data_columns = True)
 		blinks.to_hdf(self.combined_h5_filename, key = '/pupil/blinks', mode = 'a', format = 't', data_columns = True)
 		saccades.to_hdf(self.combined_h5_filename, key = '/pupil/saccades', mode = 'a', format = 't', data_columns = True)
