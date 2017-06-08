@@ -15,7 +15,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.05
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 5
+deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-1.5, 4.5])
 stimulus_deconvolution_interval = np.array([-1, 4.5])
 
