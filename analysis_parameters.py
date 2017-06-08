@@ -4,7 +4,7 @@ import numpy as np
 import platform
 
 if platform.node()=="aeneas":
-	raw_data_folder = '/home/shared/2017/visual/PredictionError/Behavioural/Reaction_times/combined/'
+	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/combined/'
 else:
 	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/combined/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
