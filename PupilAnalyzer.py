@@ -489,7 +489,7 @@ class PupilAnalyzer(Analyzer):
 			run_saccades[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_saccades'%rii, mode = 'a', format = 't', data_columns = True)
 
 
-	def signal_per_trial(self, reference_phase = 1, only_correct = True, only_incorrect = False, with_rt = False, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+	def signal_per_trial(self, reference_phase = 1, only_correct = True, only_incorrect = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
 		trial_start_offset = 0#0.5+.15+.03+.15 # hack for this dataset only
 
@@ -526,7 +526,7 @@ class PupilAnalyzer(Analyzer):
 				if baseline_type == 'relative':
 					baseline_times =  np.vstack([trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
 				else:
-					baseline_times =  np.vstack([trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
+					baseline_times =  np.vstack([trial_parameters['trial_phase_%i_full_signal'%baseline_phase][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%baseline_phase][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
 
 			for tii,(ts,te) in enumerate(trial_times):
 				if (ts > 0) & (te < recorded_pupil_signal.size):

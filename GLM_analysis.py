@@ -51,7 +51,7 @@ from Plotter import Plotter
 
 from analysis_parameters import *
 
-deconv_sample_frequency = 100
+# deconv_sample_frequency = 100
 trial_deconvolution_interval = np.array([-1, 3])
 # trial_deconvolution_interval = np.array([-1, 3])
 
