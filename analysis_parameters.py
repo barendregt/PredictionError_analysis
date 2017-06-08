@@ -12,7 +12,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 
 
-low_pass_pupil_f, high_pass_pupil_f = 5.0, 0.01
+low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.05
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
