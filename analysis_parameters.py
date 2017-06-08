@@ -8,7 +8,7 @@ if platform.node()=="aeneas":
 else:
 	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/combined/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
-figfolder = '/home/barendregt/Analysis/PredictionError/Updated_figures'
+figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 
 
