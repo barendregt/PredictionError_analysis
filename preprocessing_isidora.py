@@ -35,10 +35,10 @@ sublist = ['IAA','IAB','IAC','IAD','IAE','IAF','IAG','IAH','IAI','IAJ','IAK','IA
 
 # subname = 's1'#'tk2'#'s3'#'mb2'#'tk2'#'s3'#'tk2'
 
-low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.01
+low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 8
+deconv_sample_frequency = 10
 deconvolution_interval = np.array([-3, 3])
 
 down_fs = 10
