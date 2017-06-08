@@ -29,7 +29,7 @@ shared_data_folder = raw_data_folder #'raw_data'
 figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 #sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','DA','DB','DC','DD','DE','DF']#,'AZ','AX','AY','AW','AV','AU']#
-sublist = ['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS'] #'AA','AB',
+sublist = ['IAA','IAB','IAC','IAD','IAE','IAF','IAG','IAH','IAI','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ','IAR','IAS'] #'AA','AB',
 # sublist = ['AO']
 #['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
 
