@@ -404,7 +404,7 @@ class PupilAnalyzer(Analyzer):
 			for bs,be in zip(blocks['block_start_timestamp'], blocks['block_end_timestamp']):
 
 				this_block_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_zscore', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
-				this_block_clean_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_clean_psc', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
+				this_block_clean_signal = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_bp_clean_zscore', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
 				this_block_baseline = np.squeeze(self.h5_operator.signal_during_period(time_period = (bs, be), alias = alias, signal = 'pupil_lp', requested_eye = self.h5_operator.read_session_data(alias,'fixations_from_message_file').eye[0]))
 				
 				full_signal = np.append(full_signal, this_block_signal)
