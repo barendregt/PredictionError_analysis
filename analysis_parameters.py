@@ -22,4 +22,4 @@ stimulus_deconvolution_interval = np.array([-1, 4.5])
 down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ','BA','IAA','IAB','IAC','IAF','IAG','IAH','IAI','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ','IAR','IAS']
+sublist = ['AB','AC','AF','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AS','AT','AV','AX','AZ','BA','IAA','IAC','IAF','IAH','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ']
