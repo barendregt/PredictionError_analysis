@@ -8,7 +8,7 @@ if platform.node()=="aeneas":
 else:
 	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/combined/' #raw_data'
 shared_data_folder = raw_data_folder #'raw_data'
-figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
+figfolder = '/home/barendregt/Analysis/PredictionError/Updated_figures'
 
 
 
@@ -22,4 +22,4 @@ stimulus_deconvolution_interval = np.array([-1, 4.5])
 down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
 
-sublist = ['AB','AC','AF','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AS','AT','AV','AX','AZ','BA','IAA','IAC','IAF','IAH','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ']
+sublist = ['AB','AC','AF','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AS','AT','AV','AX','AZ','BA','IAA','IAC','IAF','IAH','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ']f
