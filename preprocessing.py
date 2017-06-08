@@ -20,27 +20,10 @@ from IPython import embed
 from BehaviorAnalyzer import BehaviorAnalyzer
 
 
-if platform.node()=="aeneas":
-	raw_data_folder = '/home/raw_data/2017/visual/PredictionError/Behavioural/Reaction_times/'
-else:
-	raw_data_folder = '/home/barendregt/Projects/PredictionError/Psychophysics/Data/k1f46/' #raw_data'
-shared_data_folder = raw_data_folder #'raw_data'
-figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
+from analysis_parameters import * 
 
-sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX']#,'BA','BB','BC','BD','BE','BF','BG','BH']#
-
-# sublist = ['AO']
-#['s1','s2','s3','s4','s5','s6']#['s1','s2','s4']['s1','s2',[
-
-# subname = 's1'#'tk2'#'s3'#'mb2'#'tk2'#'s3'#'tk2'
-
-low_pass_pupil_f, high_pass_pupil_f = 6.0, 0.05 #6.0, 0.01
-
-signal_sample_frequency = 1000
-deconv_sample_frequency = 8
 deconvolution_interval = np.array([-3, 3])
 
-down_fs = 10
 winlength = 4500#6500
 minwinlength = 4000#6000
  

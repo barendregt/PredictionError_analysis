@@ -12,7 +12,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/Figures'
 
 
 
-low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
+low_pass_pupil_f, high_pass_pupil_f = 5.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 10
@@ -22,4 +22,4 @@ stimulus_deconvolution_interval = np.array([-1, 4.5])
 down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
 
-sublist = ['AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','IAA','IAB','IAC','IAF','IAG','IAH','IAI','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ','IAR','IAS']
+sublist = ['AA','AB','AC','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ','BA','IAA','IAB','IAC','IAF','IAG','IAH','IAI','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ','IAR','IAS']
