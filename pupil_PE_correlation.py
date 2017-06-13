@@ -60,6 +60,7 @@ from Plotter import Plotter
 
 from analysis_parameters import *
 
+trial_deconvolution_interval = np.array([-1.5. 4.5])
 
 pl = Plotter(figure_folder = figfolder)
 
