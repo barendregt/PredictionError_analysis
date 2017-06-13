@@ -12,16 +12,16 @@ import scipy as sp
 from pandas import *
 
 # R stuff
-import readline
-from rpy2.robjects import pandas2ri
-pandas2ri.activate()
+# import readline
+# from rpy2.robjects import pandas2ri
+# pandas2ri.activate()
 
-from rpy2.robjects.packages import importr
-import rpy2.robjects as ro
-# ro.r('library("nlme", lib.loc="/usr/lib/R/library")')
-# import pandas.rpy.common as com
-stats = importr('stats')
-base = importr('base')
+# from rpy2.robjects.packages import importr
+# import rpy2.robjects as ro
+# # ro.r('library("nlme", lib.loc="/usr/lib/R/library")')
+# # import pandas.rpy.common as com
+# stats = importr('stats')
+# base = importr('base')
 
 
 
@@ -155,18 +155,23 @@ for subii,subname in enumerate(sublist):
 all_timepoint_array = np.dstack(all_timepoint_data)
 
 
-main_PEtr = np.zeros((all_timepoint_array.shape[2],1))
-main_PEntr = np.zeros((all_timepoint_array.shape[2],1))
-main_correct = np.zeros((all_timepoint_array.shape[2],1))
-interact = np.zeros((all_timepoint_array.shape[2],1))
+
+# main_PEtr = np.zeros((all_timepoint_array.shape[2],1))
+# main_PEntr = np.zeros((all_timepoint_array.shape[2],1))
+# main_correct = np.zeros((all_timepoint_array.shape[2],1))
+# interact = np.zeros((all_timepoint_array.shape[2],1))
+
+
 
 for timepoint in range(all_timepoint_array.shape[2]):
 	testdata = pd.DataFrame(all_timepoint_array[:,:,timepoint], columns = ['pupil','PE','TR','subject','correct'], index=np.arange(all_timepoint_array.shape[0]))
 
-	mdl = stats.aov(ro.Formula('pupil ~ c(PEtr)*c(PEntr)*c(correct) + Error(subject)'), data=testdata)
+	testdata.to_hdf('all_timepoints_matrix.h5','t%i'%timepoint, format = 't', data_columns = ['pupil','PE','TR','subject','correct'])
 
-	main_PEtr[timepoint] = float(base.summary(mdl)[1][0][4][0])
-	main_PEntr[timepoint] = float(base.summary(mdl)[1][0][4][1])
-	main_correct[timepoint] = float(base.summary(mdl)[1][0][4][2])
-	interact[timepoint] = float(base.summary(mdl)[1][0][4][6])
+# 	mdl = stats.aov(ro.Formula('pupil ~ c(PEtr)*c(PEntr)*c(correct) + Error(subject)'), data=testdata)
+
+# 	main_PEtr[timepoint] = float(base.summary(mdl)[1][0][4][0])
+# 	main_PEntr[timepoint] = float(base.summary(mdl)[1][0][4][1])
+# 	main_correct[timepoint] = float(base.summary(mdl)[1][0][4][2])
+# 	interact[timepoint] = float(base.summary(mdl)[1][0][4][6])
 

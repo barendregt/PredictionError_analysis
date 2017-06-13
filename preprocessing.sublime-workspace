@@ -1,0 +1,787 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"analys",
+				"analysis_parameters\tmodule"
+			],
+			[
+				"baseline",
+				"baseline_period"
+			],
+			[
+				"deco",
+				"deconvolution_interval"
+			],
+			[
+				"down",
+				"down_sample\tparam"
+			],
+			[
+				"all_tim",
+				"all_timepoint_array\tstatement"
+			],
+			[
+				"baselin",
+				"baseline_period\tparam"
+			],
+			[
+				"signal",
+				"signal_per_trial\tfunction"
+			],
+			[
+				"this_run",
+				"this_run_blinks\tstatement"
+			],
+			[
+				"sig",
+				"signal_type\tparam"
+			],
+			[
+				"sign",
+				"signal_sample_frequency"
+			],
+			[
+				"tri",
+				"trial_parameters\tstatement"
+			],
+			[
+				"reg_res",
+				"reg_response_phase\tstatement"
+			],
+			[
+				"desi",
+				"design_matrix"
+			],
+			[
+				"deconv",
+				"deconv_sample_frequency\tstatement"
+			],
+			[
+				"reg_resp",
+				"reg_response_phase_start"
+			],
+			[
+				"decon",
+				"deconv_sample_frequency\tstatement"
+			],
+			[
+				"trial_",
+				"trial_deconvolution_interval\tstatement"
+			],
+			[
+				"force",
+				"force_rebuild\tparam"
+			],
+			[
+				"read",
+				"read_pupil_data\tfunction"
+			],
+			[
+				"dec",
+				"decimate"
+			],
+			[
+				"read_",
+				"read_trial_data\tfunction"
+			],
+			[
+				"per",
+				"per_trial_phase_durations"
+			],
+			[
+				"shift",
+				"shift_ori_betas\tstatement"
+			],
+			[
+				"multi",
+				"multiply\tinstance"
+			],
+			[
+				"add_",
+				"add_subplot"
+			],
+			[
+				"all_st",
+				"all_stuff_betas\tstatement"
+			],
+			[
+				"ytick",
+				"yticklabels\tparam"
+			],
+			[
+				"full",
+				"full_screen"
+			],
+			[
+				"conver",
+				"convert_to_r_dataframe\tfunction"
+			],
+			[
+				"add_sub",
+				"add_subplot_axes"
+			],
+			[
+				"msig",
+				"msignal_norm\tstatement"
+			],
+			[
+				"refer",
+				"reference_condition\tstatement"
+			],
+			[
+				"x",
+				"xticks\tparam"
+			],
+			[
+				"combi",
+				"combined_h5_filename"
+			],
+			[
+				"xtick",
+				"xticklabels"
+			],
+			[
+				"ave",
+				"average_data\tstatement"
+			],
+			[
+				"power",
+				"power_signals\tstatement"
+			],
+			[
+				"xt",
+				"xticklabels\tparam"
+			],
+			[
+				"all",
+				"all_pupil_signals"
+			],
+			[
+				"pupil",
+				"pupil_signals\tstatement"
+			],
+			[
+				"figu",
+				"figure_folder\tstatement"
+			],
+			[
+				"isin",
+				"isinstance\tfunction"
+			],
+			[
+				"f",
+				"figure_folder\tstatement"
+			],
+			[
+				"sub",
+				"subplot\tfunction"
+			],
+			[
+				"si",
+				"signal_sample_frequency\tstatement"
+			],
+			[
+				"psgi",
+				"psignals_std\tstatement"
+			],
+			[
+				"run",
+				"run_signals\tstatement"
+			],
+			[
+				"stiulu",
+				"stimulus_types\tstatement"
+			],
+			[
+				"tigh",
+				"tight_layout\tfunction"
+			],
+			[
+				"psi",
+				"psignals_std\tstatement"
+			],
+			[
+				"psig",
+				"psignals_mean\tstatement"
+			],
+			[
+				"onl",
+				"only_correct\tparam"
+			],
+			[
+				"samp",
+				"signal_sample_frequency"
+			],
+			[
+				"signa",
+				"signal_type\tparam"
+			],
+			[
+				"com",
+				"combined_h5_filename\tstatement"
+			],
+			[
+				"combined",
+				"combined_h5_filename\tstatement"
+			],
+			[
+				"comb",
+				"combined_data\tstatement"
+			],
+			[
+				"get",
+				"get_aliases\tfunction"
+			],
+			[
+				"rec",
+				"recombine_signal_blocks\tfunction"
+			],
+			[
+				"combine",
+				"combined_h5_filename\tstatement"
+			],
+			[
+				"this_",
+				"this_block_signal\tstatement"
+			],
+			[
+				"folder",
+				"folder_alias\tparam"
+			],
+			[
+				"respon",
+				"response_events"
+			],
+			[
+				"incr",
+				"increase_difficulty"
+			],
+			[
+				"de",
+				"decrease_difficulty\tfunction"
+			],
+			[
+				"inc",
+				"increase_difficulty"
+			],
+			[
+				"SCRE",
+				"SCREENSIZE\tstatement"
+			],
+			[
+				"tsak",
+				"task_direction"
+			],
+			[
+				"para",
+				"parameterDict\tstatement"
+			],
+			[
+				"re",
+				"refresh_frequency\tstatement"
+			],
+			[
+				"stanr",
+				"standard_parameters\tstatement"
+			],
+			[
+				"standard",
+				"standard_parameters\tstatement"
+			],
+			[
+				"stand",
+				"standard_parameters"
+			],
+			[
+				"this_tir",
+				"this_trial_parameters\tstatement"
+			],
+			[
+				"sta",
+				"staircase_ori_index\tstatement"
+			],
+			[
+				"stair",
+				"staircase_col_index\tstatement"
+			],
+			[
+				"task",
+				"task_performance"
+			],
+			[
+				"comp",
+				"compute_performance_attended_unattended\tfunction"
+			],
+			[
+				"trial",
+				"trial_signals\tstatement"
+			],
+			[
+				"out",
+				"output_filename\tstatement"
+			],
+			[
+				"FI",
+				"FIR_object\tstatement"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 400.0,
+		"last_filter": "git: com",
+		"selected_items":
+		[
+			[
+				"git: com",
+				"Git: Commit"
+			],
+			[
+				"git:st a",
+				"Git: Status"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"isnta",
+				"Package Control: Install Package"
+			],
+			[
+				"git",
+				"Git: Pull"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 466.0
+	},
+	"console":
+	{
+		"height": 214.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) ",
+			" import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			" import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/barendregt/Analysis/PredictionError/pupil_MS_correlation.py",
+		"/home/barendregt/Analysis/PredictionError/Plotter.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_responses_per_sub.py",
+		"/home/barendregt/Analysis/PredictionError/analysis_parameters.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_responses_incorrect.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_responses.py",
+		"/home/barendregt/Analysis/PredictionError/BehaviorAnalyzer.py",
+		"/home/barendregt/Analysis/PredictionError/degee_analysis.py",
+		"/home/barendregt/Analysis/PredictionError/pupil_PE_correlation.py",
+		"/home/barendregt/Analysis/PredictionError/PupilAnalyzer.py",
+		"/home/barendregt/Analysis/PredictionError/ev_FIR_responses_per_sub.py",
+		"/home/barendregt/Analysis/PredictionError/GeneralLinearModel.py",
+		"/home/barendregt/Analysis/PredictionError/GLM_analysis.py",
+		"/home/barendregt/Analysis/PredictionError/preprocessing.py",
+		"/home/barendregt/Analysis/PredictionError/preprocessing_isidora.py",
+		"/home/barendregt/.config/sublime-text-3/Packages/SublimeGit/SublimeGit.sublime-settings",
+		"/home/barendregt/Projects/OriColorMapper/OriColorSession.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_analysis_profiles.py",
+		"/home/barendregt/Analysis/toolbox/hedfpy/src/EDFOperator.py",
+		"/home/barendregt/Projects/OriColorMapper/run_OriColor_exp.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT_K2d38/standard_parameters.py",
+		"/home/barendregt/Analysis/Attention_fMRI_analysis/mapper_analysis_ridge.py",
+		"/home/barendregt/Projects/OriColorMapper/OriColorTrial.py",
+		"/home/barendregt/Documents/Presentations/Knapen lab meetings/09-05-2017/presentation.tex",
+		"/home/barendregt/Documents/Presentations/Knapen lab meetings/04-04-2017/meeting_04042017.tex",
+		"/home/barendregt/Projects/OriColorMapper/constants.py",
+		"/home/barendregt/Projects/OriColorMapper/OriColorStim.py",
+		"/home/barendregt/Documents/Students/Xiaomeng/mri_analysis_script.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/preprocessing.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/PupilAnalyzer.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/ev_FIR_responses_per_sub.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/ev_pupil_responses_per_sub.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/Plotter.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/pupil_RT_correlation.py",
+		"/home/barendregt/Analysis/toolbox/hedfpy/src/EyeSignalOperator.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/mri_analysis_script.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/ev_pupil_responses.py",
+		"/home/barendregt/disks/Aeneas_Home/toolbox/PRF_MB_7T/preprocessing.py",
+		"/home/barendregt/disks/Aeneas_Home/toolbox/PRF_MB_7T/parameters.py",
+		"/home/barendregt/disks/Aeneas_Home/toolbox/PRF_MB_7T/analysis_settings.json",
+		"/home/barendregt/disks/Aeneas_Home/toolbox/PRF_MB_7T/workflows/AP_7T_workflow.py",
+		"/home/barendregt/Documents/Presentations/SHT meetings/25-04-2017/meeting.tex",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT_K2d38/ExpectationTrial.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT_K2d38/ExpectationStim.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT_K2d38/ExpectationSession.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT_K2d38/run_Experiment.py",
+		"/home/barendregt/Analysis/Attention_fMRI_analysis/convert_nii_to_h5.py",
+		"/home/barendregt/Analysis/Attention_fMRI_analysis/convert_pickle_to_bfsl.py",
+		"/home/barendregt/Projects/PredictionError/fMRI/Attention_only/run_Experiment.py",
+		"/home/barendregt/Projects/PredictionError/fMRI/Attention_only/plot_staircases.py",
+		"/home/barendregt/Projects/PredictionError/fMRI/Attention_only/exp_tools/Staircase.py",
+		"/home/barendregt/Projects/PredictionError/fMRI/Attention_only/ExpectationTrial.py",
+		"/home/barendregt/Projects/PredictionError/fMRI/Attention_only/ExpectationSession.py",
+		"/home/barendregt/Analysis/Attention_fMRI_analysis/tools.py",
+		"/home/barendregt/Analysis/toolbox/kent_distribution/kent_example.py",
+		"/home/barendregt/Projects/PredictionError/fMRI/Attention_only/OriColorSession.py",
+		"/home/barendregt/Analysis/Attention_fMRI_analysis/colorconstants.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT/ExpectationSession.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT/exp_tools/Session.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT/ExpectationTrial.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT/standard_parameters.py",
+		"/home/barendregt/Projects/PredictionError/Psychophysics/Experiment_code/Attention_Prediction_RT/TrainerSession.py",
+		"/home/barendregt/Projects/PredictionError/fMRI/Attention_only/constants.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_analysis_fir_deconv.py",
+		"/home/barendregt/Analysis/PredictionError/Analyzer.py",
+		"/home/barendregt/programs/anaconda3/envs/py2/lib/python2.7/site-packages/hedfpy-0.0.dev1-py2.7.egg/hedfpy/HDFEyeOperator.py",
+		"/home/barendregt/programs/anaconda3/envs/py2/lib/python2.7/site-packages/hedfpy-0.0.dev1-py2.7.egg/hedfpy/EDFOperator.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/utils/hedfpy/EDFOperator.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/utils/hedfpy/HDFEyeOperator.py",
+		"/home/barendregt/Analysis/toolbox/hedfpy/src/HDFEyeOperator.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/martijn_pupil_demo.py",
+		"/home/barendregt/.config/sublime-text-3/Packages/User/LaTeX.sublime-build",
+		"/home/barendregt/Documents/Presentations/Knapen lab meetings/meeting_04042017.tex",
+		"/home/barendregt/Documents/Presentations/Knapen lab meetings/setanim.tex",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_analysis_indiv.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_analysis_per_sub.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/utils/PupilAnalyzer.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/PredictionError_analysis/ae_run.py",
+		"/home/barendregt/Documents/Presentations/SHT meetings/meeting.tex",
+		"/home/barendregt/programs/a2dp.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_analysis_across_subs_rt.py",
+		"/home/barendregt/Analysis/PredictionError/ev_pupil_analysis_across_subs_amp.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/ExpectationTrial.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/exp_tools/Staircase.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/ExpectationSession.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/constants.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/data_analysis_pupil.py",
+		"/home/barendregt/Projects/Attention_Prediction/Psychophysics/Experiment_code/Attention_Prediction_RT/ExpectationSession.py",
+		"/home/barendregt/disks/Aeneas_Home/toolbox/PRF_MB_7T/utils/utils.py",
+		"/home/barendregt/Projects/Attention_Prediction/Psychophysics/Experiment_code/Attention_Prediction_RT/TrainerSession.py",
+		"/home/barendregt/Projects/Attention_Prediction/Psychophysics/Experiment_code/Attention_Prediction_RT/exp_tools/Session.py",
+		"/home/barendregt/Projects/Attention_Prediction/Psychophysics/Experiment_code/Attention_Prediction_RT/standard_parameters.py",
+		"/home/barendregt/Projects/Attention_Prediction/Psychophysics/Experiment_code/Attention_Prediction_RT/testcolors.py",
+		"/home/barendregt/Projects/PRF_experiment/run_PRF_exp.py",
+		"/home/barendregt/Projects/PRF_experiment/PRFTrial.py",
+		"/home/barendregt/Projects/PRF_experiment/PRFStim.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/OriColorSession.py",
+		"/home/barendregt/disks/Aeneas_Raw/2017/visual/Attention/BIDS/config.json",
+		"/home/barendregt/Analysis/Attention_Prediction/plot_pupil_results_correct_only.py",
+		"/home/barendregt/Analysis/Attention_Prediction/plot_pupil_results.py",
+		"/home/barendregt/Analysis/Attention_Prediction/PupilAnalyzer.py",
+		"/home/barendregt/programs/anaconda3/envs/py2/lib/python2.7/site-packages/hedfpy-0.0.dev1-py2.7.egg/hedfpy/EyeSignalOperator.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/data_analysis.py",
+		"/home/barendregt/Analysis/xiaomeng/code_snippet.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/Attention/quick_look.py",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/Attention/convert_nii_to_h5.py",
+		"/home/barendregt/disks/Aeneas_Home/toolbox/PRF_MB_7T/utils/GLM.py",
+		"/home/barendregt/Analysis/Attention_Prediction/preprocessing.py",
+		"/home/barendregt/Analysis/Attention_Prediction/BehaviorAnalyzer.py",
+		"/home/barendregt/Analysis/Attention_Prediction/run_fir.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/ExpectationStim.py",
+		"/home/barendregt/Analysis/xiaomeng/Analysis/data_analysis_beh.py",
+		"/home/barendregt/Downloads/joint_kde.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/plot_staircases_XY.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/run_Experiment.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/run_Experiment_GUI.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/OriColorStim.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/exp_tools/Session.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/OriColorTrial.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only/bla_parameters.py",
+		"/home/barendregt/Projects/PRF_experiment/constants.py",
+		"/home/barendregt/Projects/Attention_Prediction/Psychophysics/Experiment_code/Attention_Prediction/exp_tools/Staircase.py",
+		"/home/barendregt/Projects/Attention_Prediction/fMRI/Attention_only_Spinoza/exp_tools/Staircase.py",
+		"/home/barendregt/Analysis/Attention/quick_look.py",
+		"/home/barendregt/Documents/Courses/BI_2017/course_materials/week_4/functions.py",
+		"/home/barendregt/.config/sublime-text-3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/home/barendregt/disks/Aeneas_Home/Analysis/Attention_Prediction/PupilAnalyzer.py",
+		"/home/barendregt/disks/Aeneas_Raw/2017/visual/Attention/Behavioural/SL/sl_2_output.csv"
+	],
+	"find":
+	{
+		"height": 30.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"'A",
+			"x ",
+			"[(trial_parameters['trial_codes']>=10) * (trial_parameters['trial_codes']<30)]",
+			"[trial_parameters['trial_codes']<10]",
+			"response",
+			"PP",
+			"trial_pupil_signal",
+			"self.deconvolution_interval",
+			"trial_signals",
+			"len(all_timepoint_array)",
+			".append(np.mean(trial_signal, axis=0))",
+			"over_subs",
+			"per_sub",
+			"over_subs",
+			"(stim_deconv_interval[1]-stim_deconv_interval[0])",
+			"down_fs",
+			"True",
+			"extend",
+			" + prev_signal_size",
+			"start_block_time",
+			"reaction_time",
+			"_8_",
+			"['ori']",
+			"['color']",
+			"2*",
+			"_4_",
+			"stim_events",
+			"(trial_parameters['correct_answer']==1) * ",
+			"(~np.isnan",
+			" / ",
+			"[:-1]",
+			"orientation",
+			"stimulus_",
+			"trial_parameters['trial_codes']==50",
+			"trial_parameters['trial_codes']==0",
+			"trial_parameters['trial_phase_4_full_signal'][",
+			"trial_parameters['trial_codes']==",
+			"trial_parameters['trial_codes']",
+			", fmt = self.linestylemap[key]",
+			", fmt = self.linestylemap[label]",
+			"label",
+			"stimulus_types[params['trial_cue']]",
+			"stimulus",
+			"ax.",
+			"ax",
+			"color",
+			"['']['",
+			"color",
+			"response",
+			"plt",
+			"stimulus",
+			"color",
+			"pe_",
+			"pe",
+			"response",
+			"stim",
+			"events",
+			"_resp",
+			"_stim",
+			"stim_",
+			"resp_",
+			"FIR_resp_color",
+			"==0",
+			">=30",
+			">=10",
+			">40",
+			"<10",
+			"FIR3",
+			"FIR2",
+			"FIR1",
+			"all_correlations",
+			"self",
+			"events",
+			"stimulus_deconvolution_interval",
+			"response_fir_signals",
+			"}}",
+			"key",
+			"_stimulus",
+			"signal_sample_frequency",
+			"pupil_signal",
+			"time",
+			"times",
+			"events",
+			"extend",
+			"devonv_interval",
+			"self",
+			"pl.",
+			"pl",
+			"blink",
+			"blinks",
+			"this_trial_blinks",
+			", sub",
+			"'pupil_",
+			"pupil",
+			"extend",
+			"d(sub",
+			"sub",
+			"extend",
+			"over_subs",
+			"50",
+			"450",
+			", axis=0))",
+			", axis=0)",
+			"append(np.mean(",
+			", axis=0)",
+			"append(np.mean(",
+			", axis=0)",
+			"append(np.mean(",
+			",axis=0)",
+			"append(np.mean(",
+			"extend(",
+			"((",
+			"m)",
+			")",
+			"extend(",
+			"['PP','PU','UP','UU']",
+			"'trial_code'",
+			"trial_code",
+			"plt.subplot",
+			"median",
+			"rt",
+			"PP_rt",
+			"(this_parameters['correct_answer']==0) *",
+			"1",
+			"self",
+			"L_",
+			"L",
+			"l"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/User/LaTeX.sublime-build",
+	"project": "preprocessing.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Projects/PredictionError/PEfmri.sublime-project"
+			],
+			[
+				"hed",
+				"~/Analysis/toolbox/hedfpy.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 394.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
