@@ -440,6 +440,16 @@ class BehaviorAnalyzer(PupilAnalyzer):
 			hit_rates[tcode] = np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['response']==1) & (trial_parameters['trial_direction']==1)) / np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['trial_direction']==1))
 			fa_rates[tcode] = np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['response']==1) & (trial_parameters['trial_direction']==-1)) / np.sum((trial_parameters['trial_codes']==tcode) & (trial_parameters['trial_direction']==-1))
 
+			if hit_rates[tcode]==1:
+				hit_rates[tcode] -= 0.001
+			elif hit_rates[tcode]==0:
+				hit_rates[tcode] += 0.001
+
+			if fa_rates[tcode]==1:
+				fa_rates[tcode] -= 0.001
+			elif fa_rates[tcode]==0:
+				fa_rates[tcode] += 0.001			
+
 			d_prime[tcode] = (sp.stats.norm.ppf(hit_rates[tcode]) - sp.stats.norm.ppf(fa_rates[tcode]))/np.sqrt(2)
 			criterion[tcode] = -(sp.stats.norm.ppf(hit_rates[tcode]) + sp.stats.norm.ppf(fa_rates[tcode]))/np.sqrt(2)
 
