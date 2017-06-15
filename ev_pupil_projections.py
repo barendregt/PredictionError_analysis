@@ -433,13 +433,13 @@ for subname in sublist:
 		for key, trial_signal in pa.trial_signals.items():
 
 			if key < 10:
-				response_diff_signals['PP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals))/np.linalg.norm(np.mean(all_pupil_signals), ord=2)**2)
+				response_diff_signals['PP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals,axis=0))/np.linalg.norm(np.mean(all_pupil_signals,axis=0), ord=2)**2)
 			elif key < 30:
-				response_diff_signals['UP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals))/np.linalg.norm(np.mean(all_pupil_signals), ord=2)**2)
+				response_diff_signals['UP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals,axis=0))/np.linalg.norm(np.mean(all_pupil_signals,axis=0), ord=2)**2)
 			elif key <50:
-				response_diff_signals['PP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals))/np.linalg.norm(np.mean(all_pupil_signals), ord=2)**2)
+				response_diff_signals['PP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals,axis=0))/np.linalg.norm(np.mean(all_pupil_signals,axis=0), ord=2)**2)
 			else:
-				response_diff_signals['PP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals))/np.linalg.norm(np.mean(all_pupil_signals), ord=2)**2)
+				response_diff_signals['PP'].extend(np.dot(trial_signal,np.mean(all_pupil_signals,axis=0))/np.linalg.norm(np.mean(all_pupil_signals,axis=0), ord=2)**2)
 	except:
 		embed()
 

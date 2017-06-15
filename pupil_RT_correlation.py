@@ -90,9 +90,9 @@ for subname in sublist:
 	tcodes = [0,10,30,50,70]
 	tnames = ['noPE','PEtr','PEntr','bothPE']
 
-	pl.open_figure(force=1)
-	pl.hline(y=0)
-	pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)
+	# pl.open_figure(force=1)
+	# pl.hline(y=0)
+	# pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)
 
 	tc_correlations = dict(zip(tnames,[[]]*4))
 	for tcii in range(len(tcodes)-1):
@@ -117,9 +117,9 @@ for subname in sublist:
 		all_correlations[['PP','UP','PU','UU'][tcii]].append(np.array(tc_corr))
 
 	
-	pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
-	pl.save_figure('%s-tc_corr_response.pdf'%subname, sub_folder='per_sub/RT')
-	plt.close('all')
+	# pl.event_related_pupil_average(data = tc_correlations, conditions = tnames, show_legend = True)
+	# pl.save_figure('%s-tc_corr_response.pdf'%subname, sub_folder='per_sub/RT')
+	# plt.close('all')
 	# embed()
 
 # embed()
