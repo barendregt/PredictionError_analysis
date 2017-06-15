@@ -94,7 +94,7 @@ response_fir_signals = {'color': {'PP': [],
 						 'UU': []}
 						 }
 
-plot_indiv = True
+plot_indiv = False#True
 
 for subname in sublist:
 
