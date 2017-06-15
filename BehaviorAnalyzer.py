@@ -443,7 +443,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 			d_prime[tcode] = (sp.stats.norm.ppf(hit_rates[tcode]) - sp.stats.norm.ppf(fa_rates[tcode]))/np.sqrt(2)
 			criterion[tcode] = -(sp.stats.norm.ppf(hit_rates[tcode]) + sp.stats.norm.ppf(fa_rates[tcode]))/np.sqrt(2)
 
-		return d_prime,criterion,hit_rates,fa_rates
+		return d_prime,criterion#,hit_rates,fa_rates
 
 
 	def compute_error_rates(self):
