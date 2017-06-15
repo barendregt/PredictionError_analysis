@@ -113,7 +113,7 @@ for subname in sublist:
 	#sub_rts = pa.compute_reaction_times()
 
 	# # Get pupil data (ev)
-	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_phase = 4, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
+	pa.signal_per_trial(only_correct = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
 
 	# pa.get_IRF()
 
