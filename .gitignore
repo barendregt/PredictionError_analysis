@@ -5,3 +5,4 @@ Archive/
 # Python
 *.py[cod]
 
+*.h5
