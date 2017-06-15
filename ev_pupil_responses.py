@@ -240,12 +240,12 @@ for subname in sublist:
 	all_rts['UU'].append(np.median(sub_rts[50]))
 	all_rts['UU'].append(np.median(sub_rts[60]))
 
-	rts['UP'].append(np.mean(sub_rts[10] / np.median(np.hstack(sub_rts).ravel())))
-	rts['UP'].append(np.mean(sub_rts[20] / np.median(np.hstack(sub_rts).ravel())))
-	rts['PU'].append(np.mean(sub_rts[30] / np.median(np.hstack(sub_rts).ravel())))
-	rts['PU'].append(np.mean(sub_rts[40] / np.median(np.hstack(sub_rts).ravel())))
-	rts['UU'].append(np.mean(sub_rts[50] / np.median(np.hstack(sub_rts).ravel())))
-	rts['UU'].append(np.mean(sub_rts[60] / np.median(np.hstack(sub_rts).ravel())))
+	rts['UP'].append(np.mean(sub_rts[10] / np.median(sub_rts[0])))
+	rts['UP'].append(np.mean(sub_rts[20] / np.median(sub_rts[1])))
+	rts['PU'].append(np.mean(sub_rts[30] / np.median(sub_rts[0])))
+	rts['PU'].append(np.mean(sub_rts[40] / np.median(sub_rts[1])))
+	rts['UU'].append(np.mean(sub_rts[50] / np.median(sub_rts[0])))
+	rts['UU'].append(np.mean(sub_rts[60] / np.median(sub_rts[1])))
 
 
 	sub_pc = pa.compute_percent_correct()
@@ -577,7 +577,7 @@ for subname in sublist:
 			else:
 				stimulus_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
 
-	sub_rts = pa.compute_reaction_times()
+	sub_rts = pa.compute_reaction_times(correct_trials = False)
 
 	all_rts['PP'].append(np.median(sub_rts[0]))
 	all_rts['PP'].append(np.median(sub_rts[1]))

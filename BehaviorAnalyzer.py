@@ -389,7 +389,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 	# 						   'trial_orientation': trial_orientation,
 	# 						   'trial_correct': trial_correct})
 
-	def compute_reaction_times(self, compute_average = False):
+	def compute_reaction_times(self, compute_average = False, correct_trials = True):
 
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
@@ -397,7 +397,10 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
 			
-			rts = trial_parameters['reaction_time'][(trial_parameters['trial_codes']==tcode) * (np.array(trial_parameters['reaction_time']>0.0, dtype=bool))]
+			if correct_trials:
+				rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (trial_parameters['trial_codes']==tcode) * (np.array(trial_parameters['reaction_time']>0.0, dtype=bool))]
+			else:
+				rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==0) * (trial_parameters['trial_codes']==tcode) * (np.array(trial_parameters['reaction_time']>0.0, dtype=bool))]
 
 			if compute_average:
 				reaction_times[tcode] = np.median(rts)
