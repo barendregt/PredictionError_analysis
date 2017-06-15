@@ -10,12 +10,6 @@ from statsmodels.stats.anova import anova_lm
 from numpy import *
 import scipy as sp
 from pandas import *
-# import readline
-# from rpy2.robjects.packages import importr
-# import rpy2.robjects as ro
-# import pandas.rpy.common as com
-# stats = importr('stats')
-# base = importr('base')
 
 from math import *
 import os,glob,sys,platform
@@ -24,28 +18,14 @@ import cPickle as pickle
 import pandas as pd
 
 from IPython import embed
-
-# sys.path.append('tools/')
 from BehaviorAnalyzer import BehaviorAnalyzer
 from Plotter import Plotter
 
 
 from analysis_parameters import *
 
-linestylemap = {'PP': 'k-',
-				'UP': 'r-',
-				'PU': 'k--',
-				'UU': 'r--'}
+pl = Plotter(figure_folder = figfolder)
 
-pl = Plotter(figure_folder = figfolder, linestylemap = linestylemap)
-
-
-
-#### PLOT AVERAGES OVER SUBS
-
-# pl.open_figure()
-
-# pl.subplot(1,2,2, title= 'Average pupil difference')
 
 response_pupil_signals = {'PP': [],
 				 'UP': [],

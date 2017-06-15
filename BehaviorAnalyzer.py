@@ -393,19 +393,9 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		reaction_times = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		valid_trials = trial_parameters['reaction_time'] > 0.0
 
-		for tcode in np.unique(trial_parameters['trial_codes']):
-			
-			if correct_trials:
-				rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (trial_parameters['trial_codes']==tcode) * (np.array(trial_parameters['reaction_time']>0.0, dtype=bool))]
-			else:
-				rts = trial_parameters['reaction_time'][(trial_parameters['correct_answer']==0) * (trial_parameters['trial_codes']==tcode) * (np.array(trial_parameters['reaction_time']>0.0, dtype=bool))]
-
-			if compute_average:
-				reaction_times[tcode] = np.median(rts)
-			else:
-				reaction_times[tcode] = np.array(rts)
+		reaction_times = pd.DataFrame(data = [trial_parameters['reaction_time'][valid_trials], trial_parameters['trial_codes'][valid_trials], trial_parameters['correct_answer'][valid_trials]], columns = ['reaction_time','trial_code','correct'])
 
 		return reaction_times
 

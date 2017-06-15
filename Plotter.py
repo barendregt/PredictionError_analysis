@@ -20,7 +20,7 @@ alphabetnum = np.array(list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 
 class Plotter(object):
 
-	def __init__(self, figure_folder = '', sn_style='ticks', linestylemap = []):
+	def __init__(self, figure_folder = '', sn_style='ticks', linestylemap = None):
 
 		sn.set(style = sn_style)
 
@@ -67,6 +67,10 @@ class Plotter(object):
 		else:
 			plt.plot(x, y, label=label, figure = self.figure, *args, **kwargs)
 
+	def tsplot(self, data, tnames = [], time = [], name = 'Time (au)', ci=[68], legend=True):
+		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
+		sn.despine(offset=5)
+
 	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False):
 			
 
@@ -83,21 +87,21 @@ class Plotter(object):
 
 					if compute_sd:
 						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
-						if not self.linestylemap:
-							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)#, color=self.linestylemap[label][0])	
+						if self.linestylemap is None:
+							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)
 						else:
-							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)		
+							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1, color=self.linestylemap[label][0])		
 
 					if not signal_labels:
-						if not self.linestylemap:
+						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=label)
 						else:
-							self.plot(xtimes, msignal, label=label)
+							self.plot(xtimes, msignal, label=label, color=self.linestylemap[label][0], lt=self.linestylemap[label][1:])
 					else:
-						if not self.linestylemap:
+						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=signal_labels[label])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[label])
+							self.plot(xtimes, msignal, label=signal_labels[label], color=self.linestylemap[label][0], lt=self.linestylemap[label][1:])
 
 				
 
@@ -111,21 +115,21 @@ class Plotter(object):
 
 					if compute_sd:	
 						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
-						if not self.linestylemap:
-							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)#, color=self.linestylemap[key][0])	
-						else:
+						if self.linestylemap is None:
 							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
+						else:
+							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1, color=self.linestylemap[key][0])	
 
 					if not signal_labels:
-						if not self.linestylemap:
+						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=label)
 						else:
-							self.plot(xtimes, msignal, label=label)
+							self.plot(xtimes, msignal, label=label, color=self.linestylemap[key][0], lt=self.linestylemap[key][1:])
 					else:
-						if not self.linestylemap:
+						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=signal_labels[key])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[key])
+							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], lt=self.linestylemap[key][1:])
 
 	
 		
@@ -236,15 +240,19 @@ class Plotter(object):
 
 		latex_code = '\\addplot plot coordinates {'
 
-		bar_color = 'w'
+		if self.linestylemap is None:
+			bar_color = {key:'w' for key in conditions}
+		else:
+			bar_color = {key: self.linestylemap[key][0] for key in conditions}
+
 		bar_width = 0.75
 
 		for ii,key in enumerate(conditions):
 
 			if with_error:
-				plt.bar(ii+1, np.nanmean(data[key]), yerr = np.nanstd(data[key])/np.sqrt(5*len(data[key])), width = bar_width, label = key, color= bar_color,edgecolor='k')
+				plt.bar(ii+1, np.nanmean(data[key]), yerr = np.nanstd(data[key])/np.sqrt(5*len(data[key])), width = bar_width, label = key, color= bar_color[key],edgecolor='k')
 			else:
-				plt.bar(ii+1, np.nanmean(data[key]), width = bar_width, label = key, color = bar_color, edgecolor='k')
+				plt.bar(ii+1, np.nanmean(data[key]), width = bar_width, label = key, color = bar_color[key], edgecolor='k')
 			
 			if with_data_points:
 				plt.plot(np.ones((len(data[key]),1))*ii+1, data[key], 'o')
