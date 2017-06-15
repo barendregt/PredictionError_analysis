@@ -240,12 +240,12 @@ for subname in sublist:
 	all_rts['UU'].append(np.median(sub_rts[50]))
 	all_rts['UU'].append(np.median(sub_rts[60]))
 
-	rts['UP'].append(np.mean(sub_rts[10] / np.median(sub_rts[0])))
-	rts['UP'].append(np.mean(sub_rts[20] / np.median(sub_rts[1])))
-	rts['PU'].append(np.mean(sub_rts[30] / np.median(sub_rts[0])))
-	rts['PU'].append(np.mean(sub_rts[40] / np.median(sub_rts[1])))
-	rts['UU'].append(np.mean(sub_rts[50] / np.median(sub_rts[0])))
-	rts['UU'].append(np.mean(sub_rts[60] / np.median(sub_rts[1])))
+	rts['UP'].append(np.mean(sub_rts[10] / np.median(np.hstack(sub_rts))))
+	rts['UP'].append(np.mean(sub_rts[20] / np.median(np.hstack(sub_rts))))
+	rts['PU'].append(np.mean(sub_rts[30] / np.median(np.hstack(sub_rts))))
+	rts['PU'].append(np.mean(sub_rts[40] / np.median(np.hstack(sub_rts))))
+	rts['UU'].append(np.mean(sub_rts[50] / np.median(np.hstack(sub_rts))))
+	rts['UU'].append(np.mean(sub_rts[60] / np.median(np.hstack(sub_rts))))
 
 
 	sub_pc = pa.compute_percent_correct()

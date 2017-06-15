@@ -489,7 +489,7 @@ class PupilAnalyzer(Analyzer):
 			run_saccades[rii].to_hdf(self.combined_h5_filename, key = '/pupil/r%i_saccades'%rii, mode = 'a', format = 't', data_columns = True)
 
 
-	def signal_per_trial(self, reference_phase = 1, only_correct = True, only_incorrect = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+	def signal_per_trial(self, reference_phase = 1, only_correct = True, only_incorrect = False, return_rt = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
 		trial_start_offset = 0#0.5+.15+.03+.15 # hack for this dataset only
 
@@ -503,7 +503,10 @@ class PupilAnalyzer(Analyzer):
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = signal_type)
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
 
-		self.trial_signals =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		self.trial_signals = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
+		if return_rt:
+			self.trial_rts = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
@@ -521,6 +524,9 @@ class PupilAnalyzer(Analyzer):
 				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
 			else:
 				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
+
+			if return_rt:
+				these_rts = trial_parameters['reaction_time'][selected_trials].values
 
 			if baseline_correction:
 				if baseline_type == 'relative':
@@ -546,8 +552,14 @@ class PupilAnalyzer(Analyzer):
 						trial_pupil_signal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 1)
 
 					self.trial_signals[tcode].append(trial_pupil_signal)
+
+					if return_rt:
+						self.trial_rts[tcode].append(these_rts[tii])
+
 					
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
+			if return_rt:
+				self.trial_rts[tcode] = np.array(self.trial_rts[tcode])
 
 	def compute_TPR(self, reference_phase = 1, only_correct = False, only_incorrect = False, time_window = None, baseline_period = [-0.5, 0.0], with_rt = False, force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
