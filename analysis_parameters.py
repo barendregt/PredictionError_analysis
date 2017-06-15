@@ -18,6 +18,7 @@ signal_sample_frequency = 1000
 deconv_sample_frequency = 10
 response_deconvolution_interval = np.array([-1.5, 4.5])
 stimulus_deconvolution_interval = np.array([-1, 4.5])
+trial_deconvolution_interval = np.array([-0.5, 5.0])
 
 down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
