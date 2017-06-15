@@ -77,7 +77,15 @@ rts 	  	  = {'PP': [],
 pc 	  	  	  = {'PP': [],
 				 'UP': [],
 				 'PU': [],
-				 'UU': []}			
+				 'UU': []}	
+dp 	  	  	  = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}	
+bias  	  	  = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}					 				 		
 all_ie_scores = {'PP': [],
 				 'UP': [],
 				 'PU': [],
@@ -259,6 +267,25 @@ for subname in sublist:
 	pc['UU'].append(sub_pc[50])
 	pc['UU'].append(sub_pc[60])
 
+	sub_dp, sub_bias = pa.compute_dprime()
+	dp['PP'].append(sub_dp[0])
+	dp['PP'].append(sub_dp[1])
+	dp['UP'].append(sub_dp[10])
+	dp['UP'].append(sub_dp[20])
+	dp['PU'].append(sub_dp[30])
+	dp['PU'].append(sub_dp[40])
+	dp['UU'].append(sub_dp[50])
+	dp['UU'].append(sub_dp[60])	
+
+	bias['PP'].append(sub_bias[0])
+	bias['PP'].append(sub_bias[1])
+	bias['UP'].append(sub_bias[10])
+	bias['UP'].append(sub_bias[20])
+	bias['PU'].append(sub_bias[30])
+	bias['PU'].append(sub_bias[40])
+	bias['UU'].append(sub_bias[50])
+	bias['UU'].append(sub_bias[60])
+
 # # embed()
 
 # pl.open_figure(force=1)
@@ -367,6 +394,20 @@ pl.save_figure('pupil_response-stimulus.pdf', sub_folder = 'over_subs/pupil')
 pl.open_figure(force=1)
 # pl.figure.suptitle('Reaction time')
 # pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
+pl.bar_plot(data = dp, conditions = ['PP','UP','PU','UU'], ylabel='Performance (d prime)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
+
+pl.save_figure('dprime.pdf', sub_folder = 'over_subs/task')
+
+pl.open_figure(force=1)
+# pl.figure.suptitle('Reaction time')
+# pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
+pl.bar_plot(data = bias, conditions = ['PP','UP','PU','UU'], ylabel='Performance (bias)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
+
+pl.save_figure('bias.pdf', sub_folder = 'over_subs/task')
+
+pl.open_figure(force=1)
+# pl.figure.suptitle('Reaction time')
+# pl.hatline(x = (2.5,3.5), y = (np.mean(rts['UP'])+np.mean(rts['PU']),np.mean(rts['UP'])+np.mean(rts['PU'])))
 pl.bar_plot(data = rts, conditions = ['UP','PU','UU'], ylabel='Relative RT (% of predicted)', with_error = True, x_lim = [0.5, None],xticklabels = ['Task relevant','Task irrelevant','Both'], xlabel = 'Prediction error', y_lim = [1.0, 1.21], yticks = np.arange(1.0,1.4,.05), yticklabels = [str(val)+"%" for val in np.arange(100,140,5)])
 
 pl.save_figure('reaction_times.pdf', sub_folder = 'over_subs/task')
@@ -384,71 +425,71 @@ pl.save_figure('percent_correct.pdf', sub_folder = 'over_subs/task')
 # # # pl.save_figure('all-ev_pupil_summary-things.pdf', sub_folder = 'summary')
 
 
-for subname in sublist:
+# for subname in sublist:
 
-	# print subname
-	# Organize filenames
-	rawfolder = os.path.join(raw_data_folder,subname)
-	sharedfolder = os.path.join(shared_data_folder,subname)
-	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
-	h5filename = os.path.join(sharedfolder,subname+'.h5')
+# 	# print subname
+# 	# Organize filenames
+# 	rawfolder = os.path.join(raw_data_folder,subname)
+# 	sharedfolder = os.path.join(shared_data_folder,subname)
+# 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
+# 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+# 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
-	# redo signal extraction
-	# pa.recombine_signal_blocks(force_rebuild = True)
+# 	# redo signal extraction
+# 	# pa.recombine_signal_blocks(force_rebuild = True)
 
-	#sub_rts = pa.compute_reaction_times()
+# 	#sub_rts = pa.compute_reaction_times()
 
-	# # Get pupil data (ev)
-	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
+# 	# # Get pupil data (ev)
+# 	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
 
-	# pa.get_IRF()
+# 	# pa.get_IRF()
 
-	# all_sub_IRF['button_press'].append(pa.sub_IRF['button_press'])
+# 	# all_sub_IRF['button_press'].append(pa.sub_IRF['button_press'])
 
 
-	# embed()
-	ref_signals = []
+# 	# embed()
+# 	ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
-		if key < 10:
-			#trial_signal = trial_signal - trial_signal[:,zero_point][:,np.newaxis]
+# 	for key,trial_signal in pa.trial_signals.items():
+# 		if key < 10:
+# 			#trial_signal = trial_signal - trial_signal[:,zero_point][:,np.newaxis]
 
-			ref_signals.extend(trial_signal)
+# 			ref_signals.extend(trial_signal)
 
-	msignal = np.mean(ref_signals, axis=0)
-	msignal_norm = np.linalg.norm(msignal, ord=2)**2
+# 	msignal = np.mean(ref_signals, axis=0)
+# 	msignal_norm = np.linalg.norm(msignal, ord=2)**2
 
-	pp_signal = []
-	up_signal = []
-	pu_signal = []
-	uu_signal = []
+# 	pp_signal = []
+# 	up_signal = []
+# 	pu_signal = []
+# 	uu_signal = []
 	
 
-	try:
-		for key, trial_signal in pa.trial_signals.items():
-			if key < 10:
-				response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-			elif key < 30:
-				response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-			elif key < 50:
-				response_pupil_signals['PU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-			else:
-				response_pupil_signals['UU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
+# 	try:
+# 		for key, trial_signal in pa.trial_signals.items():
+# 			if key < 10:
+# 				response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
+# 			elif key < 30:
+# 				response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
+# 			elif key < 50:
+# 				response_pupil_signals['PU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
+# 			else:
+# 				response_pupil_signals['UU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 
-			if len(trial_signal)>0:
+# 			if len(trial_signal)>0:
 
-				if key < 10:
-					response_diff_signals['PP'].extend((trial_signal*np.mean(response_pupil_signals['PP']))/np.linalg.norm(np.mean(response_pupil_signals['PP']), ord=2)**2)
-				elif key < 30:
-					response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
-				elif key <50:
-					response_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
-				else:
-					response_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
-	except:
-		embed()
+# 				if key < 10:
+# 					response_diff_signals['PP'].extend((trial_signal*np.mean(response_pupil_signals['PP']))/np.linalg.norm(np.mean(response_pupil_signals['PP']), ord=2)**2)
+# 				elif key < 30:
+# 					response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
+# 				elif key <50:
+# 					response_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
+# 				else:
+# 					response_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
+# 	except:
+# 		embed()
 
 
 
