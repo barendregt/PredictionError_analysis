@@ -32,11 +32,6 @@ from Plotter import Plotter
 
 from analysis_parameters import *
 
-linestylemap = {'PP': 'k-',
-				'UP': 'r-',
-				'PU': 'k--',
-				'UU': 'r--'}
-
 pl = Plotter(figure_folder = figfolder, linestylemap = linestylemap)
 
 

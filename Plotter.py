@@ -250,7 +250,7 @@ class Plotter(object):
 		for ii,key in enumerate(conditions):
 
 			if with_error:
-				plt.bar(ii+1, np.nanmean(data[key]), yerr = np.nanstd(data[key])/np.sqrt(5*len(data[key])), width = bar_width, label = key, color= bar_color[key],edgecolor='k')
+				plt.bar(ii+1, np.nanmean(data[key]), yerr = np.nanstd(data[key])/np.sqrt(len(data[key])), width = bar_width, label = key, color= bar_color[key],edgecolor='k')
 			else:
 				plt.bar(ii+1, np.nanmean(data[key]), width = bar_width, label = key, color = bar_color[key], edgecolor='k')
 			

@@ -395,7 +395,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 		valid_trials = trial_parameters['reaction_time'] > 0.0
 
-		reaction_times = pd.DataFrame(data = [trial_parameters['reaction_time'][valid_trials], trial_parameters['trial_codes'][valid_trials], trial_parameters['correct_answer'][valid_trials]], columns = ['reaction_time','trial_code','correct'])
+		reaction_times = pd.DataFrame(data = np.vstack([trial_parameters['reaction_time'][valid_trials].values, trial_parameters['trial_codes'][valid_trials].values, trial_parameters['correct_answer'][valid_trials].values]).T, columns = ['reaction_time','trial_code','correct'])
 
 		return reaction_times
 
