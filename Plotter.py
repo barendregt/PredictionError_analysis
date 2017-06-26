@@ -34,8 +34,8 @@ class Plotter(object):
 		self.figure = None
 
 	def incorrect_data_format(self, data, conditions):
-		if not isinstance(data, dict):
-			print('ERROR: data must be a dictionary')
+		if (not isinstance(data, dict)) or (not isinstance(data, dataframe)):
+			print('ERROR: data must be a dictionary or dataframe')
 			return True
 
 		# Quickly check that all requested conditions are present in the data
@@ -176,11 +176,11 @@ class Plotter(object):
 		for key in conditions:
 			if key != reference_condition:
 				condition_mean = np.mean(reference_mean - data[key],axis=0) 
-				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key)
+				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=10)
 
 				if with_error:
 					condition_ste = np.std(reference_mean - data[key], axis=0)/np.sqrt(len(data[key]))
-					plt.fill_between(range(np.array(reference_mean).size), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5)
+					plt.fill_between(range(np.array(reference_mean).size), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5, color=self.linestylemap[key][0])
 
 		
 		# Do time-by-time stats on difference
