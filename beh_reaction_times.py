@@ -63,9 +63,9 @@ for tii in range(len(tc_lookup)-1):
 	all_rts['condition'][(all_rts['trial_code']>=tc_lookup[tii]) * (all_rts['trial_code']<tc_lookup[tii+1])] = tii
 
 # embed()
-# pl.open_figure(force=1)
-import matplotlib.pyplot as plt 
-import seaborn as sn 
+pl.open_figure(force=1)
+# import matplotlib.pyplot as plt 
+# import seaborn as sn 
 
 # sn.factorplot(data=all_rts, x="condition", y="reaction_time", hue="correct", size=6, kind="bar", palette="muted")
 
