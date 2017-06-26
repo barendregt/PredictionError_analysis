@@ -146,9 +146,9 @@ for subname in sublist:
 			if key < 10:
 				response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 			elif key < 30:
-				response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-			elif key < 50:
 				response_pupil_signals['PU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
+			elif key < 50:
+				response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 			else:
 				response_pupil_signals['UU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 
@@ -157,9 +157,9 @@ for subname in sublist:
 				if key < 10:
 					response_diff_signals['PP'].extend((trial_signal*msignal)/msignal_norm)
 				elif key < 30:
-					response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
-				elif key <50:
 					response_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
+				elif key <50:
+					response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
 				else:
 					response_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
 	except:
@@ -221,9 +221,9 @@ for subname in sublist:
 		if key < 10:
 			stimulus_pupil_signals['PP'].extend(trial_signal)
 		elif key < 30:
-			stimulus_pupil_signals['UP'].extend(trial_signal)
-		elif key < 50:
 			stimulus_pupil_signals['PU'].extend(trial_signal)
+		elif key < 50:
+			stimulus_pupil_signals['UP'].extend(trial_signal)
 		else:
 			stimulus_pupil_signals['UU'].extend(trial_signal)
 
@@ -231,9 +231,9 @@ for subname in sublist:
 			if key < 10:
 				stimulus_diff_signals['PP'].extend((trial_signal*msignal)/msignal_norm)
 			elif key < 30:
-				stimulus_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
-			elif key <50:
 				stimulus_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
+			elif key <50:
+				stimulus_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
 			else:
 				stimulus_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
 
@@ -595,9 +595,9 @@ for subname in sublist:
 			if key < 10:
 				response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 			elif key < 30:
-				response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-			elif key < 50:
 				response_pupil_signals['PU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
+			elif key < 50:
+				response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 			else:
 				response_pupil_signals['UU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 
@@ -606,9 +606,9 @@ for subname in sublist:
 				if key < 10:
 					response_diff_signals['PP'].extend((trial_signal*msignal)/msignal_norm)
 				elif key < 30:
-					response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
-				elif key <50:
 					response_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
+				elif key <50:
+					response_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
 				else:
 					response_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
 	except:
@@ -670,9 +670,9 @@ for subname in sublist:
 		if key < 10:
 			stimulus_pupil_signals['PP'].extend(trial_signal)
 		elif key < 30:
-			stimulus_pupil_signals['UP'].extend(trial_signal)
-		elif key < 50:
 			stimulus_pupil_signals['PU'].extend(trial_signal)
+		elif key < 50:
+			stimulus_pupil_signals['UP'].extend(trial_signal)
 		else:
 			stimulus_pupil_signals['UU'].extend(trial_signal)
 
@@ -680,9 +680,9 @@ for subname in sublist:
 			if key < 10:
 				stimulus_diff_signals['PP'].extend((trial_signal*msignal)/msignal_norm)
 			elif key < 30:
-				stimulus_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
-			elif key <50:
 				stimulus_diff_signals['PU'].extend((trial_signal*msignal)/msignal_norm)
+			elif key <50:
+				stimulus_diff_signals['UP'].extend((trial_signal*msignal)/msignal_norm)
 			else:
 				stimulus_diff_signals['UU'].extend((trial_signal*msignal)/msignal_norm)
 

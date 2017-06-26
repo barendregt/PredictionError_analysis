@@ -291,6 +291,11 @@ class Plotter(object):
 
 		sn.despine()
 
+	def factor_plot(data, *args, **kwargs):
+		# Draw a nested barplot to show survival for class and sex
+		g = sn.factorplot(data=data, *args, **kwargs)
+		g.despine(left=True)
+
 	def hline(self, y = 0, label = None):
 		
 		if label is not None:

@@ -29,10 +29,10 @@ pl = Plotter(figure_folder = figfolder, linestylemap=linestylemap)
 
 
 all_rts = []			 
-rts 	  	  = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}
+rts = {'PP': [],
+	 'UP': [],
+	 'PU': [],
+	 'UU': []}
 
 for subname in sublist:
 
@@ -51,4 +51,22 @@ for subname in sublist:
 
 all_rts = pd.concat(all_rts, keys = sublist, names = ['subject','trial'])
 
-embed()
+all_rts['rt_norm'] = np.zeros((all_rts.shape[0],1))
+# embed()
+for subname in sublist:
+	all_rts.loc[subname]['rt_norm'][np.array(all_rts['correct']==1,dtype=int)] = (all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==1,dtype=int)] / all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==1,dtype=int)].median()) * all_rts['reaction_time'][np.array(all_rts['correct']==1,dtype=int)].median()
+	all_rts.loc[subname]['rt_norm'][np.array(all_rts['correct']==0,dtype=int)] = (all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==0,dtype=int)] / all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==0,dtype=int)].median()) * all_rts['reaction_time'][np.array(all_rts['correct']==0,dtype=int)].median()
+
+all_rts['condition'] = np.zeros((all_rts.shape[0],1))
+tc_lookup = [0,10,30,50,70]
+for tii in range(len(tc_lookup)-1):
+	all_rts['condition'][(all_rts['trial_code']>=tc_lookup[tii]) * (all_rts['trial_code']<tc_lookup[tii+1])] = tii
+
+# embed()
+# pl.open_figure(force=1)
+import matplotlib.pyplot as plt 
+import seaborn as sn 
+
+sn.factorplot(data=all_rts, x="condition", y="rt_norm", hue="correct", size=6, kind="bar", palette="muted")
+plt.savefig(os.path.join(figfolder,'over_subs','task','rt_factor_test4.pdf'))
+# embed()
