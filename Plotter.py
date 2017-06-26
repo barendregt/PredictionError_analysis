@@ -18,7 +18,7 @@ from IPython import embed
 
 alphabetnum = np.array(list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), dtype="|S1")
 
-MARKERSIZE = 7
+MARKERSIZE = 5
 
 class Plotter(object):
 
@@ -98,12 +98,12 @@ class Plotter(object):
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=label)
 						else:
-							self.plot(xtimes, msignal, label=label, color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3])
+							self.plot(xtimes, msignal, label=label, color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3], markerfacecolor=self.linestylemap[label][0])
 					else:
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=signal_labels[label])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[label], color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3])
+							self.plot(xtimes, msignal, label=signal_labels[label], color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3], markerfacecolor=self.linestylemap[label][0])
 
 				
 
@@ -126,12 +126,12 @@ class Plotter(object):
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=label)
 						else:
-							self.plot(xtimes, msignal, label=label, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3])
+							self.plot(xtimes, msignal, label=label, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3], markerfacecolor=self.linestylemap[key][0])
 					else:
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=signal_labels[key])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3])
+							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markerfacecolor=self.linestylemap[key][0], markeredgecolor=self.linestylemap[key][3])
 
 	
 		
