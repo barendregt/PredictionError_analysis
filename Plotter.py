@@ -36,7 +36,7 @@ class Plotter(object):
 		self.figure = None
 
 	def incorrect_data_format(self, data, conditions):
-		if (not isinstance(data, dict)) or (not isinstance(data, dataframe)):
+		if (not isinstance(data, dict)) or (not isinstance(data, pd.DataFrame)):
 			print('ERROR: data must be a dictionary or dataframe')
 			return True
 
