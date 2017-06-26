@@ -67,6 +67,6 @@ for tii in range(len(tc_lookup)-1):
 import matplotlib.pyplot as plt 
 import seaborn as sn 
 
-sn.factorplot(data=all_rts, x="condition", y="rt_norm", hue="correct", size=6, kind="bar", palette="muted")
-plt.savefig(os.path.join(figfolder,'over_subs','task','rt_factor_test4.pdf'))
+sn.factorplot(data=all_rts, x="condition", y="reaction_time", hue="correct", size=6, kind="bar", palette="muted")
+plt.savefig(os.path.join(figfolder,'over_subs','task','rt_factor_test5.pdf'))
 # embed()
