@@ -22,10 +22,10 @@ trial_deconvolution_interval = np.array([-0.5, 5.0])
 
 down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
-linestylemap = {'PP': [[.5,.5,.5],'-',None],
-				'UP': ['y','-','o'],
-				'PU': ['m','-','s'],
-				'UU': ['c','--','d']}
+linestylemap = {'PP': [[.5,.5,.5],'-',None,None],
+				'UP': ['k','-','o','k'],
+				'PU': ['k','-','o','w'],
+				'UU': ['c','--','o','c']}
 
 
 sublist = ['AB','AC','AF','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AS','AT','AV','AX','AZ']#,'BA','IAA','IAC','IAF','IAH','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ']

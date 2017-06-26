@@ -18,6 +18,8 @@ from IPython import embed
 
 alphabetnum = np.array(list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), dtype="|S1")
 
+MARKERSIZE = 7
+
 class Plotter(object):
 
 	def __init__(self, figure_folder = '', sn_style='ticks', linestylemap = None):
@@ -96,12 +98,12 @@ class Plotter(object):
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=label)
 						else:
-							self.plot(xtimes, msignal, label=label, color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=10)
+							self.plot(xtimes, msignal, label=label, color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3])
 					else:
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=signal_labels[label])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[label], color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=10)
+							self.plot(xtimes, msignal, label=signal_labels[label], color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3])
 
 				
 
@@ -124,12 +126,12 @@ class Plotter(object):
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=label)
 						else:
-							self.plot(xtimes, msignal, label=label, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=10)
+							self.plot(xtimes, msignal, label=label, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3])
 					else:
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=signal_labels[key])
 						else:
-							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=10)
+							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3])
 
 	
 		
@@ -176,7 +178,7 @@ class Plotter(object):
 		for key in conditions:
 			if key != reference_condition:
 				condition_mean = np.mean(reference_mean - data[key],axis=0) 
-				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=10)
+				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3])
 
 				if with_error:
 					condition_ste = np.std(reference_mean - data[key], axis=0)/np.sqrt(len(data[key]))
