@@ -155,13 +155,13 @@ for subname in sublist:
 			if len(trial_signal)>0:
 
 				if key < 10:
-					response_diff_signals['PP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['PP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 				elif key < 30:
-					response_diff_signals['PU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['PU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 				elif key <50:
-					response_diff_signals['UP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['UP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 				else:
-					response_diff_signals['UU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['UU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 	except:
 		embed()
 
@@ -229,13 +229,13 @@ for subname in sublist:
 
 		if len(trial_signal)>0:
 			if key < 10:
-				response_diff_signals['PP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['PP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 			elif key < 30:
-				response_diff_signals['PU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['PU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 			elif key <50:
-				response_diff_signals['UP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['UP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 			else:
-				response_diff_signals['UU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['UU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 
 	# sub_rts = pa.compute_reaction_times()
 
@@ -610,13 +610,13 @@ for subname in sublist:
 			if len(trial_signal)>0:
 
 				if key < 10:
-					response_diff_signals['PP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['PP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 				elif key < 30:
-					response_diff_signals['PU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['PU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 				elif key <50:
-					response_diff_signals['UP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['UP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 				else:
-					response_diff_signals['UU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+					response_diff_signals['UU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 	except:
 		embed()
 
@@ -684,13 +684,13 @@ for subname in sublist:
 
 		if len(trial_signal)>0:
 			if key < 10:
-				response_diff_signals['PP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['PP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 			elif key < 30:
-				response_diff_signals['PU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['PU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 			elif key <50:
-				response_diff_signals['UP'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['UP'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 			else:
-				response_diff_signals['UU'].append(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
+				response_diff_signals['UU'].extend(np.mean(trial_signal - np.mean(ref_signals, axis=0), axis=0))
 
 	# sub_rts = pa.compute_reaction_times(correct_trials = False)
 
