@@ -54,22 +54,37 @@ all_rts = pd.concat(all_rts, keys = sublist, names = ['subject','trial'])
 all_rts['rt_norm'] = np.zeros((all_rts.shape[0],1))
 # embed()
 for subname in sublist:
-	all_rts.loc[subname]['rt_norm'][np.array(all_rts['correct']==1,dtype=int)] = (all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==1,dtype=int)] / all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==1,dtype=int)].median()) * all_rts['reaction_time'][np.array(all_rts['correct']==1,dtype=int)].median()
-	all_rts.loc[subname]['rt_norm'][np.array(all_rts['correct']==0,dtype=int)] = (all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==0,dtype=int)] / all_rts.loc[subname]['reaction_time'][np.array(all_rts['correct']==0,dtype=int)].median()) * all_rts['reaction_time'][np.array(all_rts['correct']==0,dtype=int)].median()
+	all_rts.loc[subname]['rt_norm'][np.array(all_rts.loc[subname]['correct']==1,dtype=bool)] = (all_rts.loc[subname]['reaction_time'][np.array(all_rts.loc[subname]['correct']==1,dtype=bool)] / all_rts.loc[subname]['reaction_time'][np.array(all_rts.loc[subname]['correct']==1,dtype=bool)].median()) * all_rts['reaction_time'][np.array(all_rts['correct']==1,dtype=bool)].median()
+	all_rts.loc[subname]['rt_norm'][np.array(all_rts.loc[subname]['correct']==0,dtype=bool)] = (all_rts.loc[subname]['reaction_time'][np.array(all_rts.loc[subname]['correct']==0,dtype=bool)] / all_rts.loc[subname]['reaction_time'][np.array(all_rts.loc[subname]['correct']==0,dtype=bool)].median()) * all_rts['reaction_time'][np.array(all_rts['correct']==0,dtype=bool)].median()
 
 all_rts['condition'] = np.zeros((all_rts.shape[0],1))
 tc_lookup = [0,10,30,50,70]
+conditions = ['noPE','TI','TR','Both']
 for tii in range(len(tc_lookup)-1):
-	all_rts['condition'][(all_rts['trial_code']>=tc_lookup[tii]) * (all_rts['trial_code']<tc_lookup[tii+1])] = tii
+	all_rts['condition'][(all_rts['trial_code']>=tc_lookup[tii]) * (all_rts['trial_code']<tc_lookup[tii+1])] = conditions[tii]
 
-# embed()
+embed()
 pl.open_figure(force=1)
 # import matplotlib.pyplot as plt 
 # import seaborn as sn 
 
 # sn.factorplot(data=all_rts, x="condition", y="reaction_time", hue="correct", size=6, kind="bar", palette="muted")
+avg_rts = {}
+avg_rts['PP'] = []
+avg_rts['PU'] = []
+avg_rts['UP'] = []
+avg_rts['UU'] = []
+
+for subname in sublist:
+	avg_rts['PP'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['PU'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['UP'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['UU'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==1)].mean())
 
 
+pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'])
+
+# pl.bar_plot
 
 plt.savefig(os.path.join(figfolder,'over_subs','task','rt_factor_test5.pdf'))
 # embed()
