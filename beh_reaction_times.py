@@ -76,14 +76,25 @@ avg_rts['UP'] = []
 avg_rts['UU'] = []
 
 for subname in sublist:
-	avg_rts['PP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==1)].mean())
-	avg_rts['PU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==1)].mean())
-	avg_rts['UP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==1)].mean())
-	avg_rts['UU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['PP'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==1)]))
+	avg_rts['PU'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==1)]))
+	avg_rts['UP'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==1)]))
+	avg_rts['UU'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==1)]))
 
 
-pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'], with_error = True)
+# avg_rts['PP'] = np.array(avg_rts['PP'])
+# avg_rts['UP'] = np.array(avg_rts['UP']) + 0.14
+# avg_rts['UU'] = np.array(avg_rts['UU']) + 0.11
+# avg_rts['PU'] = np.array(avg_rts['PU'])
 
+
+# avg_rts['UP'] = avg_rts['UP'] / avg_rts['PP'].mean()
+# avg_rts['PU'] = avg_rts['PU'] / avg_rts['PP'].mean()
+# avg_rts['UU'] = avg_rts['UU'] / avg_rts['PP'].mean()
+
+pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'], with_error = True, ylabel='Reaction time (s)')
+
+pl.save_figure('rt_correct_raw.pdf',sub_folder='over_subs/task')
 
 pl.open_figure(force=1)
 avg_rts = {}
@@ -93,15 +104,22 @@ avg_rts['UP'] = []
 avg_rts['UU'] = []
 
 for subname in sublist:
-	avg_rts['PP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==0)].mean())
-	avg_rts['PU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==0)].mean())
-	avg_rts['UP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==0)].mean())
-	avg_rts['UU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==0)].mean())
+	avg_rts['PP'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==0)]))
+	avg_rts['PU'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==0)]))
+	avg_rts['UP'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==0)]))
+	avg_rts['UU'].append(np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==0)]))
 
+avg_rts['PP'] = np.array(avg_rts['PP'])
+avg_rts['UP'] = np.array(avg_rts['UP']) 
+avg_rts['UU'] = np.array(avg_rts['UU'])
+avg_rts['PU'] = np.array(avg_rts['PU'])
 
-pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'], with_error = True)
+# avg_rts['UP'] = avg_rts['UP'] / np.median(avg_rts['PP'])
+# avg_rts['PU'] = avg_rts['PU'] / np.median(avg_rts['PP'])
+# avg_rts['UU'] = avg_rts['UU'] / np.median(avg_rts['PP'])
+
+pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'], with_error = True, ylabel='Reaction time (s)')
 
 # pl.bar_plot
-
-plt.savefig(os.path.join(figfolder,'over_subs','task','rt_factor_test5.pdf'))
+pl.save_figure('rt_incorrect_raw.pdf',sub_folder='over_subs/task')
 # embed()
