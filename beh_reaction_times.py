@@ -59,11 +59,11 @@ for subname in sublist:
 
 all_rts['condition'] = np.zeros((all_rts.shape[0],1))
 tc_lookup = [0,10,30,50,70]
-conditions = ['noPE','TI','TR','Both']
+conditions = ['PP','UP','PU','UU']
 for tii in range(len(tc_lookup)-1):
 	all_rts['condition'][(all_rts['trial_code']>=tc_lookup[tii]) * (all_rts['trial_code']<tc_lookup[tii+1])] = conditions[tii]
 
-embed()
+# embed()
 pl.open_figure(force=1)
 # import matplotlib.pyplot as plt 
 # import seaborn as sn 
@@ -76,13 +76,30 @@ avg_rts['UP'] = []
 avg_rts['UU'] = []
 
 for subname in sublist:
-	avg_rts['PP'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==1)].mean())
-	avg_rts['PU'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==1)].mean())
-	avg_rts['UP'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==1)].mean())
-	avg_rts['UU'].append(all_rts.loc[subname]['rt_norm'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['PP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['PU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['UP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==1)].mean())
+	avg_rts['UU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==1)].mean())
 
 
-pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'])
+pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'], with_error = True)
+
+
+pl.open_figure(force=1)
+avg_rts = {}
+avg_rts['PP'] = []
+avg_rts['PU'] = []
+avg_rts['UP'] = []
+avg_rts['UU'] = []
+
+for subname in sublist:
+	avg_rts['PP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==0)].mean())
+	avg_rts['PU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PU') * (all_rts.loc[subname]['correct']==0)].mean())
+	avg_rts['UP'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UP') * (all_rts.loc[subname]['correct']==0)].mean())
+	avg_rts['UU'].append(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==0)].mean())
+
+
+pl.bar_plot(data = avg_rts, conditions = ['PP','UP','PU','UU'], with_error = True)
 
 # pl.bar_plot
 

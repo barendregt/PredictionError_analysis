@@ -178,7 +178,7 @@ class Plotter(object):
 		for key in conditions:
 			if key != reference_condition:
 				condition_mean = np.mean(reference_mean - data[key],axis=0) 
-				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3])
+				self.plot(xtimes, condition_mean, label=reference_condition+'v'+key, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3], markerfacecolor=self.linestylemap[key][4])
 
 				if with_error:
 					condition_ste = np.std(reference_mean - data[key], axis=0)/np.sqrt(len(data[key]))
