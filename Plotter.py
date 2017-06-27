@@ -69,7 +69,7 @@ class Plotter(object):
 		else:
 			plt.plot(x, y, label=label, figure = self.figure, *args, **kwargs)
 
-	def tsplot(self, data, tnames = [], time = [], name = 'Time (au)', ci=[68], legend=True):
+	def tsplot(self, data, tnames = [], time = [], name = 'Time (au)', ci=[95], legend=True):
 		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
 		sn.despine(offset=5)
 
