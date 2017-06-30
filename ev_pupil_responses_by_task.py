@@ -315,46 +315,39 @@ pl.save_figure('ori_pupil_difference-stimulus.pdf', sub_folder = 'over_subs/pupi
 
 # pl.subplot(1,2,2, title= 'Average pupil difference')
 
-response_pupil_signals = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}
-stimulus_pupil_signals = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}				 
-response_diff_signals  = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}	
-stimulus_diff_signals  = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}				 
-power_signals = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}
-ie_scores 	  = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}
-all_rts 	  = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}				 
-rts 	  	  = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}
-pc 	  	  	  = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}			
-all_ie_scores = {'PP': [],
-				 'UP': [],
-				 'PU': [],
-				 'UU': []}	
+response_pupil_signals = {'col_PP': [],
+						 'col_UP': [],
+						 'col_PU': [],
+						 'col_UU': [],
+						 'ori_PP': [],
+						 'ori_UP': [],
+						 'ori_PU': [],
+						 'ori_UU': []}
+stimulus_pupil_signals = {'col_PP': [],
+						 'col_UP': [],
+						 'col_PU': [],
+						 'col_UU': [],
+						 'ori_PP': [],
+						 'ori_UP': [],
+						 'ori_PU': [],
+						 'ori_UU': []}				 
+response_diff_signals  = {'col_PP': [],
+						 'col_UP': [],
+						 'col_PU': [],
+						 'col_UU': [],
+						 'ori_PP': [],
+						 'ori_UP': [],
+						 'ori_PU': [],
+						 'ori_UU': []}	
+stimulus_diff_signals  = {'col_PP': [],
+						 'col_UP': [],
+						 'col_PU': [],
+						 'col_UU': [],
+						 'ori_PP': [],
+						 'ori_UP': [],
+						 'ori_PU': [],
+						 'ori_UU': []}				 
+
 
 all_sub_IRF = {'stimulus': [], 'button_press': []}
 
