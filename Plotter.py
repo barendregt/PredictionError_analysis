@@ -35,7 +35,7 @@ class Plotter(object):
 
 		self.figure = None
 
-	def bootstrap(data, num_samples, statistic, alpha):
+	def bootstrap(self, data, num_samples, statistic, alpha):
 	    """Returns bootstrap estimate of 100.0*(1-alpha) CI for statistic."""
 	    n = len(data)
 	    idx = np.random.randint(0, n, (num_samples, n))
