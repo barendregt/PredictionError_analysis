@@ -99,9 +99,9 @@ class Plotter(object):
 					if compute_sd:
 						ste_signal = np.array(signal)
 						#condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))			
-						condition_ste = np.zeros((2,signal.shape[1]))			
-						for t in range(signal.shape[1]):
-							condition_ste[:,t] = self.bootstrap(signal[:,t], 1000, mean, 0.05)
+						condition_ste = np.zeros((2,ste_signal.shape[1]))			
+						for t in range(ste_signal.shape[1]):
+							condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, mean, 0.05)
 
 						if self.linestylemap is None:
 							plt.fill_between(range(len(msignal)), condition_ste[0], condition_ste[1], alpha=0.1)
