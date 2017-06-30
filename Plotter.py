@@ -99,7 +99,7 @@ class Plotter(object):
 					if compute_sd:
 						#condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))			
 						condition_ste = np.zeros((2,np.array(signal).shape[1]))			
-						for t in np.array(signal).shape[1]:
+						for t in range(np.array(signal).shape[1]):
 							condition_ste[:,t] = self.bootstrap(signal[:,t], 1000, mean, 0.05)
 
 						if self.linestylemap is None:
