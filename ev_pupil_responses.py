@@ -155,13 +155,13 @@ for subname in sublist:
 			if len(trial_signal)>0:
 
 				if key < 10:
-					response_diff_signals['PP'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['PP'].extend(trial_signal - msignal)
 				elif key < 30:
-					response_diff_signals['PU'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['PU'].extend(trial_signal - msignal)
 				elif key < 50:
-					response_diff_signals['UP'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['UP'].extend(trial_signal - msignal)
 				else:
-					response_diff_signals['UU'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['UU'].extend(trial_signal - msignal)
 	except:
 		embed()
 
@@ -229,13 +229,13 @@ for subname in sublist:
 
 		if len(trial_signal)>0:
 			if key < 10:
-				stimulus_diff_signals['PP'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['PP'].extend(trial_signal - msignal)
 			elif key < 30:
-				stimulus_diff_signals['PU'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['PU'].extend(trial_signal - msignal)
 			elif key <50:
-				stimulus_diff_signals['UP'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['UP'].extend(trial_signal - msignal)
 			else:
-				stimulus_diff_signals['UU'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['UU'].extend(trial_signal - msignal)
 
 	# sub_rts = pa.compute_reaction_times()
 
@@ -611,13 +611,13 @@ for subname in sublist:
 			if len(trial_signal)>0:
 
 				if key < 10:
-					response_diff_signals['PP'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['PP'].extend(trial_signal - msignal)
 				elif key < 30:
-					response_diff_signals['PU'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['PU'].extend(trial_signal - msignal)
 				elif key <50:
-					response_diff_signals['UP'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['UP'].extend(trial_signal - msignal)
 				else:
-					response_diff_signals['UU'].extend(trial_signal - msignal, axis=0)
+					response_diff_signals['UU'].extend(trial_signal - msignal)
 	except:
 		embed()
 
@@ -685,13 +685,13 @@ for subname in sublist:
 
 		if len(trial_signal)>0:
 			if key < 10:
-				stimulus_diff_signals['PP'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['PP'].extend(trial_signal - msignal)
 			elif key < 30:
-				stimulus_diff_signals['PU'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['PU'].extend(trial_signal - msignal)
 			elif key <50:
-				stimulus_diff_signals['UP'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['UP'].extend(trial_signal - msignal)
 			else:
-				stimulus_diff_signals['UU'].extend(trial_signal - msignal, axis=0)
+				stimulus_diff_signals['UU'].extend(trial_signal - msignal)
 
 	# sub_rts = pa.compute_reaction_times(correct_trials = False)
 
