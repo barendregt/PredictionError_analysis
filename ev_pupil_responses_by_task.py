@@ -192,9 +192,17 @@ for subname in sublist:
 			#trial_signal = trial_signal - trial_signals[:,zero_point][:,np.newaxis]
 
 			ref_signals.extend(trial_signal)
+			
+			if key == 0:
+				col_ref_signals.extend(trial_signal)
+			else:
+				ori_ref_signals.extend(trial_signal)
 
 	msignal = np.mean(ref_signals, axis=0)
 	msignal_norm = np.linalg.norm(msignal, ord=2)**2
+
+	ori_msignal = np.mean(ori_ref_signals, axis=0)
+	col_msignal = np.mean(col_ref_signals, axis=0)
 
 	pp_signal = []
 	up_signal = []
@@ -387,8 +395,16 @@ for subname in sublist:
 
 			ref_signals.extend(trial_signal)
 
+			if key == 0:
+				col_ref_signals.extend(trial_signal)
+			else:
+				ori_ref_signals.extend(trial_signal)
+
 	msignal = np.mean(ref_signals, axis=0)
 	msignal_norm = np.linalg.norm(msignal, ord=2)**2
+
+	ori_msignal = np.mean(ori_ref_signals, axis=0)
+	col_msignal = np.mean(col_ref_signals, axis=0)
 
 	pp_signal = []
 	up_signal = []
@@ -481,8 +497,16 @@ for subname in sublist:
 
 			ref_signals.extend(trial_signal)
 
+			if key == 0:
+				col_ref_signals.extend(trial_signal)
+			else:
+				ori_ref_signals.extend(trial_signal)
+
 	msignal = np.mean(ref_signals, axis=0)
 	msignal_norm = np.linalg.norm(msignal, ord=2)**2
+
+	ori_msignal = np.mean(ori_ref_signals, axis=0)
+	col_msignal = np.mean(col_ref_signals, axis=0)
 
 	pp_signal = []
 	up_signal = []
