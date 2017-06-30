@@ -186,6 +186,8 @@ for subname in sublist:
 
 	# embed()
 	ref_signals = []
+	col_ref_signals = []
+	ori_ref_signals = []
 
 	for key,trial_signal in pa.trial_signals.items():
 		if key < 10:
@@ -388,6 +390,8 @@ for subname in sublist:
 
 	# embed()
 	ref_signals = []
+	col_ref_signals = []
+	ori_ref_signals = []
 
 	for key,trial_signal in pa.trial_signals.items():
 		if key < 10:
@@ -490,6 +494,8 @@ for subname in sublist:
 
 	# embed()
 	ref_signals = []
+	col_ref_signals = []
+	ori_ref_signals = []
 
 	for key,trial_signal in pa.trial_signals.items():
 		if key < 10:
