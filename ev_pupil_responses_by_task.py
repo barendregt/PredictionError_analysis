@@ -136,7 +136,7 @@ for subname in sublist:
 
 	try:
 		for key, trial_signal in pa.trial_signals.items():
-			if len(trial_signal):
+			if len(trial_signal)>0:
 				if key == 0:
 					response_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 				elif key == 1:
@@ -203,7 +203,7 @@ for subname in sublist:
 	
 
 	for key, trial_signal in pa.trial_signals.items():
-		if len(trial_signal):
+		if len(trial_signal)>0:
 			if key == 0:
 				stimulus_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 			elif key == 1:
@@ -398,7 +398,7 @@ for subname in sublist:
     
 	try:
 		for key, trial_signal in pa.trial_signals.items():
-			if len(trial_signal):
+			if len(trial_signal)>0:
 				if key == 0:
 					response_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 				elif key == 1:
@@ -491,7 +491,7 @@ for subname in sublist:
 	
 
 	for key, trial_signal in pa.trial_signals.items():
-		if len(trial_signal):
+		if len(trial_signal)>0:
 			if key == 0:
 				stimulus_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
 			elif key == 1:
