@@ -35,6 +35,15 @@ class Plotter(object):
 
 		self.figure = None
 
+	def bootstrap(data, num_samples, statistic, alpha):
+	    """Returns bootstrap estimate of 100.0*(1-alpha) CI for statistic."""
+	    n = len(data)
+	    idx = np.random.randint(0, n, (num_samples, n))
+	    samples = data[idx]
+	    stat = np.sort(statistic(samples, 1))
+	    return (stat[int((alpha/2.0)*num_samples)],
+	            stat[int((1-alpha/2.0)*num_samples)])
+
 	def incorrect_data_format(self, data, conditions):
 		if (not isinstance(data, dict)) and (not isinstance(data, pd.DataFrame)):
 			print('ERROR: data must be a dictionary or dataframe')
@@ -88,11 +97,12 @@ class Plotter(object):
 						msignal = signal
 
 					if compute_sd:
-						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
+						#condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
+						condition_ste = self.bootstrap(signal, 1000, mean, 0.05)
 						if self.linestylemap is None:
-							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)
+							plt.fill_between(range(len(msignal)), condition_ste[0], condition_ste[1], alpha=0.1)
 						else:
-							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1, color=self.linestylemap[label][0])		
+							plt.fill_between(range(len(msignal)), condition_ste[0], condition_ste[1], alpha=0.1, color=self.linestylemap[label][0])		
 
 					if not signal_labels:
 						if self.linestylemap is None:
