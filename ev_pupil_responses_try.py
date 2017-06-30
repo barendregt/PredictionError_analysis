@@ -286,7 +286,7 @@ for subname in sublist:
 	# bias['UU'].append(sub_bias[50])
 	# bias['UU'].append(sub_bias[60])
 
-# # embed()
+embed()
 
 # pl.open_figure(force=1)
 # # pl.figure.suptitle('Pupil amplitude')
