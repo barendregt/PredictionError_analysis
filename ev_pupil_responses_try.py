@@ -599,14 +599,15 @@ for subname in sublist:
     
 	try:
 		for key, trial_signal in pa.trial_signals.items():
-			if key < 10:
-				response_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
-			elif key < 30:
-				response_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
-			elif key < 50:
-				response_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
-			else:
-				response_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
+			if len(trial_signal)>0:
+				if key < 10:
+					response_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
+				elif key < 30:
+					response_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
+				elif key < 50:
+					response_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
+				else:
+					response_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
 
 			if len(trial_signal)>0:
 
@@ -674,14 +675,15 @@ for subname in sublist:
 	
 
 	for key, trial_signal in pa.trial_signals.items():
-		if key < 10:
-			stimulus_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
-		elif key < 30:
-			stimulus_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
-		elif key < 50:
-			stimulus_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
-		else:
-			stimulus_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
+		if len(trial_signal)>0:
+			if key < 10:
+				stimulus_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
+			elif key < 30:
+				stimulus_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
+			elif key < 50:
+				stimulus_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
+			else:
+				stimulus_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
 
 		if len(trial_signal)>0:
 			if key < 10:
