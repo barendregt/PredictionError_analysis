@@ -82,7 +82,7 @@ class Plotter(object):
 		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
 		sn.despine(offset=5)
 
-	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False):
+	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, with_stats = True):
 			
 
 		if onset_marker != []:
@@ -148,7 +148,25 @@ class Plotter(object):
 							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markerfacecolor=self.linestylemap[key][4], markeredgecolor=self.linestylemap[key][3])
 
 	
-		
+		if with_stats:
+			extract_data = np.array([data[key] for key in conditions])
+
+			f = np.zeros((np.array(reference_mean).size,1))
+			p = np.zeros((np.array(reference_mean).size,1))
+
+			y_pos = plt.axis()[2]
+
+			for time_point in range(np.array(reference_mean).size):
+				y_pos = 0
+				# All conditions one-way
+				f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][time_point],
+																  extract_data[1][time_point],
+																  extract_data[2][time_point],
+																  extract_data[3][time_point])
+
+				if p[time_point] < (0.05/np.array(reference_mean).size):
+					plt.text(time_point, y_pos,'*')	
+
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)
 
