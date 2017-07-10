@@ -81,7 +81,7 @@ FIR_signals = {'noPEc': [],
 			  'noPEic':[],
 			  'bothPEic':[],
 			  'TIic':[],
-			  'TRic:[]'}
+			  'TRic':[]}
 
 plot_indiv = False#True
 
