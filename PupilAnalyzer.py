@@ -897,7 +897,7 @@ class PupilAnalyzer(Analyzer):
 
 			self.FIR = FIRDeconvolution(
 							signal = recorded_pupil_signal,
-							events = [stim_events_correct / self.signal_sample_frequency, stim_events_incorrect / self.signal_sample_frequency],
+							events = np.hstack([stim_events_correct / self.signal_sample_frequency, stim_events_incorrect / self.signal_sample_frequency]),
 							event_names = ['noPEc','bothPEc','TIc','TRc','noPEic','bothPEic','TIic','TRic'],
 							durations = {'noPEc': stim_durs_correct[0],
 										 'bothPEc': stim_durs_correct[1],
@@ -924,8 +924,8 @@ class PupilAnalyzer(Analyzer):
 		self.FIR_betas = sp.linalg.lstsq(self.dm_stim.T, self.FIR_resampled_pupil_signal.T)[0]
 
 
-
-		# return self.FIR_betas[]
+		stim_betas = np.reshape(self.FIR_betas[:240],(8,35))
+		return [stim_betas, ['noPEc','bothPEc','TIc','TRc','noPEic','bothPEic','TIic','TRic']]
 
 
 	def build_design_matrix(self, sub_IRF = None):
