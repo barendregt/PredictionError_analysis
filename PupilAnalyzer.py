@@ -917,13 +917,13 @@ class PupilAnalyzer(Analyzer):
 
 			# dm_stim_color = self.FIR_stim_color.design_matrix
 
-
+		embed()	
 		self.dm_stim = np.vstack([self.FIR.design_matrix, self.FIR_nuiss.design_matrix])
 
 	
 		self.FIR_betas = sp.linalg.lstsq(self.dm_stim.T, self.FIR_resampled_pupil_signal.T)[0]
 
-		embed()
+
 
 		# return self.FIR_betas[]
 
