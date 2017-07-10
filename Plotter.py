@@ -82,7 +82,7 @@ class Plotter(object):
 		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
 		sn.despine(offset=5)
 
-	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, with_stats = True):
+	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, with_stats = False, stats_type = 'ttest'):
 			
 
 		if onset_marker != []:
@@ -156,16 +156,29 @@ class Plotter(object):
 
 			y_pos = plt.axis()[2]
 
-			for time_point in range(np.array(extract_data[0]).size):
-				y_pos = 0
-				# All conditions one-way
-				f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][time_point],
-																  extract_data[1][time_point],
-																  extract_data[2][time_point],
-																  extract_data[3][time_point])
+			if stats_type == 'anova':
 
-				if p[time_point] < (0.05/np.array(extract_data[0]).size):
-					plt.text(time_point, y_pos,'*')	
+				for time_point in range(np.array(extract_data[0]).size):
+					y_pos = 0
+					# All conditions one-way
+					f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][time_point],
+																	  extract_data[1][time_point],
+																	  extract_data[2][time_point],
+																	  extract_data[3][time_point])
+
+					if p[time_point] < (0.05/np.array(extract_data[0]).size):
+						plt.text(time_point, y_pos,'*')	
+			else:
+				for time_point in range(np.array(extract_data[0]).size):
+					y_pos = 0
+					# All conditions one-way
+					f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][time_point],
+																	  extract_data[1][time_point],
+																	  extract_data[2][time_point],
+																	  extract_data[3][time_point])
+
+					if p[time_point] < (0.05/np.array(extract_data[0]).size):
+						plt.text(time_point, y_pos,'*')					
 
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)
