@@ -916,8 +916,8 @@ class PupilAnalyzer(Analyzer):
 			self.FIR.create_design_matrix(intercept=False)
 
 			# dm_stim_color = self.FIR_stim_color.design_matrix
-
-		embed()	
+		except:
+			embed()	
 		self.dm_stim = np.vstack([self.FIR.design_matrix, self.FIR_nuiss.design_matrix])
 
 	
