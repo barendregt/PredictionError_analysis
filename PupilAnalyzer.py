@@ -917,6 +917,7 @@ class PupilAnalyzer(Analyzer):
 
 			# dm_stim_color = self.FIR_stim_color.design_matrix
 		except:
+			print('error!')
 			embed()	
 		self.dm_stim = np.vstack([self.FIR.design_matrix, self.FIR_nuiss.design_matrix])
 
