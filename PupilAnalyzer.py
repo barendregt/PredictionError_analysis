@@ -924,7 +924,7 @@ class PupilAnalyzer(Analyzer):
 		self.FIR_betas = sp.linalg.lstsq(self.dm_stim.T, self.FIR_resampled_pupil_signal.T)[0]
 
 
-		stim_betas = np.reshape(self.FIR_betas[:240],(8,35))
+		stim_betas = np.reshape(self.FIR_betas[:280],(8,35))
 		return [stim_betas, ['noPEc','bothPEc','TIc','TRc','noPEic','bothPEic','TIic','TRic']]
 
 
