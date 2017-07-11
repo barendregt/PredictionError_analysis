@@ -642,6 +642,7 @@ pl.event_related_pupil_average(data = stimulus_diff_signals, conditions = ['UP',
 
 pl.save_figure('inc_pupil_difference-stimulus.pdf', sub_folder = 'over_subs/pupil/incorrect')
 
+embed()
 
 incorrect_response_pupil_signals = response_pupil_signals
 incorrect_stimulus_pupil_signals = stimulus_pupil_signals
@@ -660,4 +661,3 @@ pl.hline(y=0)
 pl.event_related_pupil_average(data = corr_incorr_diff_signals, conditions=['PP','UP','PU','UU']signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size (difference from predicted)', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), y_lim = [-.10, .25], compute_mean = True, compute_sd = True, with_stats = False, stats_type = 'ttest')
 pl.save_figure('inc_pupil_difference-stimulus.pdf', sub_folder = 'over_subs/pupil')
 
-embed()
