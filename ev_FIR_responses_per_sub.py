@@ -20,6 +20,9 @@ from pandas import *
 import matplotlib.pyplot as plt 
 import seaborn as sn 
 
+from joblib import Parallel, delayed
+import multiprocessing
+
 sn.set(style='ticks', font='Arial', font_scale=1, rc={
 	'axes.linewidth': 0.50, 
 	'axes.labelsize': 7, 
@@ -85,7 +88,8 @@ FIR_signals = {'noPEc': [],
 
 plot_indiv = False#True
 
-for subname in sublist:
+#for subname in sublist:
+def run_analysis(subname):
 
 
 
@@ -112,5 +116,10 @@ for subname in sublist:
 
 	for b,l in zip(betas,labels):
 		FIR_signals[l].append(b)
+
+num_cores = multiprocessing.cpu_count()
+
+
+Parallel(n_jobs=8)(delayed(run_analysis)(subname) for subname in sublist)
 
 embed()
