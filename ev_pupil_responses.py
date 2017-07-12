@@ -676,7 +676,7 @@ pl.event_related_pupil_average(data = stimulus_diff_signals, conditions = ['UP',
 
 pl.save_figure('inc_pupil_difference-stimulus.pdf', sub_folder = 'over_subs/pupil/incorrect')
 
-embed()
+# embed()
 
 # incorrect_response_pupil_signals = response_pupil_signals
 # incorrect_stimulus_pupil_signals = stimulus_pupil_signals
