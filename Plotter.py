@@ -92,7 +92,7 @@ class Plotter(object):
 			for (label, signal) in data.items():
 				if label in conditions:
 					if compute_mean:
-						msignal = np.mean(signal, axis=0)
+						msignal = np.nanmean(signal, axis=0)
 					else:
 						msignal = signal
 
@@ -101,7 +101,7 @@ class Plotter(object):
 						#condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))			
 						condition_ste = np.zeros((2,ste_signal.shape[1]))			
 						for t in range(ste_signal.shape[1]):
-							condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.mean, 0.5)
+							condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.5)
 
 						if self.linestylemap is None:
 							plt.fill_between(range(len(msignal)), condition_ste[0], condition_ste[1], alpha=0.1)
@@ -125,7 +125,7 @@ class Plotter(object):
 			for (key,signal) in enumerate(data):
 				if key in conditions:
 					if compute_mean:
-						msignal = np.mean(signal, axis=0)
+						msignal = np.nanmean(signal, axis=0)
 					else:
 						msignal = signal
 
