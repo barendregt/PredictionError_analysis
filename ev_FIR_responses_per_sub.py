@@ -117,8 +117,10 @@ def run_analysis(subname):
 	for b,l in zip(betas,labels):
 		FIR_signals[l].append(b)
 
-	a = pd.DataFrame.from_dict(FIR_signals)
-	a.to_hdf(os.path.join(sharedfolder,'FIR_correct_incorrect.h5'),'table',append=True)
+	with f = open(os.path.join(sharedfolder,'FIR_correct_incorrect.pickle'),'wb'):
+		pickle.dump(FIR_signals, f)
+		f.close()
+	#a.to_hdf(os.path.join(sharedfolder,'FIR_correct_incorrect.pickle')
 
 
 num_cores = multiprocessing.cpu_count()
