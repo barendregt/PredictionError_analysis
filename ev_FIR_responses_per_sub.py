@@ -77,14 +77,7 @@ zero_point = 15
 all_betas = []
 
 
-FIR_signals = {'noPEc': [],
-			  'bothPEc':[],
-			  'TIc':[],
-			  'TRc':[],
-			  'noPEic':[],
-			  'bothPEic':[],
-			  'TIic':[],
-			  'TRic':[]}
+
 
 plot_indiv = False#True
 
@@ -92,7 +85,14 @@ plot_indiv = False#True
 def run_analysis(subname):
 
 
-
+	FIR_signals = {'noPEc': [],
+					'bothPEc':[],
+					'TIc':[],
+					'TRc':[],
+					'noPEic':[],
+					'bothPEic':[],
+					'TIic':[],
+					'TRic':[]}
 
 
 	this_sub_IRF = {'stimulus': [], 'button_press': []}
@@ -117,9 +117,13 @@ def run_analysis(subname):
 	for b,l in zip(betas,labels):
 		FIR_signals[l].append(b)
 
+	a = pd.DataFrame.from_dict(FIR_signals)
+	a.to_hdf(os.path.join(sharedfolder,subname,'FIR_correct_incorrect.h5'),'table',append=True)
+
+
 num_cores = multiprocessing.cpu_count()
 
 
-Parallel(n_jobs=8)(delayed(run_analysis)(subname) for subname in sublist)
+Parallel(n_jobs=12)(delayed(run_analysis)(subname) for subname in sublist)
 
-embed()
+# embed()
