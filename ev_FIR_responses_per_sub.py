@@ -117,7 +117,7 @@ def run_analysis(subname):
 	for b,l in zip(betas,labels):
 		FIR_signals[l].append(b)
 
-	with f = open(os.path.join(sharedfolder,'FIR_correct_incorrect.pickle'),'wb'):
+	with open(os.path.join(sharedfolder,'FIR_correct_incorrect.pickle'),'wb') as f:
 		pickle.dump(FIR_signals, f)
 		f.close()
 	#a.to_hdf(os.path.join(sharedfolder,'FIR_correct_incorrect.pickle')
