@@ -118,7 +118,7 @@ def run_analysis(subname):
 		FIR_signals[l].append(b)
 
 	a = pd.DataFrame.from_dict(FIR_signals)
-	a.to_hdf(os.path.join(sharedfolder,subname,'FIR_correct_incorrect.h5'),'table',append=True)
+	a.to_hdf(os.path.join(sharedfolder,'FIR_correct_incorrect.h5'),'table',append=True)
 
 
 num_cores = multiprocessing.cpu_count()
