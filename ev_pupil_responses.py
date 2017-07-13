@@ -60,6 +60,24 @@ incorrect_stimulus_pupil_signals = {'PP': [],
 				 'PU': [],
 				 'UU': []}	
 
+correct_response_diff_signals = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}
+correct_stimulus_diff_signals = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}	
+
+incorrect_response_diff_signals = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}
+incorrect_stimulus_diff_signals = {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}	
+
 
 response_pupil_signals = {'PP': [],
 				 'UP': [],
@@ -179,12 +197,16 @@ for subname in sublist:
 
 				if key < 10:
 					response_diff_signals['PP'].extend(trial_signal - msignal)
+					correct_response_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
 				elif key < 30:
 					response_diff_signals['PU'].extend(trial_signal - msignal)
+					correct_response_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
 				elif key < 50:
 					response_diff_signals['UP'].extend(trial_signal - msignal)
+					correct_response_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
 				else:
 					response_diff_signals['UU'].extend(trial_signal - msignal)
+					correct_response_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
 	except:
 		embed()
 
@@ -257,12 +279,16 @@ for subname in sublist:
 		if len(trial_signal)>0:
 			if key < 10:
 				stimulus_diff_signals['PP'].extend(trial_signal - msignal)
+				correct_stimulus_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
 			elif key < 30:
 				stimulus_diff_signals['PU'].extend(trial_signal - msignal)
-			elif key <50:
+				correct_stimulus_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
+			elif key < 50:
 				stimulus_diff_signals['UP'].extend(trial_signal - msignal)
+				correct_stimulus_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
 			else:
 				stimulus_diff_signals['UU'].extend(trial_signal - msignal)
+				correct_stimulus_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
 
 	# sub_rts = pa.compute_reaction_times()
 
@@ -498,12 +524,16 @@ for subname in sublist:
 
 				if key < 10:
 					response_diff_signals['PP'].extend(trial_signal - msignal)
+					incorrect_response_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
 				elif key < 30:
 					response_diff_signals['PU'].extend(trial_signal - msignal)
-				elif key <50:
+					incorrect_response_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
+				elif key < 50:
 					response_diff_signals['UP'].extend(trial_signal - msignal)
+					incorrect_response_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
 				else:
 					response_diff_signals['UU'].extend(trial_signal - msignal)
+					incorrect_response_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
 	except:
 		embed()
 
@@ -577,12 +607,16 @@ for subname in sublist:
 		if len(trial_signal)>0:
 			if key < 10:
 				stimulus_diff_signals['PP'].extend(trial_signal - msignal)
+				incorrect_stimulus_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
 			elif key < 30:
 				stimulus_diff_signals['PU'].extend(trial_signal - msignal)
-			elif key <50:
+				incorrect_stimulus_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
+			elif key < 50:
 				stimulus_diff_signals['UP'].extend(trial_signal - msignal)
+				incorrect_stimulus_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
 			else:
 				stimulus_diff_signals['UU'].extend(trial_signal - msignal)
+				incorrect_stimulus_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
 
 	# sub_rts = pa.compute_reaction_times(correct_trials = False)
 
@@ -693,3 +727,14 @@ pl.hline(y=0)
 pl.event_related_pupil_average(data = corr_incorr_diff_signals, conditions=['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size difference (incorrect-correct)', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), y_lim = [None,None], compute_mean = True, compute_sd = True, with_stats = False, stats_type = 'ttest')
 pl.save_figure('correct_v_incorrect-stimulus.pdf', sub_folder = 'over_subs/pupil')
 
+corr_incorr_diff_signals = {}
+
+for field in ['PP','UP','PU','UU']:
+	corr_incorr_diff_signals[field] = np.array([i-c for c,i in zip(correct_stimulus_diff_signals[field],incorrect_stimulus_diff_signals[field])])
+
+
+
+pl.open_figure(force=1)
+pl.hline(y=0)
+pl.event_related_pupil_average(data = corr_incorr_diff_signals, conditions=['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size difference (incorrect-correct)', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), y_lim = [None,None], compute_mean = True, compute_sd = True, with_stats = False, stats_type = 'ttest')
+pl.save_figure('correct_v_incorrect-difference-stimulus.pdf', sub_folder = 'over_subs/pupil')
