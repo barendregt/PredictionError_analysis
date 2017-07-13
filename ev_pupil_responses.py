@@ -182,31 +182,31 @@ for subname in sublist:
 		for key, trial_signal in pa.trial_signals.items():
 			if key < 10:
 				response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-				correct_response_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
+				correct_response_pupil_signals['PP'].extend(trial_signal)
 			elif key < 30:
-				response_pupil_signals['PU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-				correct_response_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
+				response_pupil_signals['PU'].extend(trial_signal)#.extend(trial_signal)
+				correct_response_pupil_signals['PU'].extend(trial_signal)
 			elif key < 50:
-				response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-				correct_response_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
+				response_pupil_signals['UP'].extend(trial_signal)#.extend(trial_signal)
+				correct_response_pupil_signals['UP'].extend(trial_signal)
 			else:
-				response_pupil_signals['UU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-				correct_response_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
+				response_pupil_signals['UU'].extend(trial_signal)#.extend(trial_signal)
+				correct_response_pupil_signals['UU'].extend(trial_signal)
 
 			if len(trial_signal)>0:
 
 				if key < 10:
 					response_diff_signals['PP'].extend(trial_signal - msignal)
-					correct_response_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
+					correct_response_diff_signals['PP'].extend(trial_signal - msignal)
 				elif key < 30:
 					response_diff_signals['PU'].extend(trial_signal - msignal)
-					correct_response_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
+					correct_response_diff_signals['PU'].extend(trial_signal - msignal)
 				elif key < 50:
 					response_diff_signals['UP'].extend(trial_signal - msignal)
-					correct_response_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
+					correct_response_diff_signals['UP'].extend(trial_signal - msignal)
 				else:
 					response_diff_signals['UU'].extend(trial_signal - msignal)
-					correct_response_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
+					correct_response_diff_signals['UU'].extend(trial_signal - msignal)
 	except:
 		embed()
 
@@ -265,30 +265,30 @@ for subname in sublist:
 	for key, trial_signal in pa.trial_signals.items():
 		if key < 10:
 			stimulus_pupil_signals['PP'].extend(trial_signal)
-			correct_stimulus_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
+			correct_stimulus_pupil_signals['PP'].extend(trial_signal)
 		elif key < 30:
 			stimulus_pupil_signals['PU'].extend(trial_signal)
-			correct_stimulus_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
+			correct_stimulus_pupil_signals['PU'].extend(trial_signal)
 		elif key < 50:
 			stimulus_pupil_signals['UP'].extend(trial_signal)
-			correct_stimulus_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
+			correct_stimulus_pupil_signals['UP'].extend(trial_signal)
 		else:
 			stimulus_pupil_signals['UU'].extend(trial_signal)
-			correct_stimulus_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
+			correct_stimulus_pupil_signals['UU'].extend(trial_signal)
 
 		if len(trial_signal)>0:
 			if key < 10:
 				stimulus_diff_signals['PP'].extend(trial_signal - msignal)
-				correct_stimulus_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
+				correct_stimulus_diff_signals['PP'].extend(trial_signal - msignal)
 			elif key < 30:
 				stimulus_diff_signals['PU'].extend(trial_signal - msignal)
-				correct_stimulus_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
+				correct_stimulus_diff_signals['PU'].extend(trial_signal - msignal)
 			elif key < 50:
 				stimulus_diff_signals['UP'].extend(trial_signal - msignal)
-				correct_stimulus_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
+				correct_stimulus_diff_signals['UP'].extend(trial_signal - msignal)
 			else:
 				stimulus_diff_signals['UU'].extend(trial_signal - msignal)
-				correct_stimulus_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
+				correct_stimulus_diff_signals['UU'].extend(trial_signal - msignal)
 
 	# sub_rts = pa.compute_reaction_times()
 
@@ -509,31 +509,31 @@ for subname in sublist:
 			if len(trial_signal)>0:
 				if key < 10:
 					response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
+					incorrect_response_pupil_signals['PP'].extend(trial_signal)
 				elif key < 30:
 					response_pupil_signals['PU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
+					incorrect_response_pupil_signals['PU'].extend(trial_signal)
 				elif key < 50:
 					response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
+					incorrect_response_pupil_signals['UP'].extend(trial_signal)
 				else:
 					response_pupil_signals['UU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
+					incorrect_response_pupil_signals['UU'].extend(trial_signal)
 
 			if len(trial_signal)>0:
 
 				if key < 10:
 					response_diff_signals['PP'].extend(trial_signal - msignal)
-					incorrect_response_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
+					incorrect_response_diff_signals['PP'].extend(trial_signal - msignal)
 				elif key < 30:
 					response_diff_signals['PU'].extend(trial_signal - msignal)
-					incorrect_response_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
+					incorrect_response_diff_signals['PU'].extend(trial_signal - msignal)
 				elif key < 50:
 					response_diff_signals['UP'].extend(trial_signal - msignal)
-					incorrect_response_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
+					incorrect_response_diff_signals['UP'].extend(trial_signal - msignal)
 				else:
 					response_diff_signals['UU'].extend(trial_signal - msignal)
-					incorrect_response_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
+					incorrect_response_diff_signals['UU'].extend(trial_signal - msignal)
 	except:
 		embed()
 
@@ -593,30 +593,30 @@ for subname in sublist:
 		if len(trial_signal)>0:
 			if key < 10:
 				stimulus_pupil_signals['PP'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
+				incorrect_stimulus_pupil_signals['PP'].extend(trial_signal)
 			elif key < 30:
 				stimulus_pupil_signals['PU'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
+				incorrect_stimulus_pupil_signals['PU'].extend(trial_signal)
 			elif key < 50:
 				stimulus_pupil_signals['UP'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
+				incorrect_stimulus_pupil_signals['UP'].extend(trial_signal)
 			else:
 				stimulus_pupil_signals['UU'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
+				incorrect_stimulus_pupil_signals['UU'].extend(trial_signal)
 
 		if len(trial_signal)>0:
 			if key < 10:
 				stimulus_diff_signals['PP'].extend(trial_signal - msignal)
-				incorrect_stimulus_diff_signals['PP'].append(np.mean(trial_signal - msignal, axis=0))
+				incorrect_stimulus_diff_signals['PP'].extend(trial_signal - msignal)
 			elif key < 30:
 				stimulus_diff_signals['PU'].extend(trial_signal - msignal)
-				incorrect_stimulus_diff_signals['PU'].append(np.mean(trial_signal - msignal, axis=0))
+				incorrect_stimulus_diff_signals['PU'].extend(trial_signal - msignal)
 			elif key < 50:
 				stimulus_diff_signals['UP'].extend(trial_signal - msignal)
-				incorrect_stimulus_diff_signals['UP'].append(np.mean(trial_signal - msignal, axis=0))
+				incorrect_stimulus_diff_signals['UP'].extend(trial_signal - msignal)
 			else:
 				stimulus_diff_signals['UU'].extend(trial_signal - msignal)
-				incorrect_stimulus_diff_signals['UU'].append(np.mean(trial_signal - msignal, axis=0))
+				incorrect_stimulus_diff_signals['UU'].extend(trial_signal - msignal)
 
 	# sub_rts = pa.compute_reaction_times(correct_trials = False)
 
@@ -710,7 +710,7 @@ pl.event_related_pupil_average(data = stimulus_diff_signals, conditions = ['UP',
 
 pl.save_figure('inc_pupil_difference-stimulus.pdf', sub_folder = 'over_subs/pupil/incorrect')
 
-# embed()
+embed()
 
 # incorrect_response_pupil_signals = response_pupil_signals
 # incorrect_stimulus_pupil_signals = stimulus_pupil_signals
