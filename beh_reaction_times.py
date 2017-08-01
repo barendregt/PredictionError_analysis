@@ -26,7 +26,11 @@ from analysis_parameters import *
 
 pl = Plotter(figure_folder = figfolder, linestylemap=linestylemap)
 
+# raw_data_folder = '/home/barendregt/Projects/PredictionError/fMRI/Attention_Prediction/data/'
 
+# shared_data_folder = '/home/barendregt/Projects/PredictionError/fMRI/Attention_Prediction/data/'
+
+# sublist = ['mb1','mb4']
 
 all_rts = []			 
 rts = {'PP': [],
@@ -44,6 +48,8 @@ for subname in sublist:
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
 	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+
+	pa.load_data()
 
 	sub_rts = pa.compute_reaction_times()
 
@@ -111,7 +117,7 @@ for subname in sublist:
 	avg_rts['UU'].append(np.mean(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==1)] / np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==1)])))
 
 
-pl.bar_plot(data = avg_rts, conditions = ['UP','PU','UU'], with_error = True, ylabel='Reaction time (s)')
+pl.bar_plot(data = avg_rts, conditions = ['UP','PU','UU'], with_error = True, ylabel='Reaction time (% of predicted)', y_lim = [1.0, 1.2])
 
 # pl.bar_plot
 pl.save_figure('rt_correct_norm.pdf',sub_folder='over_subs/task')
@@ -156,7 +162,7 @@ for subname in sublist:
 	avg_rts['UU'].extend(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='UU') * (all_rts.loc[subname]['correct']==0)] / np.median(all_rts.loc[subname]['reaction_time'][(all_rts.loc[subname]['condition']=='PP') * (all_rts.loc[subname]['correct']==0)]))
 
 
-pl.bar_plot(data = avg_rts, conditions = ['UP','PU','UU'], with_error = True, ylabel='Reaction time (s)')
+pl.bar_plot(data = avg_rts, conditions = ['UP','PU','UU'], with_error = True, ylabel='Reaction time (% of predicted)', y_lim = [1.0, 1.2])
 
 # pl.bar_plot
 pl.save_figure('rt_incorrect_norm.pdf',sub_folder='over_subs/task')
