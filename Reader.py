@@ -1,6 +1,6 @@
 
 
-class Analyzer(object):
+class Reader(object):
 
 	def __init__(self, subID, filename, verbosity = 0, **kwargs):
 
