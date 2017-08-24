@@ -3,6 +3,9 @@ from __future__ import division
 import numpy as np
 import scipy as sp
 
+import matplotlib.pyplot as plt
+import seaborn as sn
+
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
 from statsmodels.stats.anova import anova_lm
@@ -201,16 +204,16 @@ for subname in sublist:
 		for key, trial_signal in pa.trial_signals.items():
 			if key < 10:
 				response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-				correct_response_pupil_signals['PP'].extend(trial_signal)
+				correct_response_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
 			elif key < 30:
 				response_pupil_signals['PU'].extend(trial_signal)#.extend(trial_signal)
-				correct_response_pupil_signals['PU'].extend(trial_signal)
+				correct_response_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
 			elif key < 50:
 				response_pupil_signals['UP'].extend(trial_signal)#.extend(trial_signal)
-				correct_response_pupil_signals['UP'].extend(trial_signal)
+				correct_response_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
 			else:
 				response_pupil_signals['UU'].extend(trial_signal)#.extend(trial_signal)
-				correct_response_pupil_signals['UU'].extend(trial_signal)
+				correct_response_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
 
 			if len(trial_signal)>0:
 
@@ -288,16 +291,16 @@ for subname in sublist:
 	for key, trial_signal in pa.trial_signals.items():
 		if key < 10:
 			stimulus_pupil_signals['PP'].extend(trial_signal)
-			correct_stimulus_pupil_signals['PP'].extend(trial_signal)
+			correct_stimulus_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
 		elif key < 30:
 			stimulus_pupil_signals['PU'].extend(trial_signal)
-			correct_stimulus_pupil_signals['PU'].extend(trial_signal)
+			correct_stimulus_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
 		elif key < 50:
 			stimulus_pupil_signals['UP'].extend(trial_signal)
-			correct_stimulus_pupil_signals['UP'].extend(trial_signal)
+			correct_stimulus_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
 		else:
 			stimulus_pupil_signals['UU'].extend(trial_signal)
-			correct_stimulus_pupil_signals['UU'].extend(trial_signal)
+			correct_stimulus_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
 
 		if len(trial_signal)>0:
 			if key < 10:
@@ -536,16 +539,16 @@ for subname in sublist:
 			if len(trial_signal)>0:
 				if key < 10:
 					response_pupil_signals['PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['PP'].extend(trial_signal)
+					incorrect_response_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
 				elif key < 30:
 					response_pupil_signals['PU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['PU'].extend(trial_signal)
+					incorrect_response_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
 				elif key < 50:
 					response_pupil_signals['UP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['UP'].extend(trial_signal)
+					incorrect_response_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
 				else:
 					response_pupil_signals['UU'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
-					incorrect_response_pupil_signals['UU'].extend(trial_signal)
+					incorrect_response_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
 
 			if len(trial_signal)>0:
 
@@ -624,16 +627,16 @@ for subname in sublist:
 		if len(trial_signal)>0:
 			if key < 10:
 				stimulus_pupil_signals['PP'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['PP'].extend(trial_signal)
+				incorrect_stimulus_pupil_signals['PP'].append(np.mean(trial_signal, axis=0))
 			elif key < 30:
 				stimulus_pupil_signals['PU'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['PU'].extend(trial_signal)
+				incorrect_stimulus_pupil_signals['PU'].append(np.mean(trial_signal, axis=0))
 			elif key < 50:
 				stimulus_pupil_signals['UP'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['UP'].extend(trial_signal)
+				incorrect_stimulus_pupil_signals['UP'].append(np.mean(trial_signal, axis=0))
 			else:
 				stimulus_pupil_signals['UU'].extend(trial_signal)
-				incorrect_stimulus_pupil_signals['UU'].extend(trial_signal)
+				incorrect_stimulus_pupil_signals['UU'].append(np.mean(trial_signal, axis=0))
 
 		if len(trial_signal)>0:
 			if key < 10:
@@ -745,79 +748,176 @@ for subname in sublist:
 
 # pl.save_figure('inc_pupil_difference-stimulus.pdf', sub_folder = 'over_subs/pupil/incorrect')
 
-embed()
+
 
 # incorrect_response_pupil_signals = response_pupil_signals
 # incorrect_stimulus_pupil_signals = stimulus_pupil_signals
 
 
+keys = ['PP','UP','PU','UU']
 
-data = pd.DataFrame()
-
-timepoint_data = []
-
-for t in range(np.diff(trial_deconvolution_interval) * deconv_sample_frequency):
-	# tdata = pd.DataFrame()
-
-	tdata = pd.DataFrame(np.hstack([np.array(correct_stimulus_diff_signals['UP'])[:,t],
-								np.array(correct_stimulus_diff_signals['PU'])[:,t],
-								np.array(correct_stimulus_diff_signals['UU'])[:,t]]),columns=['pupil'])	
-	tdata['pe_type'] = np.hstack([['UP']*np.array(correct_stimulus_diff_signals['UP']).shape[0],
-								  ['PU']*np.array(correct_stimulus_diff_signals['PU']).shape[0],
-								  ['UU']*np.array(correct_stimulus_diff_signals['UU']).shape[0]])
-	tdata['correct'] = np.ones(np.array(correct_stimulus_diff_signals['UP']).shape[0]+
-					  		   np.array(correct_stimulus_diff_signals['PU']).shape[0]+
-					           np.array(correct_stimulus_diff_signals['UU']).shape[0])
-
-	tdata['subid'] = np.hstack([correct_stimulus_diff_subids['PP'],
-								correct_stimulus_diff_subids['PU'],
-								correct_stimulus_diff_subids['UP'],
-								correct_stimulus_diff_subids['UU']])
-
-	tdata_ic = pd.DataFrame(np.hstack([np.array(incorrect_stimulus_diff_signals['UP'])[:,t],
-								np.array(incorrect_stimulus_diff_signals['PU'])[:,t],
-								np.array(incorrect_stimulus_diff_signals['UU'])[:,t]]),columns=['pupil'])	
-	tdata_ic['pe_type'] = np.hstack([['UP']*np.array(incorrect_stimulus_diff_signals['UP']).shape[0],
-								  ['PU']*np.array(incorrect_stimulus_diff_signals['PU']).shape[0],
-								  ['UU']*np.array(incorrect_stimulus_diff_signals['UU']).shape[0]])
-	tdata_ic['correct'] = np.zeros(np.array(incorrect_stimulus_diff_signals['UP']).shape[0]+
-					  		   np.array(incorrect_stimulus_diff_signals['PU']).shape[0]+
-					           np.array(incorrect_stimulus_diff_signals['UU']).shape[0])
-
-	tdata_ic['subid'] = np.hstack([incorrect_stimulus_diff_subids['PP'],
-								incorrect_stimulus_diff_subids['PU'],
-								incorrect_stimulus_diff_subids['UP'],
-								incorrect_stimulus_diff_subids['UU']])	
-
-	tdata = tdata.append(tdata_ic, ignore_index=True)
-
-	tdata.to_hdf('/home/barendregt/Projects/PredictionError/Psychophysics/Data/timepoint_data/pupil_task_data.h5',key='t%i'%t,format='table',append=False,data_columns=['pupil','pe_type','correct'])
-
-	#timepoint_data.append(tdata.append(tdata_ic, ignore_index=True))
-
-
-
-
-corr_incorr_diff_signals = {}
-
-for field in ['PP','UP','PU','UU']:
-	corr_incorr_diff_signals[field] = np.array([i-c for c,i in zip(correct_stimulus_pupil_signals[field],incorrect_stimulus_pupil_signals[field])])
-
-
+keymap = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}
 
 pl.open_figure(force=1)
-pl.hline(y=0)
-pl.event_related_pupil_average(data = corr_incorr_diff_signals, conditions=['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size difference (incorrect-correct)', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), y_lim = [None,None], compute_mean = True, compute_sd = True, with_stats = False, stats_type = 'ttest')
-pl.save_figure('correct_v_incorrect-stimulus.pdf', sub_folder = 'over_subs/pupil')
 
-corr_incorr_diff_signals = {}
+for i in range(len(keys)):
 
-for field in ['PP','UP','PU','UU']:
-	corr_incorr_diff_signals[field] = np.array([i-c for c,i in zip(correct_stimulus_diff_signals[field],incorrect_stimulus_diff_signals[field])])
+	pl.subplot(2,2,i+1)
+
+	pl.title(keymap[keys[i]])
+
+	pl.event_related_pupil_average(data = {'correct': correct_stimulus_pupil_signals[keys[i]], 'incorrect': incorrect_stimulus_pupil_signals[keys[i]]},
+								   conditions = ['correct','incorrect'], compute_mean = True, compute_sd = True, with_stats = True, stats_type = 'ttest', x_lim = [5, 55], y_lim = [-0.25, 0.9], show_legend = True, xticks = np.arange(5,55,5), xticklabels = np.arange(-0.5, 5.5, 0.5), onset_marker = 10)
+
+# pl.show_figure()
+
+pl.save_figure('correct-v-incorrect_per_PE.pdf', sub_folder = 'over_subs/pupil')
+
+embed()
+
+# f = plt.figure()
+
+# plt.subplot(2,2,1)
+# plt.title('No PE')
+# plt.plot(np.mean(correct_stimulus_pupil_signals['PP'], axis=0), label='correct')
+# plt.plot(np.mean(incorrect_stimulus_pupil_signals['PP'], axis=0), label='incorrect')
+
+# plt.axis([10,55,-0.25,0.7])
+# plt.legend()
+
+# plt.subplot(2,2,2)
+# plt.title('TR PE')
+# plt.plot(np.mean(correct_stimulus_pupil_signals['UP'], axis=0), label='correct')
+# plt.plot(np.mean(incorrect_stimulus_pupil_signals['UP'], axis=0), label='incorrect')
+
+# plt.axis([10,55,-0.25,0.7])
+# plt.legend()
+
+# plt.subplot(2,2,3)
+# plt.title('TI PE')
+# plt.plot(np.mean(correct_stimulus_pupil_signals['PU'], axis=0), label='correct')
+# plt.plot(np.mean(incorrect_stimulus_pupil_signals['PU'], axis=0), label='incorrect')
+
+# plt.axis([10,55,-0.25,0.7])
+# plt.legend()
+
+# plt.subplot(2,2,4)
+# plt.title('TR+TI PE')
+# plt.plot(np.mean(correct_stimulus_pupil_signals['UU'], axis=0), label='correct')
+# plt.plot(np.mean(incorrect_stimulus_pupil_signals['UU'], axis=0), label='incorrect')
+
+# plt.axis([10,55,-0.25,0.7])
+# plt.legend()
+
+# plt.tight_layout()
+
+# sn.despine()
+
+# plt.savefig(os.path.join(figfolder,'over_subs','pupil','correct-with-incorrect.pdf'))
+
+# data = pd.DataFrame()
+
+# timepoint_data = []
+
+# for t in range(np.diff(trial_deconvolution_interval) * deconv_sample_frequency):
+# 	# tdata = pd.DataFrame()
+
+# 	tdata = pd.DataFrame(np.hstack([np.array(correct_stimulus_diff_signals['UP'])[:,t],
+# 								np.array(correct_stimulus_diff_signals['PU'])[:,t],
+# 								np.array(correct_stimulus_diff_signals['UU'])[:,t]]),columns=['pupil'])	
+# 	tdata['pe_type'] = np.hstack([['UP']*np.array(correct_stimulus_diff_signals['UP']).shape[0],
+# 								  ['PU']*np.array(correct_stimulus_diff_signals['PU']).shape[0],
+# 								  ['UU']*np.array(correct_stimulus_diff_signals['UU']).shape[0]])
+# 	tdata['correct'] = np.ones(np.array(correct_stimulus_diff_signals['UP']).shape[0]+
+# 					  		   np.array(correct_stimulus_diff_signals['PU']).shape[0]+
+# 					           np.array(correct_stimulus_diff_signals['UU']).shape[0])
+
+# 	tdata['subid'] = np.hstack([correct_stimulus_diff_subids['PU'],
+# 								correct_stimulus_diff_subids['UP'],
+# 								correct_stimulus_diff_subids['UU']])
+
+# 	tdata_ic = pd.DataFrame(np.hstack([np.array(incorrect_stimulus_diff_signals['UP'])[:,t],
+# 								np.array(incorrect_stimulus_diff_signals['PU'])[:,t],
+# 								np.array(incorrect_stimulus_diff_signals['UU'])[:,t]]),columns=['pupil'])	
+# 	tdata_ic['pe_type'] = np.hstack([['UP']*np.array(incorrect_stimulus_diff_signals['UP']).shape[0],
+# 								  ['PU']*np.array(incorrect_stimulus_diff_signals['PU']).shape[0],
+# 								  ['UU']*np.array(incorrect_stimulus_diff_signals['UU']).shape[0]])
+# 	tdata_ic['correct'] = np.zeros(np.array(incorrect_stimulus_diff_signals['UP']).shape[0]+
+# 					  		   np.array(incorrect_stimulus_diff_signals['PU']).shape[0]+
+# 					           np.array(incorrect_stimulus_diff_signals['UU']).shape[0])
+
+# 	tdata_ic['subid'] = np.hstack([incorrect_stimulus_diff_subids['PU'],
+# 								incorrect_stimulus_diff_subids['UP'],
+# 								incorrect_stimulus_diff_subids['UU']])	
+
+# 	tdata = tdata.append(tdata_ic, ignore_index=True)
+
+# 	tdata.to_hdf('pupil_task_data_diff.h5',key='t%i'%t,format='table',append=False,data_columns=['pupil','pe_type','correct','subid'])
+
+# 	#timepoint_data.append(tdata.append(tdata_ic, ignore_index=True))
+
+
+# data = pd.DataFrame()
+
+# timepoint_data = []
+
+# for t in range(np.diff(trial_deconvolution_interval) * deconv_sample_frequency):
+# 	# tdata = pd.DataFrame()
+
+# 	tdata = pd.DataFrame(np.hstack([np.array(correct_stimulus_pupil_signals['UP'])[:,t],
+# 								np.array(correct_stimulus_pupil_signals['PU'])[:,t],
+# 								np.array(correct_stimulus_pupil_signals['UU'])[:,t]]),columns=['pupil'])	
+# 	tdata['pe_type'] = np.hstack([['UP']*np.array(correct_stimulus_pupil_signals['UP']).shape[0],
+# 								  ['PU']*np.array(correct_stimulus_pupil_signals['PU']).shape[0],
+# 								  ['UU']*np.array(correct_stimulus_pupil_signals['UU']).shape[0]])
+# 	tdata['correct'] = np.ones(np.array(correct_stimulus_pupil_signals['UP']).shape[0]+
+# 					  		   np.array(correct_stimulus_pupil_signals['PU']).shape[0]+
+# 					           np.array(correct_stimulus_pupil_signals['UU']).shape[0])
+
+# 	tdata['subid'] = np.hstack([correct_stimulus_diff_subids['PU'],
+# 								correct_stimulus_diff_subids['UP'],
+# 								correct_stimulus_diff_subids['UU']])
+
+# 	tdata_ic = pd.DataFrame(np.hstack([np.array(incorrect_stimulus_pupil_signals['UP'])[:,t],
+# 								np.array(incorrect_stimulus_pupil_signals['PU'])[:,t],
+# 								np.array(incorrect_stimulus_pupil_signals['UU'])[:,t]]),columns=['pupil'])	
+# 	tdata_ic['pe_type'] = np.hstack([['UP']*np.array(incorrect_stimulus_pupil_signals['UP']).shape[0],
+# 								  ['PU']*np.array(incorrect_stimulus_pupil_signals['PU']).shape[0],
+# 								  ['UU']*np.array(incorrect_stimulus_pupil_signals['UU']).shape[0]])
+# 	tdata_ic['correct'] = np.zeros(np.array(incorrect_stimulus_pupil_signals['UP']).shape[0]+
+# 					  		   np.array(incorrect_stimulus_pupil_signals['PU']).shape[0]+
+# 					           np.array(incorrect_stimulus_pupil_signals['UU']).shape[0])
+
+# 	tdata_ic['subid'] = np.hstack([incorrect_stimulus_diff_subids['PU'],
+# 								incorrect_stimulus_diff_subids['UP'],
+# 								incorrect_stimulus_diff_subids['UU']])	
+
+# 	tdata = tdata.append(tdata_ic, ignore_index=True)
+
+# 	tdata.to_hdf('pupil_task_data_nodiff.h5',key='t%i'%t,format='table',append=False,data_columns=['pupil','pe_type','correct','subid'])
 
 
 
-pl.open_figure(force=1)
-pl.hline(y=0)
-pl.event_related_pupil_average(data = corr_incorr_diff_signals, conditions=['UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size difference (incorrect-correct)', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), y_lim = [None,None], compute_mean = True, compute_sd = True, with_stats = False, stats_type = 'ttest')
-pl.save_figure('correct_v_incorrect-difference-stimulus.pdf', sub_folder = 'over_subs/pupil')
+# corr_incorr_diff_signals = {}
+
+# for field in ['PP','UP','PU','UU']:
+# 	corr_incorr_diff_signals[field] = np.array([i-c for c,i in zip(correct_stimulus_pupil_signals[field],incorrect_stimulus_pupil_signals[field])])
+
+
+
+# pl.open_figure(force=1)
+# pl.hline(y=0)
+# pl.event_related_pupil_average(data = corr_incorr_diff_signals, conditions=['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size difference (incorrect-correct)', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), y_lim = [None,None], compute_mean = True, compute_sd = True, with_stats = False, stats_type = 'ttest')
+# pl.save_figure('correct_v_incorrect-stimulus.pdf', sub_folder = 'over_subs/pupil')
+
+# corr_incorr_diff_signals = {}
+
+# for field in ['PP','UP','PU','UU']:
+# 	corr_incorr_diff_signals[field] = np.array([i-c for c,i in zip(correct_stimulus_diff_signals[field],incorrect_stimulus_diff_signals[field])])
+
+
+
+# pl.open_figure(force=1)
+# pl.hline(y=0)
+# pl.event_related_pupil_average(data = corr_incorr_diff_signals, conditions=['PP','UP','PU','UU'], signal_labels = {'PP': 'Predicted', 'UP': 'Task relevant','PU':'Task irrelevant','UU':'Both'}, show_legend=True, ylabel = 'Pupil size difference (incorrect-correct)', x_lim = [0.5*(signal_sample_frequency/down_fs), 4.5*(signal_sample_frequency/down_fs)], xticks = np.arange(0,5*(signal_sample_frequency/down_fs),0.5*(signal_sample_frequency/down_fs)), xticklabels = np.arange(stimulus_deconvolution_interval[0], stimulus_deconvolution_interval[1],.5), y_lim = [None,None], compute_mean = True, compute_sd = True, with_stats = False, stats_type = 'ttest')
+# pl.save_figure('correct_v_incorrect-difference-stimulus.pdf', sub_folder = 'over_subs/pupil')

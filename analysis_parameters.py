@@ -33,7 +33,9 @@ linestylemap = {'PP': [[.5,.5,.5],'-',None,None,None],
 				'ori_PP': [[.5,.5,.5],'-',None,None,None],
 				'ori_UP': ['m','-','o','m','w'],
 				'ori_PU': ['y','-','o','y','w'],
-				'ori_UU': ['c','--','o','c','c']}
+				'ori_UU': ['c','--','o','c','c'],
+				'correct': ['c','-',None,None,None],
+				'incorrect':['m','-',None,None,None]}
 
 
 sublist = ['AB','AC','AF','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AS','AT','AV','AX','AZ','BA','BB','BC','IAA','IAC','IAF','IAH','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ']

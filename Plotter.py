@@ -68,6 +68,10 @@ class Plotter(object):
 			else:
 				print('Warning: figure is already open. Use force=1 to create new axes')
 
+	def show_figure(self):
+		if self.figure is not None:
+			plt.show()
+
 	def subplot(self, *args, **kwargs):
 		plt.subplot(*args, **kwargs)		
 
@@ -149,35 +153,51 @@ class Plotter(object):
 
 	
 		if with_stats:
-			extract_data = np.array([data[key] for key in conditions])
+			extract_data = np.array([np.array(data[key]) for key in conditions])
 
-			f = np.zeros((np.array(extract_data[0]).size,1))
+			
 			p = np.zeros((np.array(extract_data[0]).size,1))
 
 			y_pos = plt.axis()[2]
 
 			if stats_type == 'anova':
 
+				f = np.zeros((np.array(extract_data[0]).size,1))
+
 				for time_point in range(np.array(extract_data[0]).size):
 					y_pos = 0
 					# All conditions one-way
-					f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][time_point],
-																	  extract_data[1][time_point],
-																	  extract_data[2][time_point],
-																	  extract_data[3][time_point])
+					f[time_point],p[time_point] = sp.stats.f_oneway(np.array(extract_data[0])[:,time_point],
+																	  np.array(extract_data[1])[:,time_point],
+																	  np.array(extract_data[2])[:,time_point],
+																	  np.array(extract_data[3])[:,time_point])
 
-					if p[time_point] < (0.05/np.array(extract_data[0]).size):
+					if p[time_point] < 0.05:#(0.05/np.array(extract_data[0]).shape[-1]):
 						plt.text(time_point, y_pos,'*')	
 			else:
-				for time_point in range(np.array(extract_data[0]).size):
-					y_pos = 0
-					# All conditions one-way
-					f[time_point],p[time_point] = sp.stats.f_oneway(extract_data[0][time_point],
-																	  extract_data[1][time_point],
-																	  extract_data[2][time_point],
-																	  extract_data[3][time_point])
+				# embed()
+				t = np.zeros((np.array(extract_data[0]).size,1))
 
-					if p[time_point] < (0.05/np.array(extract_data[0]).size):
+				rStart = 0
+				rEnd = np.array(extract_data[0]).shape[-1]
+
+				if x_lim[0] is not None:
+					rStart = x_lim[0]
+				if x_lim[1] is not None:
+					rEnd = x_lim[1]
+
+				num_data_points = min([extract_data[0].shape[0], extract_data[1].shape[0]])
+
+				for time_point in range(rStart, rEnd):
+					y_pos = 0
+					# All conditions ttest
+					try:
+						t[time_point],p[time_point] = sp.stats.ttest_rel(extract_data[0][:num_data_points,time_point],
+																		  extract_data[1][:num_data_points,time_point])
+					except:
+						embed()
+
+					if p[time_point] < 0.15:# (0.05/np.array(extract_data[0]).shape[-1]):
 						plt.text(time_point, y_pos,'*')					
 
 		plt.ylabel(ylabel)
