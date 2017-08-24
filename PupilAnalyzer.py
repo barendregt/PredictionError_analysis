@@ -86,10 +86,10 @@ class PupilAnalyzer(Analyzer):
 
 		return signal
 
-	def read_blink_data(self, input_file):
+	def read_blink_data(self, input_file, run = 'blinks'):
 
 		with pd.get_store(input_file) as tfile:
-			blinks = tfile['pupil/blinks/table']
+			blinks = tfile['pupil/%s/table'%run]
 
 		return blinks
 
@@ -820,7 +820,32 @@ class PupilAnalyzer(Analyzer):
 		return  ms_per_run, signal_per_run
 
 
+	def compute_blink_rate(self, max_blink_duration = 100000):
 
+
+		self.get_aliases()
+		
+
+		blinks_per_run = []
+		signal_per_run = []
+		for run_ii in range(len(self.aliases)):
+			blinks = self.read_blink_data(self.combined_h5_filename, run = 'r%i_saccades'%run_ii)
+
+			signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'r%i_signal'%run_ii)
+
+			block_times = np.arange(0, signal.size, block_length_samples)
+
+			blinks_per_block = np.array([])
+			pupil_per_block = np.array([])
+
+			for t in range(1,len(block_times)):
+				blinks_per_block = np.append(blinks_per_block, np.sum(((blinks['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) >= block_times[t-1]) * ((blinks['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) < block_times[t]) * (blinks['duration'] < max_blink_duration)))
+				pupil_per_block = np.append(pupil_per_block, np.mean(signal[block_times[t-1]:block_times[t]]))
+
+			blinks_per_run.append(blinks_per_block)
+			signal_per_run.append(pupil_per_block)
+
+		return  blinks_per_run, signal_per_run
 
 
 	def get_IRF_correct_incorrect(self, deconv_interval = None, only_correct = False):
