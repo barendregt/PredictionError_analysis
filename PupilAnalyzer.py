@@ -508,6 +508,10 @@ class PupilAnalyzer(Analyzer):
 		if return_rt:
 			self.trial_rts = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
+		if return_blinks:
+			blinks = self.read_blink_data(self.combined_h5_filename)
+			self.trial_blinks = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
 		
@@ -820,10 +824,12 @@ class PupilAnalyzer(Analyzer):
 		return  ms_per_run, signal_per_run
 
 
-	def compute_blink_rate(self, max_blink_duration = 100000):
+	def compute_blink_rate(self, block_length = 5, max_blink_duration = 100000):
 
 
 		self.get_aliases()
+
+		block_length_samples = block_length * self.signal_downsample_factor
 		
 
 		blinks_per_run = []
