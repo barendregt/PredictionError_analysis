@@ -73,7 +73,7 @@ class Plotter(object):
 			plt.show()
 
 	def subplot(self, *args, **kwargs):
-		plt.subplot(*args, **kwargs)		
+		return plt.subplot(*args, **kwargs)		
 
 	def plot(self, x, y, label = None, *args, **kwargs):
 
@@ -197,7 +197,7 @@ class Plotter(object):
 					except:
 						embed()
 
-					if p[time_point] < 0.15:# (0.05/np.array(extract_data[0]).shape[-1]):
+					if p[time_point] < 0.05:# (0.05/np.array(extract_data[0]).shape[-1]):
 						plt.text(time_point, y_pos,'*')					
 
 		plt.ylabel(ylabel)

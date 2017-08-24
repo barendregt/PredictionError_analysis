@@ -762,9 +762,9 @@ pl.open_figure(force=1)
 
 for i in range(len(keys)):
 
-	pl.subplot(2,2,i+1)
+	ax = pl.subplot(2,2,i+1)
 
-	pl.title(keymap[keys[i]])
+	ax.set_title(keymap[keys[i]])
 
 	pl.event_related_pupil_average(data = {'correct': correct_stimulus_pupil_signals[keys[i]], 'incorrect': incorrect_stimulus_pupil_signals[keys[i]]},
 								   conditions = ['correct','incorrect'], compute_mean = True, compute_sd = True, with_stats = True, stats_type = 'ttest', x_lim = [5, 55], y_lim = [-0.25, 0.9], show_legend = True, xticks = np.arange(5,55,5), xticklabels = np.arange(-0.5, 5.5, 0.5), onset_marker = 10)
@@ -773,7 +773,7 @@ for i in range(len(keys)):
 
 pl.save_figure('correct-v-incorrect_per_PE.pdf', sub_folder = 'over_subs/pupil')
 
-embed()
+# embed()
 
 # f = plt.figure()
 
