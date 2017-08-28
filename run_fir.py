@@ -7,7 +7,7 @@ import os,glob,sys
 from joblib import Parallel, delayed
 import multiprocessing
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -36,7 +36,7 @@ minwinlength = 4000#6000
  
 def run_analysis(subii,subname):	
 
-	print '[main] Running analysis for %s' % (subname)
+	print(('[main] Running analysis for %s' % (subname)))
 
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)

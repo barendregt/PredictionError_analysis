@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -38,7 +38,7 @@ sn.set(style='ticks', font='Arial', font_scale=1, rc={
 from math import *
 import os,glob,sys,platform
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -94,7 +94,7 @@ for subname in sublist:
 	# pl.hline(y=0)
 	# pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)
 
-	tc_correlations = dict(zip(tnames,[[]]*4))
+	tc_correlations = dict(list(zip(tnames,[[]]*4)))
 	for tcii in range(len(tcodes)-1):
 		
 		tc_rts = trial_params['reaction_time'][(trial_params['correct_answer']==1)*(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]
@@ -179,7 +179,7 @@ for subname in sublist:
 	# pl.hline(y=0)
 	# pl.vline(x=np.abs(trial_deconvolution_interval[0])*deconv_sample_frequency)
 
-	tc_correlations = dict(zip(tnames,[[]]*4))
+	tc_correlations = dict(list(zip(tnames,[[]]*4)))
 	for tcii in range(len(tcodes)-1):
 		
 		tc_rts = trial_params['reaction_time'][(trial_params['correct_answer']==0)*(trial_params['trial_codes'] >= tcodes[tcii]) * (trial_params['trial_codes'] < tcodes[tcii+1])]

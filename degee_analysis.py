@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -38,7 +38,7 @@ sn.set(style='ticks', font='Arial', font_scale=1, rc={
 from math import *
 import os,glob,sys,platform
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -117,7 +117,7 @@ for subname in sublist:
 
 	trial_parameters = pa.read_trial_data(pa.combined_h5_filename)
 
-	for key, tpr in pa.TPR.items():
+	for key, tpr in list(pa.TPR.items()):
 		if key < 10:
 
 			all_data[all_data_index] = np.hstack([tpr, trial_parameters['response'][trial_parameters['trial_codes']==key], trial_parameters['trial_direction'][trial_parameters['trial_codes']==key], 'PP'])

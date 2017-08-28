@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -6,7 +6,7 @@ import scipy as sp
 from math import *
 import os,glob,sys
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -83,7 +83,7 @@ for subname in sublist:
 
 	ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			#trial_signal = trial_signal - trial_signal[:,zero_point][:,np.newaxis]
 
@@ -94,7 +94,7 @@ for subname in sublist:
 
 	pl.open_figure(force=1)
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 
 		if key < 10:
 			pupil_signals['PP'].extend((trial_signal-msignal))
@@ -111,7 +111,7 @@ for subname in sublist:
 
 	ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			trial_signal = trial_signal[:,power_time_window[0]:power_time_window[1]] - trial_signal[:,zero_point][:,np.newaxis]
 
@@ -120,7 +120,7 @@ for subname in sublist:
 	msignal = np.mean(ref_signals, axis=0)
 	msignal_norm = np.linalg.norm(msignal, ord=2)#**2
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		trial_signal = trial_signal[:,power_time_window[0]:power_time_window[1]] - trial_signal[:,zero_point][:,np.newaxis]
 
 		power_signal = np.dot(trial_signal, msignal)/msignal_norm
@@ -156,7 +156,7 @@ for subname in sublist:
 	pl.bar_plot(data = power_signals, conditions = ['UP','PU','UU'], with_error = True, ylabel = 'Pupil amplitude (a.u.)', x_lim = [0.5, None])
 
 	# Convert IE scores back to milliseconds
-	for (key,item) in ie_scores.items():
+	for (key,item) in list(ie_scores.items()):
 		ie_scores[key] = np.array(ie_scores[key]) * np.median(all_ie_scores)
 
 	pl.subplot(1,2,2, title='Reaction times')

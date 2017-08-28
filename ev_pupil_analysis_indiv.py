@@ -4,7 +4,7 @@ import scipy as sp
 from math import *
 import os,glob,sys
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -43,7 +43,7 @@ zero_point = 15
 
 for subname in sublist:
 
-	print subname
+	print(subname)
 	# Organize filenames
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
@@ -66,7 +66,7 @@ for subname in sublist:
 					 'PU': [],
 					 'UU': []}
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			pupil_signals['PP'].extend(trial_signal - trial_signal[:,zero_point][:,np.newaxis])
 		elif key < 30:
@@ -89,7 +89,7 @@ power_time_window = [30,50]
 zero_point = 15
 
 for subname in sublist:
-	print subname
+	print(subname)
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
@@ -109,7 +109,7 @@ for subname in sublist:
 
 	ref_signal = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		trial_signal = trial_signal[:,power_time_window[0]:power_time_window[1]] - trial_signal[:,zero_point][:,np.newaxis]
 
 		ref_signal.extend(trial_signal)
@@ -117,7 +117,7 @@ for subname in sublist:
 	msignal = np.mean(ref_signal, axis=0)
 	msignal_norm = np.linalg.norm(msignal, ord=2)#**2xx
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		trial_signal = trial_signal[:,power_time_window[0]:power_time_window[1]] - trial_signal[:,zero_point][:,np.newaxis]
 
 		power_signal = np.dot(trial_signal, msignal)/msignal_norm
@@ -140,7 +140,7 @@ pl.save_figure('all_pupil-amplitude.pdf', sub_folder = 'individual')
 pl.open_figure(force=1)
 
 for subname in sublist:
-	print subname
+	print(subname)
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
@@ -166,7 +166,7 @@ for subname in sublist:
 	ie_scores['UU'].extend(sub_ie_scores[50] / np.median(sub_ie_scores[0]))
 	ie_scores['UU'].extend(sub_ie_scores[60] / np.median(sub_ie_scores[1]))
 
-	for (key,item) in ie_scores.items():
+	for (key,item) in list(ie_scores.items()):
 		ie_scores[key] = np.array(ie_scores[key]) * np.median(ie_scores['PP'])
 
 	pl.subplot(4,4,sublist.index(subname)+1, title='S%i'%sublist.index(subname))

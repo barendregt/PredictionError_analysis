@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -48,7 +48,7 @@ sn.set(style='ticks', font='Arial', font_scale=1, rc={
 from math import *
 import os,glob,sys,platform
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -96,7 +96,7 @@ for subii,subname in enumerate(sublist):
 	# key2 = pe present/absent
 	# key3 = tr-pe present/absent
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			# tc_rts = trial_params['reaction_time'][(trial_params['correct_answer']==1) * (trial_params['trial_codes'] < 10)]
 			key1 = 0
@@ -127,7 +127,7 @@ for subii,subname in enumerate(sublist):
 
 	pa.signal_per_trial(only_correct = False, only_incorrect = True, return_rt = True, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], down_sample = True)
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			# tc_rts = trial_params['reaction_time'][(trial_params['correct_answer']==0) * (trial_params['trial_codes'] < 10)]
 			key1 = 0
@@ -202,7 +202,7 @@ for subii,subname in enumerate(sublist):
 	# key2 = pe present/absent
 	# key3 = tr-pe present/absent
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			# tc_rts = trial_params['reaction_time'][(trial_params['correct_answer']==1) * (trial_params['trial_codes'] < 10)]
 			key1 = 0
@@ -233,7 +233,7 @@ for subii,subname in enumerate(sublist):
 
 	pa.signal_per_trial(only_correct = False, only_incorrect = True, return_rt = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-0.5, 0.0], down_sample = True)
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			# tc_rts = trial_params['reaction_time'][(trial_params['correct_answer']==0) * (trial_params['trial_codes'] < 10)]
 			key1 = 0

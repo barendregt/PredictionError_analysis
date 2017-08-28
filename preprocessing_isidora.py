@@ -7,7 +7,7 @@ import os,glob,sys,platform
 from joblib import Parallel, delayed
 import multiprocessing
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 import matplotlib.pyplot as plt
@@ -47,7 +47,7 @@ minwinlength = 4000#6000
  
 def run_analysis(subname):	
 
-	print '[main] Running analysis for %s' % (subname)
+	print(('[main] Running analysis for %s' % (subname)))
 
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
@@ -247,7 +247,7 @@ def run_analysis(subname):
 
 	response_pupil_signals = []
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		response_pupil_signals.extend(trial_signal)
 
 	plt.figure()

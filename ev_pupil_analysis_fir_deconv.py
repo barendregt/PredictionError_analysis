@@ -7,7 +7,7 @@ import seaborn as sn
 from math import *
 import os,glob,sys
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -39,7 +39,7 @@ all_sub_rts = [[],[],[]]
  
 def run_analysis(subname):	
 
-	print '[main] Running analysis for %s' % (subname)
+	print(('[main] Running analysis for %s' % (subname)))
 
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
@@ -63,7 +63,7 @@ def run_analysis(subname):
 
 	sub_HRF = {'stimulus': [], 'button_press': []}
 
-	for name,dec in zip(pa.FIRo.covariates.keys(), pa.FIRo.betas_per_event_type.squeeze()):
+	for name,dec in zip(list(pa.FIRo.covariates.keys()), pa.FIRo.betas_per_event_type.squeeze()):
 		#pa.fir_signal.update({name: [pa.FIRo.deconvolution_interval_timepoints, dec]})
 		plt.plot(pa.FIRo.deconvolution_interval_timepoints, dec, label = name)
 

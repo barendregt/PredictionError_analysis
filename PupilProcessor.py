@@ -1,4 +1,4 @@
-from __future__ import division
+# from __future__ import division
 
 import os,glob,datetime
 
@@ -6,7 +6,7 @@ import numpy as np
 import scipy as sp
 import seaborn as sn
 import matplotlib.pylab as plt
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 import tables
 
@@ -22,11 +22,11 @@ from fir import FIRDeconvolution
 
 from IPython import embed
 
-from Reader import Reader
+from Processor import Processor
 
 sn.set(style = 'ticks')
 
-class PupilReader(Reader):
+class PupilProcessor(Processor):
 
 	def __init__(self, subID, filename, edf_folder, sort_by_date = False, verbosity = 0, **kwargs):
 
@@ -34,7 +34,7 @@ class PupilReader(Reader):
 		self.default_parameters = {'low_pass_pupil_f': 6.0,
 								   'high_pass_pupil_f': 0.01}
 
-		super(PupilReader, self).__init__(subID, filename, verbosity=verbosity, **kwargs)
+		super(PupilProcessor, self).__init__(subID, filename, verbosity=verbosity, **kwargs)
 
 		self.edf_folder = edf_folder
 		self.data_folder = edf_folder
@@ -157,7 +157,7 @@ class PupilReader(Reader):
 		if (len(params) > 1) & (~last_node):
 			return np.array([self.recode_trial_code(p[1], last_node = True) for p in params.iterrows()], dtype=float)
 
-		new_format = 'trial_cue' in params.keys()
+		new_format = 'trial_cue' in list(params.keys())
 
 		if not new_format:
 			if np.array(params['trial_type'] == 1): # base trial (/expected)
@@ -256,7 +256,7 @@ class PupilReader(Reader):
 							  'green45': 2,
 							  'green135': 3}
 
-			if 'trial_cue_label' not in params.keys():
+			if 'trial_cue_label' not in list(params.keys()):
 				params['trial_cue'] = stimulus_types[params['trial_cue']]
 
 			if params['trial_cue']==params['trial_stimulus']:
@@ -351,7 +351,7 @@ class PupilReader(Reader):
 		self.load_data()
 
 		if self.verbosity:
-			print '[%s] Recombining signal and parameters from blocks/runs' % (self.__class__.__name__)
+			print(('[%s] Recombining signal and parameters from blocks/runs' % (self.__class__.__name__)))
 
 		full_signal = np.array([])
 		full_baseline = np.array([])
@@ -493,13 +493,13 @@ class PupilReader(Reader):
 		
 		fieldnames = ['task_data','events','trial_signals','fir_signal','pupil_data']
 
-		print '[%s] Storing pupil data' % (self.__class__.__name__)
+		print(('[%s] Storing pupil data' % (self.__class__.__name__)))
 
 		output = []
 
 		for fname in fieldnames:
 			if hasattr(self, fname):
-				print fname
+				print(fname)
 				eval('output.append(self.'+fname+')')
 
 		pickle.dump(output,open(os.path.join(self.data_folder, 'pupil_' + self.output_filename),'wb'))

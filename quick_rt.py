@@ -22,7 +22,7 @@ def recode_trial_code(params, last_node = False):
 	if (len(params) > 1) & (~last_node):
 		return np.array([recode_trial_code(p[1], last_node = True) for p in params.iterrows()], dtype=float)
 
-	new_format = 'trial_cue' in params.keys()
+	new_format = 'trial_cue' in list(params.keys())
 
 	if not new_format:
 		if np.array(params['trial_type'] == 1): # base trial (/expected)
@@ -121,7 +121,7 @@ def recode_trial_code(params, last_node = False):
 						  'green45': 2,
 						  'green135': 3}
 
-		if 'trial_cue_label' not in params.keys():
+		if 'trial_cue_label' not in list(params.keys()):
 			params['trial_cue'] = stimulus_types[params['trial_cue']]
 
 		if params['trial_cue']==params['trial_stimulus']:

@@ -7,7 +7,7 @@ import matplotlib.pyplot as pl
 from math import *
 import os,glob,datetime
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from BehaviorAnalyzer import BehaviorAnalyzer

@@ -1,4 +1,4 @@
-from __future__ import division
+# from __future__ import division
 
 import os,glob,datetime
 
@@ -6,7 +6,7 @@ import numpy as np
 import scipy as sp
 import seaborn as sn
 import matplotlib.pylab as plt
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 import tables
 
@@ -24,7 +24,7 @@ from IPython import embed
 
 from Analyzer import Analyzer
 
-from PupilReader import PupilReader
+from PupilProcessor import PupilProcessor
 
 sn.set(style = 'ticks')
 
@@ -33,7 +33,7 @@ class PupilAnalyzer(Analyzer):
 	def __init__(self, subID, filename, edf_folder, sort_by_date = False, reference_phase = 7,verbosity = 0, **kwargs):
 
 		
-		self.PR = PupilReader(subID, filename, edf_folder, sort_by_date, verbosity, **kwargs)
+		self.PR = PupilProcessor(subID, filename, edf_folder, sort_by_date, verbosity, **kwargs)
 
 		
 		self.FIR_object 	= None
@@ -58,12 +58,10 @@ class PupilAnalyzer(Analyzer):
 		if return_rt:
 			self.trial_rts = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
-		if return_blinks:
-			blinks = self.read_blink_data(self.combined_h5_filename)
-			self.trial_blinks = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		# if return_blinks:
+		# 	blinks = self.read_blink_data(self.combined_h5_filename)
+		# 	self.trial_blinks = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
-
-		embed()
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
 		
@@ -77,9 +75,9 @@ class PupilAnalyzer(Analyzer):
 
 
 			if with_rt:
-				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
+				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1]))
 			else:
-				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
+				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1]))
 
 			if return_rt:
 				these_rts = trial_parameters['reaction_time'][selected_trials].values
@@ -114,8 +112,8 @@ class PupilAnalyzer(Analyzer):
 					if return_rt:
 						self.trial_rts[tcode].append(these_rts[tii])
 
-					if return_blinks:
-						self.trial_blinks[tcode].append(blinks[(blinks['start_timestamp']/self.signal_sample_frequency >= ts) * (blinks['end_timestamp']/self.signal_sample_frequency < te)])
+					# if return_blinks:
+					# 	self.trial_blinks[tcode].append(blinks[(blinks['start_timestamp']/self.signal_sample_frequency >= ts) * (blinks['end_timestamp']/self.signal_sample_frequency < te)])
 
 					
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
@@ -154,9 +152,9 @@ class PupilAnalyzer(Analyzer):
 
 
 			if with_rt:
-				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1])
+				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1]))
 			else:
-				trial_times = zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[1])
+				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[1]))
 
 
 			baseline_times =  np.vstack([trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
@@ -197,7 +195,7 @@ class PupilAnalyzer(Analyzer):
 		nuiss_deconv_interval = [-2, 5]
 
 
-		print('[%s] Starting FIR deconvolution' % (self.__class__.__name__))
+		print(('[%s] Starting FIR deconvolution' % (self.__class__.__name__)))
 
 		self.FIR_nuiss = FIRDeconvolution(
 						signal = recorded_pupil_signal,
@@ -316,7 +314,7 @@ class PupilAnalyzer(Analyzer):
 		# all_resp_betas = all_betas[:,4:]
 		# all_nuiss_betas = self.FIR_betas_all[:-int(stim_events.shape[0]*(stim_deconv_interval[1]-stim_deconv_interval[0])*self.deconv_sample_frequency+resp_events.shape[0]*(resp_deconv_interval[1]-resp_deconv_interval[0])*self.deconv_sample_frequency)].reshape((nuiss_events.shape[0],(nuiss_deconv_interval[1]-nuiss_deconv_interval[0])*self.deconv_sample_frequency)).T
 
-		return [[stim_betas, resp_betas, stim_nuiss_betas, resp_nuiss_betas], [self.FIR_stim.covariates.keys(), self.FIR_resp.covariates.keys(),self.FIR_nuiss.covariates.keys()]]
+		return [[stim_betas, resp_betas, stim_nuiss_betas, resp_nuiss_betas], [list(self.FIR_stim.covariates.keys()), list(self.FIR_resp.covariates.keys()),list(self.FIR_nuiss.covariates.keys())]]
 
 		# figure()
 		# ax=subplot(1,2,1)
@@ -439,7 +437,7 @@ class PupilAnalyzer(Analyzer):
 		nuiss_deconv_interval = [-2, 5]
 
 
-		print('[%s] Starting FIR deconvolution' % (self.__class__.__name__))
+		print(('[%s] Starting FIR deconvolution' % (self.__class__.__name__)))
 
 		self.FIR_nuiss = FIRDeconvolution(
 						signal = recorded_pupil_signal,
@@ -523,14 +521,14 @@ class PupilAnalyzer(Analyzer):
 
 	def build_design_matrix(self, sub_IRF = None):
 		
-		print('[%s] Creating design matrix for GLM' % (self.__class__.__name__))
+		print(('[%s] Creating design matrix for GLM' % (self.__class__.__name__)))
 
 		if sub_IRF is None:
 			sub_IRF = {'stimulus': [], 'button_press': []}
 
 		
 
-			for name,dec in zip(self.FIRo.covariates.keys(), self.FIRo.betas_per_event_type.squeeze()):
+			for name,dec in zip(list(self.FIRo.covariates.keys()), self.FIRo.betas_per_event_type.squeeze()):
 				sub_IRF[name] = resample(dec,int(len(dec)*(self.signal_sample_frequency/self.deconv_sample_frequency)))[:,np.newaxis]
 				sub_IRF[name] /= max(abs(sub_IRF[name]))
 
@@ -558,7 +556,7 @@ class PupilAnalyzer(Analyzer):
 
 	def run_GLM(self):
 
-		print('[%s] Running GLM analysis' % (self.__class__.__name__))
+		print(('[%s] Running GLM analysis' % (self.__class__.__name__)))
 
 		if not hasattr(self, 'design_matrix'):
 			self.build_design_matrix()

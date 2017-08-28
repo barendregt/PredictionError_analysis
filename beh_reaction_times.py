@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -14,7 +14,7 @@ from pandas import *
 from math import *
 import os,glob,sys,platform
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed

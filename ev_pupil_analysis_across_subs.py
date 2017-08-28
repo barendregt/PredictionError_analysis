@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -20,7 +20,7 @@ from pandas import *
 from math import *
 import os,glob,sys
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -128,7 +128,7 @@ for subname in sublist:
 	uu_signal = []
 	
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			pp_signal.extend(trial_signal)
 		elif key < 30:

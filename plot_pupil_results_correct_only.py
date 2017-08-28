@@ -7,7 +7,7 @@ import matplotlib.pyplot as pl
 from math import *
 import os,glob,datetime
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from BehaviorAnalyzer import BehaviorAnalyzer
@@ -148,7 +148,7 @@ for subii,subname in enumerate(sublist):
 
 	peak_window = [6,14]
 
-	for name in trial_signals.keys():
+	for name in list(trial_signals.keys()):
 
 		msignal = np.array(trial_signals[name]['stim']).mean(axis=0)
 

@@ -11,7 +11,7 @@ from math import *
 
 import os,glob,sys
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -51,7 +51,7 @@ class Plotter(object):
 
 		# Quickly check that all requested conditions are present in the data
 		for key in conditions:
-			if key not in data.keys():
+			if key not in list(data.keys()):
 				print('ERROR: not all requested keys present in provided data')
 				return True
 		return False
@@ -93,7 +93,7 @@ class Plotter(object):
 			plt.axvline(onset_marker, ymin=0, ymax=1, linewidth=1.5, color='k', figure = self.figure)
 
 		if isinstance(data, dict):
-			for (label, signal) in data.items():
+			for (label, signal) in list(data.items()):
 				if label in conditions:
 					if compute_mean:
 						msignal = np.nanmean(signal, axis=0)
@@ -108,9 +108,9 @@ class Plotter(object):
 							condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.5)
 
 						if self.linestylemap is None:
-							plt.fill_between(range(len(msignal)), condition_ste[0], condition_ste[1], alpha=0.1)
+							plt.fill_between(list(range(len(msignal))), condition_ste[0], condition_ste[1], alpha=0.1)
 						else:
-							plt.fill_between(range(len(msignal)), condition_ste[0], condition_ste[1], alpha=0.1, color=self.linestylemap[label][0])		
+							plt.fill_between(list(range(len(msignal))), condition_ste[0], condition_ste[1], alpha=0.1, color=self.linestylemap[label][0])		
 
 					if not signal_labels:
 						if self.linestylemap is None:
@@ -136,9 +136,9 @@ class Plotter(object):
 					if compute_sd:	
 						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
 						if self.linestylemap is None:
-							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
+							plt.fill_between(list(range(len(msignal))), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
 						else:
-							plt.fill_between(range(len(msignal)), msignal-condition_ste, msignal+condition_ste, alpha=0.1, color=self.linestylemap[key][0])	
+							plt.fill_between(list(range(len(msignal))), msignal-condition_ste, msignal+condition_ste, alpha=0.1, color=self.linestylemap[key][0])	
 
 					if not signal_labels:
 						if self.linestylemap is None:
@@ -247,7 +247,7 @@ class Plotter(object):
 
 				if with_error:
 					condition_ste = np.std(reference_mean - data[key], axis=0)/np.sqrt(len(data[key]))
-					plt.fill_between(range(np.array(reference_mean).size), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5, color=self.linestylemap[key][0])
+					plt.fill_between(list(range(np.array(reference_mean).size)), condition_mean-condition_ste, condition_mean+condition_ste, alpha=0.5, color=self.linestylemap[key][0])
 
 		
 		# Do time-by-time stats on difference
@@ -329,7 +329,7 @@ class Plotter(object):
 		# plt.xticks(1+np.arange(len(conditions)), conditions)
 		latex_code += '};'
 
-		print latex_code
+		print(latex_code)
 
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)

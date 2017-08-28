@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -20,7 +20,7 @@ from pandas import *
 from math import *
 import os,glob,sys,platform
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -111,7 +111,7 @@ for subname in sublist:
 	col_ref_signals = []
 	ori_ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			#trial_signal = trial_signal - trial_signal[:,zero_point][:,np.newaxis]
 
@@ -135,7 +135,7 @@ for subname in sublist:
 	
 
 	try:
-		for key, trial_signal in pa.trial_signals.items():
+		for key, trial_signal in list(pa.trial_signals.items()):
 			if len(trial_signal)>0:
 				if key == 0:
 					response_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
@@ -189,7 +189,7 @@ for subname in sublist:
 	col_ref_signals = []
 	ori_ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			#trial_signal = trial_signal - trial_signals[:,zero_point][:,np.newaxis]
 
@@ -212,7 +212,7 @@ for subname in sublist:
 	uu_signal = []
 	
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if len(trial_signal)>0:
 			if key == 0:
 				stimulus_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
@@ -386,7 +386,7 @@ for subname in sublist:
 	col_ref_signals = []
 	ori_ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			#trial_signal = trial_signal - trial_signal[:,zero_point][:,np.newaxis]
 
@@ -410,7 +410,7 @@ for subname in sublist:
 	
     
 	try:
-		for key, trial_signal in pa.trial_signals.items():
+		for key, trial_signal in list(pa.trial_signals.items()):
 			if len(trial_signal)>0:
 				if key == 0:
 					response_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))
@@ -490,7 +490,7 @@ for subname in sublist:
 	col_ref_signals = []
 	ori_ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			#trial_signal = trial_signal - trial_signals[:,zero_point][:,np.newaxis]
 
@@ -513,7 +513,7 @@ for subname in sublist:
 	uu_signal = []
 	
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if len(trial_signal)>0:
 			if key == 0:
 				stimulus_pupil_signals['col_PP'].extend(trial_signal)#.append(np.mean(trial_signal, axis=0))

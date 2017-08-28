@@ -7,7 +7,7 @@ import seaborn as sn
 from math import *
 import os,glob,sys
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 from IPython import embed
@@ -39,7 +39,7 @@ all_sub_rts = [[],[],[]]
  
 def run_analysis(subname):	
 
-	print '[main] Running analysis for %s' % (subname)
+	print(('[main] Running analysis for %s' % (subname)))
 
 	rawfolder = os.path.join(raw_data_folder,subname)
 	sharedfolder = os.path.join(shared_data_folder,subname)
@@ -58,7 +58,7 @@ def run_analysis(subname):
 
 	plt.figure(figsize=(10,8))
 
-	for name,dec in zip(pa.FIRo.covariates.keys(), pa.FIRo.betas_per_event_type.squeeze()):
+	for name,dec in zip(list(pa.FIRo.covariates.keys()), pa.FIRo.betas_per_event_type.squeeze()):
 		#pa.fir_signal.update({name: [pa.FIRo.deconvolution_interval_timepoints, dec]})
 		plt.pltot(pa.FIRo.deconvolution_interval_timepoints, dec, label = name)
 
@@ -78,7 +78,7 @@ def run_analysis(subname):
 	pred_signal = []
 	unpred_signal = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			pred_signal.extend(trial_signal[:,5:] - trial_signal[:,:5].mean())
 		else:
@@ -104,14 +104,14 @@ def run_analysis(subname):
 
 	all_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		trial_signal = trial_signal[:,peak_window[0]:peak_window[1]] - trial_signal[:,:5].mean()
 
 		all_signals.extend(trial_signal)
 
 	msignal = np.mean(all_signals, axis=0)
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		trial_signal = trial_signal[:,peak_window[0]:peak_window[1]] - trial_signal[:,:5].mean()
 		# power_signal = np.array([np.dot(signal,msignal)/(np.linalg.norm(msignal, ord=2)**2) for signal in trial_signal])
 		power_signal = np.dot(trial_signal, msignal)/(np.linalg.norm(msignal, ord=2)**2)

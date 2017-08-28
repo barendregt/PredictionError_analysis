@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -20,7 +20,7 @@ from pandas import *
 from math import *
 import os,glob,sys,platform
 
-import cPickle as pickle
+import pickle as pickle
 import pandas as pd
 
 import matplotlib.pyplot as plt 
@@ -122,7 +122,7 @@ for subname in sublist:
 	# embed()
 	ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			#trial_signal = trial_signal - trial_signal[:,zero_point][:,np.newaxis]
 
@@ -138,7 +138,7 @@ for subname in sublist:
 	
 
 	try:
-		for key, trial_signal in pa.trial_signals.items():
+		for key, trial_signal in list(pa.trial_signals.items()):
 			if key < 10:
 				response_pupil_signals['PP'].extend(trial_signal)
 			elif key < 30:
@@ -162,7 +162,7 @@ for subname in sublist:
 
 	ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			trial_signal = trial_signal[:,power_time_window[0]:power_time_window[1]]# - trial_signal[:,zero_point][:,np.newaxis]
 
@@ -171,7 +171,7 @@ for subname in sublist:
 	msignal = np.mean(ref_signals, axis=0)
 	msignal_norm = np.linalg.norm(msignal, ord=2)**2
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		trial_signal = trial_signal[:,power_time_window[0]:power_time_window[1]]# - trial_signal[:,zero_point][:,np.newaxis]
 
 		power_signal = np.dot(trial_signal, msignal)/msignal_norm
@@ -197,7 +197,7 @@ for subname in sublist:
 	# embed()
 	ref_signals = []
 
-	for key,trial_signal in pa.trial_signals.items():
+	for key,trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			#trial_signal = trial_signal - trial_signals[:,zero_point][:,np.newaxis]
 
@@ -212,7 +212,7 @@ for subname in sublist:
 	uu_signal = []
 	
 
-	for key, trial_signal in pa.trial_signals.items():
+	for key, trial_signal in list(pa.trial_signals.items()):
 		if key < 10:
 			stimulus_pupil_signals['PP'].extend(trial_signal)
 		elif key < 30:
