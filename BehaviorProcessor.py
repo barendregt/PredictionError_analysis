@@ -67,6 +67,7 @@ class BehaviorProcessor(PupilProcessor):
 		"""
 
 		
+		
 
 	def recode_trial_types(self):
 		"""

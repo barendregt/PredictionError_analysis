@@ -120,7 +120,11 @@ class PupilAnalyzer(Analyzer):
 			if return_rt:
 				self.trial_rts[tcode] = np.array(self.trial_rts[tcode])
 
-	def compute_TPR(self, reference_phase = 1, only_correct = False, only_incorrect = False, time_window = None, baseline_period = [-0.5, 0.0], with_rt = False, force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+	def compute_TPR(self, reference_phase = 1, only_correct = False, only_incorrect = False, time_window = None, baseline_period = [-0.5, 0.0], with_rt = False, force_rebuild = False, signal_type = 'clean_signal', down_sample = False, sort_by_code = True):
+
+		"""
+		Compute a trial-by-trial pupil response, sorted by trial code
+		"""
 
 		if only_correct==True and only_incorrect==True:
 			display('Error: incompatible trial selection!!')
@@ -134,40 +138,51 @@ class PupilAnalyzer(Analyzer):
 
 		self.PR.load_combined_data(force_rebuild=force_rebuild)
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = signal_type)
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		recorded_pupil_signal = self.PR.read_pupil_data(self.PR.combined_h5_filename, signal_type = signal_type)
+		trial_parameters = self.PR.read_trial_data(self.PR.combined_h5_filename)
 
-		self.TPR =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		if sort_by_code:
+			self.TPR =  {key:[] for key in np.unique(trial_parameters['trial_codes'])}
+		else:
+			self.TPR = []
 
 
-		for tcode in np.unique(trial_parameters['trial_codes']):
+		#for tcode in np.unique(trial_parameters['trial_codes']):
 		
 
-			if only_correct:
-				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==1), dtype=bool)
-			if only_incorrect:
-				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==0), dtype=bool)				
-			else:
-				selected_trials = np.array(trial_parameters['trial_codes']==tcode, dtype=bool)			
+		if only_correct:
+			selected_trials = np.array(trial_parameters['correct_answer']==1, dtype=bool)
+		if only_incorrect:
+			selected_trials = np.array(trial_parameters['correct_answer']==0, dtype=bool)				
+		else:
+			selected_trials = np.array((trial_parameters['correct_answer']==1) | (trial_parameters['correct_answer']==0), dtype=bool)			
 
 
-			if with_rt:
-				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1]))
-			else:
-				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.signal_sample_frequency)[1]))
+		if with_rt:
+			trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.PR.signal_sample_frequency)[1]))
+		else:
+			trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.PR.signal_sample_frequency)[1]))
 
 
-			baseline_times =  np.vstack([trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
+		baseline_times =  np.vstack([trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[0]*self.PR.signal_sample_frequency), trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[1]*self.PR.signal_sample_frequency)])
 
-			for tii,(ts,te) in enumerate(trial_times):
-				if (ts > 0) & (te < recorded_pupil_signal.size):
+		for tii,(ts,te) in enumerate(trial_times):
+			if (ts > 0) & (te < recorded_pupil_signal.size):
 
-					trial_pupil_response = np.mean(recorded_pupil_signal[int(ts):int(te)]) - np.mean(recorded_pupil_signal[int(baseline_times[0, int(tii)]):int(baseline_times[1,int(tii)])])
-					# trial_puresponsegnal = np.mean(recorded_pupil_signal[int(ts):int(te)]) - 
+				trial_pupil_response = np.mean(recorded_pupil_signal[int(ts):int(te)]) - np.mean(recorded_pupil_signal[int(baseline_times[0, int(tii)]):int(baseline_times[1,int(tii)])])
+				# trial_puresponsegnal = np.mean(recorded_pupil_signal[int(ts):int(te)]) - 
 
-					self.TPR[tcode].append(trial_pupil_response)
+				if sort_by_code:
+					self.TPR[trial_parameters['trial_codes'][tii]].append(trial_pupil_response)
+				else:
+					self.TPR.append(trial_pupil_response)
 					
-			self.TPR[tcode] = np.array(self.TPR[tcode])
+		if sort_by_code:
+
+			for tcode in np.unique(trial_parameters['trial_codes']):
+				self.TPR[tcode] = np.array(self.TPR[tcode])
+		else:
+			self.TPR = np.array(self.TPR)
 
 
 
@@ -178,7 +193,7 @@ class PupilAnalyzer(Analyzer):
 
 		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
 
-		self.FIR_resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / self.signal_sample_frequency)*self.deconv_sample_frequency), axis = -1)
+		self.FIR_resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / self.PR.signal_sample_frequency)*self.deconv_sample_frequency), axis = -1)
 
 
 		trial_parameters = self.read_trial_data(self.combined_h5_filename)
