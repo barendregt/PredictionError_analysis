@@ -55,11 +55,11 @@ for subname in sublist:
 	# Get trial information
 	trial_codes = ba.recode_trial_code(beh_data)
 	beh_data['TR_PE'] = np.array((trial_codes > 1) & (trial_codes >= 30), dtype=int)
-	beh_data['TI_PE'] = np.array((trial_codes > 1) & (trial_codes < 30), dtype=int)
+	beh_data['TI_PE'] = np.array((trial_codes > 1) & ((trial_codes < 30) | (trial_codes >= 50)), dtype=int)
 
 	# Some accounting
-	beh_data['missed_response'] = np.array(beh_data['button'] == '', dtype=int)
-	beh_data['subID'] = sublist.index(subname)
+	beh_data['missed_response'] = np.array(beh_data['reaction_time'] < .3, dtype=int)
+	beh_data['subj_idx'] = sublist.index(subname)
 
 
 	# Get pupil size change per trial
@@ -74,9 +74,11 @@ for subname in sublist:
 
 	# Dump everything to a TSV file
 	if sublist.index(subname)==0:
-		tsv_output_data = beh_data[['subID','TR_PE','TI_PE','reaction_time','pupil_response','missed_response','correct_answer']]
+		tsv_output_data = beh_data[['subj_idx','TR_PE','TI_PE','reaction_time','pupil_response','missed_response','correct_answer']]
 	else:
-		tsv_output_data = tsv_output_data.append(beh_data[['subID','TR_PE','TI_PE','reaction_time','pupil_response','missed_response','correct_answer']], ignore_index = True)
+		tsv_output_data = tsv_output_data.append(beh_data[['subj_idx','TR_PE','TI_PE','reaction_time','pupil_response','missed_response','correct_answer']], ignore_index = True)
 
+# Rename columns for HDDM convention
+tsv_output_data.rename(columns = {'reaction_time': 'rt', 'correct_answer': 'response'}, inplace = True)
 
 tsv_output_data.to_csv('for_hddm.csv')
