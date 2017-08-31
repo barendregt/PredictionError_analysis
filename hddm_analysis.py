@@ -17,6 +17,8 @@ import hddm
 
 filename = 'for_hddm.csv'
 
+new_fit = False
+
 data = hddm.load_csv(filename)
 
 
@@ -25,8 +27,13 @@ m = hddm.HDDM(data[data['missed_response']>0], depends_on = {'v':['TR_PE','TI_PE
 
 #m = hddm.HDDM(data[data['missed_response']>0], depends_on = {'v':['TR_PE','TI_PE']})
 
-m.find_starting_values()
 
-m.sample(100, burn = 50, dbname = 'dbresults', db = 'pickle')
+if new_fit:
+	m.find_starting_values()
+
+	m.sample(100, burn = 50, dbname = 'dbresults', db = 'pickle')
+
+else:
+	m.load_db('dbresults')
 
 embed()
