@@ -1,6 +1,9 @@
 import numpy as np
 import scipy as sp
 
+import matplotlib
+matplotlib.use('Qt4Agg')
+
 import matplotlib.pyplot as plt
 import seaborn as sn
 
@@ -15,11 +18,11 @@ from IPython import embed
 import hddm
 
 
-filename = 'for_hddm.csv'
+filename = 'PE_analysis'
 
 new_fit = False
 
-data = hddm.load_csv(filename)
+data = hddm.load_csv('%s.csv'%filename)
 
 
 # fit initial model
@@ -27,13 +30,18 @@ m = hddm.HDDM(data[data['missed_response']>0], depends_on = {'v':['TR_PE','TI_PE
 
 #m = hddm.HDDM(data[data['missed_response']>0], depends_on = {'v':['TR_PE','TI_PE']})
 
+m.find_starting_values()
 
-if new_fit:
-	m.find_starting_values()
+m.sample(1000, burn = 5000, dbname = '%s-db.pickle'%filename, db = 'pickle')
 
-	m.sample(100, burn = 50, dbname = 'dbresults', db = 'pickle')
-
-else:
-	m.load_db('dbresults')
 
 embed()
+# if new_fit:
+# 	m.find_starting_values()
+
+# 	m.sample(10, burn = 5, dbname = '%s-dbpick.pickle'%filename, db = 'pickle')
+
+# 	m.save('%s-model'%filename)
+# else:
+# 	m.load_db('%s-db'%filename)
+
