@@ -21,7 +21,7 @@ data = hddm.load_csv(filename)
 
 
 # fit initial model
-m = hddm.HDDM(data[data['missed_response']>0], depends_on = {'v':['TR_PE','TI_PE']})
+m = hddm.HDDM(data[data['missed_response']>0], depends_on = {'v':['TR_PE','TI_PE'],'t':['TR_PE','TI_PE']})
 
 
 
