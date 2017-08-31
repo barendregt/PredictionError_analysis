@@ -81,4 +81,4 @@ for subname in sublist:
 # Rename columns for HDDM convention
 tsv_output_data.rename(columns = {'reaction_time': 'rt', 'correct_answer': 'response'}, inplace = True)
 
-tsv_output_data.to_csv('for_hddm.csv')
+tsv_output_data.to_csv('PE_analysis.csv')
