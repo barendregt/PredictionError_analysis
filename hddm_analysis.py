@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 
 import matplotlib
-# matplotlib.use('Qt4Agg')
+matplotlib.use('WebAgg')
 
 import matplotlib.pyplot as plt
 import seaborn as sn
