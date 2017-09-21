@@ -39,7 +39,7 @@ m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_P
 
 m.find_starting_values()
 
-runii = 0
+runii = 1
 
 m.sample(10000, burn = 5000, dbname = '%s-%i-db.pickle'%(filename,runii), db = 'pickle')
 
