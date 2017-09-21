@@ -28,6 +28,10 @@ data = hddm.load_csv('%s.csv'%filename)
 # fit initial model
 m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_PE'],'t':['TR_PE','TI_PE']})
 
+
+embed()
+
+
 # m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_PE']})
 
 m.find_starting_values()
