@@ -7,6 +7,9 @@ matplotlib.use('WebAgg')
 # import matplotlib.pyplot as plt
 # import seaborn as sn
 
+# from joblib import Parallel, delayed
+# import multiprocessing
+
 from math import *
 import os,glob,sys,platform
 
@@ -36,16 +39,9 @@ m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_P
 
 m.find_starting_values()
 
-m.sample(10000, burn = 5000, dbname = '%s-db.pickle'%filename, db = 'pickle')
+runii = 0
+
+m.sample(10000, burn = 5000, dbname = '%s-%i-db.pickle'%(filename,runii), db = 'pickle')
 
 
 embed()
-# if new_fit:
-# 	m.find_starting_values()
-
-# 	m.sample(10, burn = 5, dbname = '%s-dbpick.pickle'%filename, db = 'pickle')
-
-# 	m.save('%s-model'%filename)
-# else:
-# 	m.load_db('%s-db'%filename)
-
