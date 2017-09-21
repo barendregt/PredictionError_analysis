@@ -32,7 +32,7 @@ m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_P
 
 m.find_starting_values()
 
-m.sample(10000, burn = 5000, dbname = '%s-db.pickle'%filename, db = 'pickle')
+m.sample(6000, burn = 3000, dbname = '%s-db.pickle'%filename, db = 'pickle')
 
 
 embed()
