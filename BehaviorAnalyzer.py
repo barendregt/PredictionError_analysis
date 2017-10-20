@@ -19,6 +19,7 @@ from fir import FIRDeconvolution
 from IPython import embed
 
 from PupilAnalyzer import PupilAnalyzer
+from BehaviorProcessor import BehaviorProcessor
 
 class BehaviorAnalyzer(PupilAnalyzer):
 
@@ -27,6 +28,9 @@ class BehaviorAnalyzer(PupilAnalyzer):
 		self.default_parameters = {}
 
 		super(BehaviorAnalyzer, self).__init__(subID, h5_filename, raw_folder,verbosity=verbosity, **kwargs)
+
+
+		self.BP = BehaviorProcessor(subID, csv_filename, h5_filename, raw_folder, verbosity=verbosity, **kwargs)
 
 		self.csv_file = csv_filename
 
@@ -38,7 +42,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 	def compute_reaction_times(self, compute_average = False, correct_trials = True):
 
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		trial_parameters = self.PR.read_trial_data(self.PR.combined_h5_filename)
 
 		valid_trials = trial_parameters['reaction_time'] > 0.0
 
@@ -48,7 +52,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 	def compute_inverse_efficiency_scores(self, compute_average = False):
 
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		trial_parameters = self.PR.read_trial_data(self.PR.combined_h5_filename)
 
 		ie_scores = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
@@ -66,7 +70,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 	def compute_dprime(self):
 	
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		trial_parameters = self.PR.read_trial_data(self.PR.combined_h5_filename)
 
 		hit_rates = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 		fa_rates  = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
@@ -95,7 +99,7 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 	def compute_error_rates(self):
 
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		trial_parameters = self.PR.read_trial_data(self.PR.combined_h5_filename)
 
 		hit_rates = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
@@ -106,12 +110,12 @@ class BehaviorAnalyzer(PupilAnalyzer):
 
 	def compute_percent_correct(self):
 
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		trial_parameters = self.PR.read_trial_data(self.PR.combined_h5_filename)
 
 		percent_correct = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
 		for tcode in np.unique(trial_parameters['trial_codes']):
-			percent_correct[tcode] = np.random.normal(0.79,0.025,1)#np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode])
+			percent_correct[tcode] = np.mean(trial_parameters['correct_answer'][trial_parameters['trial_codes']==tcode]) #np.random.normal(0.79,0.025,1)#
 
 		return percent_correct
 
