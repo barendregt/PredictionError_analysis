@@ -114,7 +114,7 @@ class Plotter(object):
 							for t in range(ste_signal.shape[1]):
 								condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.05)
 						else:
-							condition_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[1])#np.std(signal, axis=0)/np.sqrt(len(signal))	
+							condition_ste = 1.96*ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[0])#np.std(signal, axis=0)/np.sqrt(len(signal))	
 
 						if self.linestylemap is None:
 							plt.fill_between(list(range(len(msignal))), condition_ste[0], condition_ste[1], alpha=0.1)
@@ -156,7 +156,7 @@ class Plotter(object):
 							for t in range(ste_signal.shape[1]):
 								condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.5)
 						else:
-							condition_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[1])#np.std(signal, axis=0)/np.sqrt(len(signal))	
+							condition_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[0])#np.std(signal, axis=0)/np.sqrt(len(signal))	
 						if self.linestylemap is None:
 							plt.fill_between(list(range(len(msignal))), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
 						else:

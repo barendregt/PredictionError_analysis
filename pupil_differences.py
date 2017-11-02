@@ -6,10 +6,9 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import seaborn as sn
 
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
-from statsmodels.stats.anova import anova_lm
-
+# import statsmodels.api as sm
+# from statsmodels.formula.api import ols
+# from statsmodels.stats.anova import anova_lm
 from numpy import *
 import scipy as sp
 from pandas import *
@@ -132,21 +131,21 @@ pl.save_figure(filename = 'correct_pupil_average.pdf', sub_folder = 'over_subs/p
 # pl.subplot(3,2,2)
 pl.open_figure(force=1)
 
-pl.event_related_pupil_average(data=pupil_signals['incorrect'],x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.25,0.8],compute_mean=True, compute_sd = True, smooth_signal=True, smooth_factor=20, show_legend=True,title='Incorrect')
+pl.event_related_pupil_average(data=pupil_signals['incorrect'],x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.25,0.8],compute_mean=True, compute_sd = True,smooth_signal=True, smooth_factor=20, show_legend=True,title='Incorrect')
 
 pl.save_figure(filename = 'incorrect_pupil_average.pdf', sub_folder = 'over_subs/pupil')
 
 # pl.subplot(3,2,3)
 pl.open_figure(force=1)
 
-pl.event_related_pupil_average(data=error_minus_noerror_correct,signal_labels={'UP':'UP-PP','PU':'PU-PP','UU':'UU-PP'},x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.25],compute_mean=True, compute_sd = True, smooth_signal=True, smooth_factor=20, show_legend=True)
+pl.event_related_pupil_average(data=error_minus_noerror_correct,signal_labels={'UP':'UP-PP','PU':'PU-PP','UU':'UU-PP'},x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.25],compute_mean=True, compute_sd = True,smooth_signal=True, smooth_factor=20, show_legend=True)
 
 pl.save_figure(filename = 'correct_pupil_diff.pdf', sub_folder = 'over_subs/pupil')
 
 # pl.subplot(3,2,4)
 pl.open_figure(force=1)
 
-pl.event_related_pupil_average(data=error_minus_noerror_incorrect,signal_labels={'UP':'UP-PP','PU':'PU-PP','UU':'UU-PP'},x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.25],compute_mean=True, compute_sd = True, smooth_signal=True, smooth_factor=20, show_legend=True)
+pl.event_related_pupil_average(data=error_minus_noerror_incorrect,signal_labels={'UP':'UP-PP','PU':'PU-PP','UU':'UU-PP'},x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.25],compute_mean=True, compute_sd = True,smooth_signal=True, smooth_factor=20, show_legend=True)
 
 pl.save_figure(filename = 'incorrect_pupil_diff.pdf', sub_folder = 'over_subs/pupil')
 
