@@ -30,6 +30,7 @@ from IPython import embed
 
 # sys.path.append('tools/')
 from BehaviorAnalyzer import BehaviorAnalyzer
+from PupilAnalyzer import PupilAnalyzer
 from Plotter import Plotter
 
 
@@ -167,7 +168,7 @@ for subname in sublist:
 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+	pa = PupilAnalyzer(subname, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
 	# redo signal extraction
 	# pa.recombine_signal_blocks(force_rebuild = True)
@@ -175,8 +176,10 @@ for subname in sublist:
 	#sub_rts = pa.compute_reaction_times()
 
 	# # Get pupil data (ev)
-	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = True)
-
+	try:
+		pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = True, baseline_type = 'relative', baseline_period = [-0.5, 0.0], force_rebuild=False, down_sample = False)
+	except:
+		embed()
 	# pa.get_IRF()
 
 	# all_sub_IRF['button_press'].append(pa.sub_IRF['button_press'])
@@ -501,7 +504,8 @@ for subname in sublist:
 	csvfilename = glob.glob(rawfolder + '/*.csv')#[-1]
 	h5filename = os.path.join(sharedfolder,subname+'.h5')
 
-	pa = BehaviorAnalyzer(subname, csvfilename, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
+
+	pa = PupilAnalyzer(subname, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = response_deconvolution_interval, verbosity = 0)
 
 	# redo signal extraction
 	# pa.recombine_signal_blocks(force_rebuild = True)
@@ -752,7 +756,7 @@ for subname in sublist:
 
 # incorrect_response_pupil_signals = response_pupil_signals
 # incorrect_stimulus_pupil_signals = stimulus_pupil_signals
-
+embed()
 
 keys = ['PP','UP','PU','UU']
 
@@ -774,6 +778,21 @@ for i in range(len(keys)):
 pl.save_figure('correct-v-incorrect_per_PE.pdf', sub_folder = 'over_subs/pupil')
 
 # embed()
+
+keys = ['UP','PU','UU']
+
+pl.open_figure(force=1)
+
+for i in range(len(keys)):
+	pl.plot(x=np.arange(600),y = np.mean(incorrect_stimulus_diff_signals[keys[i]], axis=0) - np.mean(correct_stimulus_diff_signals[keys[i]], axis=0))
+	
+
+
+
+
+
+
+
 
 # f = plt.figure()
 

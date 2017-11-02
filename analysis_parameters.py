@@ -15,17 +15,17 @@ figfolder = '/home/barendregt/Analysis/PredictionError/New_Figures'
 low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.05
 
 signal_sample_frequency = 1000
-deconv_sample_frequency = 10
+deconv_sample_frequency = 50
 response_deconvolution_interval = np.array([-1.5, 4.5])
 stimulus_deconvolution_interval = np.array([-1, 4.5])
 trial_deconvolution_interval = np.array([-0.5, 5.0])
 
 down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 
-linestylemap = {'PP': [[.5,.5,.5],'-',None,None,None],
-				'UP': ['m','-','o','m','w'],
-				'PU': ['y','-','o','y','w'],
-				'UU': ['c','--','o','c','c'],
+linestylemap = {'PP': [[0,0,0],'-',None,None,None],
+				'UP': [[.9,.1,.1],'-',None,None,None],
+				'PU': [[.1,.9,.1],'--',None,None,None],
+				'UU': ['r','--',None,None,None],
 				'col_PP': [[.5,.5,.5],'-',None,None,None],
 				'col_UP': ['m','-','o','m','w'],
 				'col_PU': ['y','-','o','y','w'],

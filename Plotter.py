@@ -86,7 +86,7 @@ class Plotter(object):
 		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
 		sn.despine(offset=5)
 
-	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, with_stats = False, stats_type = 'ttest'):
+	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, stats_type = 'ttest', smooth_signal = False, smooth_factor = 10):
 			
 
 		if onset_marker != []:
@@ -94,18 +94,27 @@ class Plotter(object):
 
 		if isinstance(data, dict):
 			for (label, signal) in list(data.items()):
-				if label in conditions:
+				if (len(conditions)==0) | (label in conditions):
 					if compute_mean:
 						msignal = np.nanmean(signal, axis=0)
 					else:
 						msignal = signal
 
+					if smooth_signal:
+						msignal = sp.signal.decimate(msignal, smooth_factor)
+
 					if compute_sd:
-						ste_signal = np.array(signal)
-						#condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))			
-						condition_ste = np.zeros((2,ste_signal.shape[1]))			
-						for t in range(ste_signal.shape[1]):
-							condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.5)
+						if smooth_signal:
+							ste_signal = sp.signal.decimate(np.array(signal),smooth_factor,axis=1)
+						else:
+							ste_signal = np.array(signal)
+						if bootstrap_sd:
+									
+							condition_ste = np.zeros((2,ste_signal.shape[1]))			
+							for t in range(ste_signal.shape[1]):
+								condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.05)
+						else:
+							condition_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[1])#np.std(signal, axis=0)/np.sqrt(len(signal))	
 
 						if self.linestylemap is None:
 							plt.fill_between(list(range(len(msignal))), condition_ste[0], condition_ste[1], alpha=0.1)
@@ -127,14 +136,27 @@ class Plotter(object):
 
 		else:
 			for (key,signal) in enumerate(data):
-				if key in conditions:
+				if (len(conditions)==0) | (key in conditions):
 					if compute_mean:
 						msignal = np.nanmean(signal, axis=0)
 					else:
 						msignal = signal
 
+					if smooth_signal:
+						msignal = sp.signal.decimate(msignal, smooth_factor)
+
 					if compute_sd:	
-						condition_ste = np.std(signal, axis=0)/np.sqrt(len(signal))
+						if smooth_signal:
+							ste_signal = np.array(sp.signal.decimate(signal,smooth_factor,axis=1))
+						else:
+							ste_signal = np.array(signal)
+						if bootstrap_sd:
+									
+							condition_ste = np.zeros((2,ste_signal.shape[1]))			
+							for t in range(ste_signal.shape[1]):
+								condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.5)
+						else:
+							condition_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[1])#np.std(signal, axis=0)/np.sqrt(len(signal))	
 						if self.linestylemap is None:
 							plt.fill_between(list(range(len(msignal))), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
 						else:

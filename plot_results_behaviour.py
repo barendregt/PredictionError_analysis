@@ -68,8 +68,7 @@ for subname in sublist:
 
 all_rts = pd.concat(all_rts, keys = sublist, names = ['subject','trial'])
 
-for s in sublist:
-	all_rts['reaction_time'][s] = all_rts['reaction_time'][s].values / np.mean(all_rts['reaction_time'][s].values)
+
 
 all_rts['condition'] = 'Predicted'
 
@@ -80,7 +79,10 @@ all_rts.loc[(all_rts['trial_code'] >= 50.0) & (all_rts['trial_code'] <= 60.0),'c
 all_rts['task'] = 'Color'
 all_rts.loc[(all_rts['trial_code'] == 1) | ((all_rts['trial_code'] == 20) | ((all_rts['trial_code'] == 40) | (all_rts['trial_code'] == 60))),'task'] = 'Orientation'
 
+for s in sublist:
+	all_rts['reaction_time'][s] = all_rts['reaction_time'][s].values / np.median(all_rts['reaction_time'][s].values[all_rts['condition'][s]=='Predicted'])
 
+embed()	
 # Make some plots to visualize data
 sns.set(style="white", context="talk")
 
@@ -96,7 +98,7 @@ ax1.set(ylim=[.5, 1])
 ax1.legend(loc='top right', shadow=True, fontsize='small')
 ax1.set_title('Task performance')
 
-g = sns.factorplot(ax=ax2,x="task", y="reaction_time", hue="condition", data=all_rts,
+g = sns.factorplot(ax=ax2,x="condition",y="reaction_time", data=all_rts,
                    size=6, kind="bar", palette="muted",legend=False)
 #g.despine(ax=ax2,left=True)
 ax2.set_ylabel("reaction_time (sec)")
@@ -112,4 +114,3 @@ mp.tight_layout()
 mp.show()
 
 
-embed()	

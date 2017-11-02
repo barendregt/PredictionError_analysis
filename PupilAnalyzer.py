@@ -42,7 +42,7 @@ class PupilAnalyzer(Analyzer):
 		self.pupil_data     = None
 
 
-	def signal_per_trial(self, reference_phase = 1, only_correct = True, only_incorrect = False, return_rt = False, return_blinks = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+	def signal_per_trial(self, reference_phase = 1, only_correct = False, only_incorrect = False, return_rt = False, return_blinks = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
 		if only_correct==True and only_incorrect==True:
 			display('Error: incompatible trial selection!!')
@@ -50,8 +50,8 @@ class PupilAnalyzer(Analyzer):
 
 		self.PR.load_combined_data(force_rebuild=force_rebuild)
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = signal_type)
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		recorded_pupil_signal = self.PR.read_pupil_data(self.PR.combined_h5_filename, signal_type = signal_type)
+		trial_parameters = self.PR.read_trial_data(self.PR.combined_h5_filename)
 
 		self.trial_signals = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
@@ -59,7 +59,7 @@ class PupilAnalyzer(Analyzer):
 			self.trial_rts = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
 		# if return_blinks:
-		# 	blinks = self.read_blink_data(self.combined_h5_filename)
+		# 	blinks = self.read_blink_data(self.PR.combined_h5_filename)
 		# 	self.trial_blinks = {key:[] for key in np.unique(trial_parameters['trial_codes'])}
 
 
@@ -75,18 +75,18 @@ class PupilAnalyzer(Analyzer):
 
 
 			if with_rt:
-				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1]))
+				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.PR.deconvolution_interval)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.PR.deconvolution_interval)*self.PR.signal_sample_frequency)[1]))
 			else:
-				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.deconvolution_interval-trial_start_offset)*self.signal_sample_frequency)[1]))
+				trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.PR.deconvolution_interval)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((self.PR.deconvolution_interval)*self.PR.signal_sample_frequency)[1]))
 
 			if return_rt:
 				these_rts = trial_parameters['reaction_time'][selected_trials].values
 
 			if baseline_correction:
 				if baseline_type == 'relative':
-					baseline_times =  np.vstack([trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
+					baseline_times =  np.vstack([trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[0]*self.PR.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (baseline_period[1]*self.PR.signal_sample_frequency)])
 				else:
-					baseline_times =  np.vstack([trial_parameters['trial_phase_%i_full_signal'%baseline_phase][selected_trials].values + (baseline_period[0]*self.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%baseline_phase][selected_trials].values + (baseline_period[1]*self.signal_sample_frequency)])
+					baseline_times =  np.vstack([trial_parameters['trial_phase_%i_full_signal'%baseline_phase][selected_trials].values + (baseline_period[0]*self.PR.signal_sample_frequency), trial_parameters['trial_phase_%i_full_signal'%baseline_phase][selected_trials].values + (baseline_period[1]*self.PR.signal_sample_frequency)])
 
 			for tii,(ts,te) in enumerate(trial_times):
 				if (ts > 0) & (te < recorded_pupil_signal.size):
@@ -105,7 +105,7 @@ class PupilAnalyzer(Analyzer):
 
 					# self.trial_signals[tcode].append(resample(trial_pupil_signal, round(len(trial_pupil_signal)/self.signal_downsample_factor)))
 					if down_sample:
-						trial_pupil_signal = sp.signal.decimate(trial_pupil_signal, self.signal_downsample_factor, 1)
+						trial_pupil_signal = sp.signal.decimate(trial_pupil_signal, self.PR.signal_downsample_factor, 1)
 
 					self.trial_signals[tcode].append(trial_pupil_signal)
 
@@ -113,7 +113,7 @@ class PupilAnalyzer(Analyzer):
 						self.trial_rts[tcode].append(these_rts[tii])
 
 					# if return_blinks:
-					# 	self.trial_blinks[tcode].append(blinks[(blinks['start_timestamp']/self.signal_sample_frequency >= ts) * (blinks['end_timestamp']/self.signal_sample_frequency < te)])
+					# 	self.trial_blinks[tcode].append(blinks[(blinks['start_timestamp']/self.PR.signal_sample_frequency >= ts) * (blinks['end_timestamp']/self.PR.signal_sample_frequency < te)])
 
 					
 			self.trial_signals[tcode] = np.array(self.trial_signals[tcode])
@@ -134,7 +134,7 @@ class PupilAnalyzer(Analyzer):
 		trial_start_offset = 0
 
 		if time_window is None:
-			time_window = self.deconvolution_interval
+			time_window = self.PR.deconvolution_interval
 
 		self.PR.load_combined_data(force_rebuild=force_rebuild)
 
@@ -159,9 +159,9 @@ class PupilAnalyzer(Analyzer):
 
 
 		if with_rt:
-			trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.deconvolution_interval-trial_start_offset)*self.PR.signal_sample_frequency)[1]))
+			trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.PR.deconvolution_interval)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + (trial_parameters['reaction_time'][selected_trials].values*self.PR.signal_sample_frequency) + ((self.PR.deconvolution_interval)*self.PR.signal_sample_frequency)[1]))
 		else:
-			trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window-trial_start_offset)*self.PR.signal_sample_frequency)[1]))
+			trial_times = list(zip(trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window)*self.PR.signal_sample_frequency)[0], trial_parameters['trial_phase_%i_full_signal'%reference_phase][selected_trials].values + ((time_window)*self.PR.signal_sample_frequency)[1]))
 
 
 		baseline_times =  np.vstack([trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[0]*self.PR.signal_sample_frequency), trial_parameters['trial_phase_1_full_signal'][selected_trials].values + (baseline_period[1]*self.PR.signal_sample_frequency)])
@@ -191,20 +191,20 @@ class PupilAnalyzer(Analyzer):
 		self.PR.load_combined_data()
 		# embed()
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
+		recorded_pupil_signal = self.read_pupil_data(self.PR.combined_h5_filename, signal_type = 'long_signal')
 
 		self.FIR_resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / self.PR.signal_sample_frequency)*self.deconv_sample_frequency), axis = -1)
 
 
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
-		blinks = self.read_blink_data(self.combined_h5_filename)
-		saccades = self.read_saccade_data(self.combined_h5_filename)
+		trial_parameters = self.read_trial_data(self.PR.combined_h5_filename)
+		blinks = self.read_blink_data(self.PR.combined_h5_filename)
+		saccades = self.read_saccade_data(self.PR.combined_h5_filename)
 
 		nuiss_events = np.array([blinks['end_block_timestamp'],
 							   saccades['end_block_timestamp']])#,
 							   #trial_parameters['trial_phase_2_full_signal']])#,   # task cue
-							   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_stimulus']<2],   # red stimulus
-					  		   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+							   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.PR.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_stimulus']<2],   # red stimulus
+					  		   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.PR.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
 		nuiss_deconv_interval = [-2, 5]
@@ -214,10 +214,10 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR_nuiss = FIRDeconvolution(
 						signal = recorded_pupil_signal,
-						events = nuiss_events / self.signal_sample_frequency,
+						events = nuiss_events / self.PR.signal_sample_frequency,
 						event_names = ['blinks','saccades'],#,'task_cue'],#,'red_stim','green_stim'],
 						#durations = {'response': self.events['durations']['response']},
-						sample_frequency = self.signal_sample_frequency,
+						sample_frequency = self.PR.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
 			        	deconvolution_interval = nuiss_deconv_interval,
 			        	#covariates = self.events['covariates']
@@ -248,10 +248,10 @@ class PupilAnalyzer(Analyzer):
 
 			self.FIR_stim = FIRDeconvolution(
 							signal = recorded_pupil_signal,
-							events = stim_events / self.signal_sample_frequency,
+							events = stim_events / self.PR.signal_sample_frequency,
 							event_names = ['noPE','bothPE','PEtr','PEntr'],
 							#durations = {'response': self.events['durations']['response']},
-							sample_frequency = self.signal_sample_frequency,
+							sample_frequency = self.PR.signal_sample_frequency,
 				            deconvolution_frequency = self.deconv_sample_frequency,
 				        	deconvolution_interval = stim_deconv_interval,
 				        	#covariates = self.events['covariates']
@@ -267,25 +267,25 @@ class PupilAnalyzer(Analyzer):
 
 
 			if only_correct:
-				resp_events = np.array([(trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] < 10)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] < 10)], # no PE
-								   (trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 50)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
-								   (trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
-								   (trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
+				resp_events = np.array([(trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] < 10)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] < 10)], # no PE
+								   (trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 50)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
+								   (trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
+								   (trial_parameters['reaction_time'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(trial_parameters['correct_answer']==1) * (~np.isnan(trial_parameters['reaction_time'])) * (~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
 								  ])
 			else:
-				resp_events = np.array([(trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] < 10)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] < 10)], # no PE
-								  (trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 50)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
-								  (trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
-								  (trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)] * self.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
+				resp_events = np.array([(trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] < 10)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] < 10)], # no PE
+								  (trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 50)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 50)], # both PE
+								  (trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 10) * (trial_parameters['trial_codes'] < 30)], # PE TR
+								  (trial_parameters['reaction_time'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)] * self.PR.signal_sample_frequency) + trial_parameters['trial_phase_7_full_signal'][(~np.isnan(trial_parameters['trial_phase_7_full_signal'])) * (~np.isnan(trial_parameters['reaction_time'])) * (trial_parameters['trial_codes'] >= 30) * (trial_parameters['trial_codes'] < 50)]  # PE ~TR
 				 				  ])
 
 
 			self.FIR_resp = FIRDeconvolution(
 							signal = recorded_pupil_signal,
-							events = resp_events / self.signal_sample_frequency,
+							events = resp_events / self.PR.signal_sample_frequency,
 							event_names = ['noPE','bothPE','PEtr','PEntr'],
 							#durations = {'response': self.events['durations']['response']},
-							sample_frequency = self.signal_sample_frequency,
+							sample_frequency = self.PR.signal_sample_frequency,
 				            deconvolution_frequency = self.deconv_sample_frequency,
 				        	deconvolution_interval = resp_deconv_interval,
 				        	#covariates = self.events['covariates']
@@ -375,9 +375,9 @@ class PupilAnalyzer(Analyzer):
 		ms_per_run = []
 		signal_per_run = []
 		for run_ii in range(len(self.aliases)):
-			saccades = self.read_saccade_data(self.combined_h5_filename, run = 'r%i_saccades'%run_ii)
+			saccades = self.read_saccade_data(self.PR.combined_h5_filename, run = 'r%i_saccades'%run_ii)
 
-			signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'r%i_signal'%run_ii)
+			signal = self.read_pupil_data(self.PR.combined_h5_filename, signal_type = 'r%i_signal'%run_ii)
 
 			block_times = np.arange(0, signal.size, block_length_samples)
 
@@ -385,7 +385,7 @@ class PupilAnalyzer(Analyzer):
 			pupil_per_block = np.array([])
 
 			for t in range(1,len(block_times)):
-				ms_per_block = np.append(ms_per_block, np.sum(((saccades['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) >= block_times[t-1]) * ((saccades['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) < block_times[t]) * (saccades['length'] < 1.0)))
+				ms_per_block = np.append(ms_per_block, np.sum(((saccades['start_block_timestamp']/self.PR.signal_sample_frequency*self.signal_downsample_factor) >= block_times[t-1]) * ((saccades['start_block_timestamp']/self.PR.signal_sample_frequency*self.signal_downsample_factor) < block_times[t]) * (saccades['length'] < 1.0)))
 				pupil_per_block = np.append(pupil_per_block, np.mean(signal[block_times[t-1]:block_times[t]]))
 
 			ms_per_run.append(ms_per_block)
@@ -407,11 +407,11 @@ class PupilAnalyzer(Analyzer):
 		signal_per_run = []
 		for run_ii in range(len(self.aliases)):
 
-			trial_parameters = self.read_trial_data(self.combined_h5_filename, run = '')
+			trial_parameters = self.read_trial_data(self.PR.combined_h5_filename, run = '')
 
-			blinks = self.read_blink_data(self.combined_h5_filename, run = 'r%i_saccades'%run_ii)
+			blinks = self.read_blink_data(self.PR.combined_h5_filename, run = 'r%i_saccades'%run_ii)
 
-			signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'r%i_signal'%run_ii)
+			signal = self.read_pupil_data(self.PR.combined_h5_filename, signal_type = 'r%i_signal'%run_ii)
 
 			block_times = np.arange(0, signal.size, block_length_samples)
 
@@ -419,7 +419,7 @@ class PupilAnalyzer(Analyzer):
 			pupil_per_block = np.array([])
 
 			for t in range(1,len(block_times)):
-				blinks_per_block = np.append(blinks_per_block, np.sum(((blinks['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) >= block_times[t-1]) * ((blinks['start_block_timestamp']/self.signal_sample_frequency*self.signal_downsample_factor) < block_times[t]) * (blinks['duration'] < max_blink_duration)))
+				blinks_per_block = np.append(blinks_per_block, np.sum(((blinks['start_block_timestamp']/self.PR.signal_sample_frequency*self.signal_downsample_factor) >= block_times[t-1]) * ((blinks['start_block_timestamp']/self.PR.signal_sample_frequency*self.signal_downsample_factor) < block_times[t]) * (blinks['duration'] < max_blink_duration)))
 				pupil_per_block = np.append(pupil_per_block, np.mean(signal[block_times[t-1]:block_times[t]]))
 
 			blinks_per_run.append(blinks_per_block)
@@ -433,20 +433,20 @@ class PupilAnalyzer(Analyzer):
 		self.PR.load_combined_data()
 
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
+		recorded_pupil_signal = self.read_pupil_data(self.PR.combined_h5_filename, signal_type = 'long_signal')
 
-		self.FIR_resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / self.signal_sample_frequency)*self.deconv_sample_frequency), axis = -1)
+		self.FIR_resampled_pupil_signal = sp.signal.resample(recorded_pupil_signal, int((recorded_pupil_signal.shape[-1] / self.PR.signal_sample_frequency)*self.deconv_sample_frequency), axis = -1)
 
 
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
-		blinks = self.read_blink_data(self.combined_h5_filename)
-		saccades = self.read_saccade_data(self.combined_h5_filename)
+		trial_parameters = self.read_trial_data(self.PR.combined_h5_filename)
+		blinks = self.read_blink_data(self.PR.combined_h5_filename)
+		saccades = self.read_saccade_data(self.PR.combined_h5_filename)
 
 		nuiss_events = np.array([blinks['end_block_timestamp'],
 							   saccades['end_block_timestamp']])#,
 							   #trial_parameters['trial_phase_2_full_signal']])#,   # task cue
-							   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_stimulus']<2],   # red stimulus
-					  		   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
+							   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']<2]*self.PR.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][(~np.isnan(trial_parameters['trial_phase_4_full_signal'])) * (trial_parameters['trial_stimulus']<2],   # red stimulus
+					  		   #(trial_parameters['reaction_time'][trial_parameters['trial_stimulus']>=2]*self.PR.signal_sample_frequency)+trial_parameters['trial_phase_4_full_signal'][trial_parameters['trial_stimulus']>=2]]) # green stimulus
 
 		#if deconv_interval is None:
 		nuiss_deconv_interval = [-2, 5]
@@ -456,10 +456,10 @@ class PupilAnalyzer(Analyzer):
 
 		self.FIR_nuiss = FIRDeconvolution(
 						signal = recorded_pupil_signal,
-						events = nuiss_events / self.signal_sample_frequency,
+						events = nuiss_events / self.PR.signal_sample_frequency,
 						event_names = ['blinks','saccades'],#,'task_cue'],#,'red_stim','green_stim'],
 						#durations = {'response': self.events['durations']['response']},
-						sample_frequency = self.signal_sample_frequency,
+						sample_frequency = self.PR.signal_sample_frequency,
 			            deconvolution_frequency = self.deconv_sample_frequency,
 			        	deconvolution_interval = nuiss_deconv_interval,
 			        	#covariates = self.events['covariates']
@@ -502,7 +502,7 @@ class PupilAnalyzer(Analyzer):
 
 			self.FIR = FIRDeconvolution(
 							signal = recorded_pupil_signal,
-							events = np.hstack([stim_events_correct / self.signal_sample_frequency, stim_events_incorrect / self.signal_sample_frequency]),
+							events = np.hstack([stim_events_correct / self.PR.signal_sample_frequency, stim_events_incorrect / self.PR.signal_sample_frequency]),
 							event_names = ['noPEc','bothPEc','TIc','TRc','noPEic','bothPEic','TIic','TRic'],
 							durations = {'noPEc': stim_durs_correct[0],
 										 'bothPEc': stim_durs_correct[1],
@@ -512,7 +512,7 @@ class PupilAnalyzer(Analyzer):
 										 'bothPEic': stim_durs_incorrect[1],
 										 'TRic': stim_durs_incorrect[3],
 										 'TIic': stim_durs_incorrect[2]},
-							sample_frequency = self.signal_sample_frequency,
+							sample_frequency = self.PR.signal_sample_frequency,
 				            deconvolution_frequency = self.deconv_sample_frequency,
 				        	deconvolution_interval = stim_deconv_interval,
 				        	#covariates = self.events['covariates']
@@ -544,17 +544,17 @@ class PupilAnalyzer(Analyzer):
 		
 
 			for name,dec in zip(list(self.FIRo.covariates.keys()), self.FIRo.betas_per_event_type.squeeze()):
-				sub_IRF[name] = resample(dec,int(len(dec)*(self.signal_sample_frequency/self.deconv_sample_frequency)))[:,np.newaxis]
+				sub_IRF[name] = resample(dec,int(len(dec)*(self.PR.signal_sample_frequency/self.deconv_sample_frequency)))[:,np.newaxis]
 				sub_IRF[name] /= max(abs(sub_IRF[name]))
 
 
 		self.PR.load_combined_data()
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		recorded_pupil_signal = self.read_pupil_data(self.PR.combined_h5_filename, signal_type = 'long_signal')
+		trial_parameters = self.read_trial_data(self.PR.combined_h5_filename)
 
 		stim_times = trial_parameters['trial_response_phase_full_signal'] + (500+150+30+150)
-		resp_times = trial_parameters['trial_response_phase_full_signal'] + self.signal_sample_frequency*trial_parameters['reaction_time']
+		resp_times = trial_parameters['trial_response_phase_full_signal'] + self.PR.signal_sample_frequency*trial_parameters['reaction_time']
 
 		# embed()
 
@@ -578,7 +578,7 @@ class PupilAnalyzer(Analyzer):
 
 		self.PR.load_combined_data()
 
-		recorded_pupil_signal = self.read_pupil_data(self.combined_h5_filename, signal_type = 'long_signal')
-		trial_parameters = self.read_trial_data(self.combined_h5_filename)
+		recorded_pupil_signal = self.read_pupil_data(self.PR.combined_h5_filename, signal_type = 'long_signal')
+		trial_parameters = self.read_trial_data(self.PR.combined_h5_filename)
 
 		trial_betas = np.linalg.pinv(self.design_matrix).dot(recorded_pupil_signal)
