@@ -123,29 +123,41 @@ for con in ['PU','UP','UU']:
 
 pl.open_figure(force=1)
 
-pl.subplot(3,3,1)
+# pl.subplot(3,2,1)
 
 pl.event_related_pupil_average(data=pupil_signals['correct'],x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.25,0.8],compute_mean=True, compute_sd = True, smooth_signal=True, smooth_factor=20, show_legend=True,title='Correct')
 
-pl.subplot(3,3,3)
+pl.save_figure(filename = 'correct_pupil_average.pdf', sub_folder = 'over_subs/pupil')
+
+# pl.subplot(3,2,2)
+pl.open_figure(force=1)
 
 pl.event_related_pupil_average(data=pupil_signals['incorrect'],x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.25,0.8],compute_mean=True, compute_sd = True, smooth_signal=True, smooth_factor=20, show_legend=True,title='Incorrect')
 
-pl.subplot(3,3,4)
+pl.save_figure(filename = 'incorrect_pupil_average.pdf', sub_folder = 'over_subs/pupil')
+
+# pl.subplot(3,2,3)
+pl.open_figure(force=1)
 
 pl.event_related_pupil_average(data=error_minus_noerror_correct,signal_labels={'UP':'UP-PP','PU':'PU-PP','UU':'UU-PP'},x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.25],compute_mean=True, compute_sd = True, smooth_signal=True, smooth_factor=20, show_legend=True)
 
-pl.subplot(3,3,6)
+pl.save_figure(filename = 'correct_pupil_diff.pdf', sub_folder = 'over_subs/pupil')
+
+# pl.subplot(3,2,4)
+pl.open_figure(force=1)
 
 pl.event_related_pupil_average(data=error_minus_noerror_incorrect,signal_labels={'UP':'UP-PP','PU':'PU-PP','UU':'UU-PP'},x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.25],compute_mean=True, compute_sd = True, smooth_signal=True, smooth_factor=20, show_legend=True)
 
-pl.subplot(3,3,8)
+pl.save_figure(filename = 'incorrect_pupil_diff.pdf', sub_folder = 'over_subs/pupil')
+
+# pl.subplot(3,1,3)
+pl.open_figure(force=1)
 
 pl.event_related_pupil_average(data=incorrect_minus_correct,x_lim=[25,250],xticks=np.arange(25,300,25),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.25],compute_mean=False, compute_sd = False, smooth_signal=True, smooth_factor=20, show_legend=True,title='Difference')
 
-pl.save_figure(filename = 'pupil_differences.pdf', sub_folder = 'over_subs/pupil')
+pl.save_figure(filename = 'incorrect_minus_correct.pdf', sub_folder = 'over_subs/pupil')
 
-pl.close()
+
 
 # plt.show()
 

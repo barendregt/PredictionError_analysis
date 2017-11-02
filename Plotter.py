@@ -400,7 +400,10 @@ class Plotter(object):
 
 	def save_figure(self, filename = '', sub_folder = ''):
 
-		self.figure.tight_layout()
+		try:
+			self.figure.tight_layout()
+		except:
+			pass
 
 		# Create a random PDF filename if none is provided
 		if len(filename)==0: 
