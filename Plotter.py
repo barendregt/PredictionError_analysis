@@ -104,17 +104,21 @@ class Plotter(object):
 						msignal = sp.signal.decimate(msignal, smooth_factor)
 
 					if compute_sd:
-						if smooth_signal:
-							ste_signal = sp.signal.decimate(np.array(signal),smooth_factor,axis=1)
-						else:
-							ste_signal = np.array(signal)
+						# if smooth_signal:
+						# 	ste_signal = sp.signal.decimate(np.array(signal),smooth_factor,axis=1)
+						# else:
+						ste_signal = np.array(signal)
 						if bootstrap_sd:
 									
 							condition_ste = np.zeros((2,ste_signal.shape[1]))			
 							for t in range(ste_signal.shape[1]):
 								condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.05)
 						else:
-							condition_ste = 1.96*ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[0])#np.std(signal, axis=0)/np.sqrt(len(signal))	
+							tmp_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[0])#np.std(signal, axis=0)/np.sqrt(len(signal))
+							condition_ste = np.array([np.nanmean(signal, axis=0) - tmp_ste/2, np.nanmean(signal, axis=0) + tmp_ste/2])
+
+						if smooth_signal:
+							condition_ste = sp.signal.decimate(condition_ste, smooth_factor, axis=-1)
 
 						if self.linestylemap is None:
 							plt.fill_between(list(range(len(msignal))), condition_ste[0], condition_ste[1], alpha=0.1)
