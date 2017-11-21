@@ -86,7 +86,7 @@ class Plotter(object):
 		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
 		sn.despine(offset=5)
 
-	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, stats_type = 'ttest', smooth_signal = False, smooth_factor = 10):
+	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, sig_marker_ypos = 0.0, smooth_signal = False, smooth_factor = 10):
 			
 
 		if onset_marker != []:
@@ -95,19 +95,15 @@ class Plotter(object):
 		if isinstance(data, dict):
 			for (label, signal) in list(data.items()):
 				if (len(conditions)==0) | (label in conditions):
-					if compute_mean:
-						msignal = np.nanmean(signal, axis=0)
-					else:
-						msignal = signal
 
 					if smooth_signal:
-						msignal = sp.signal.decimate(msignal, smooth_factor)
+						signal = sp.signal.decimate(signal, smooth_factor)
 
 					if compute_sd:
 						# if smooth_signal:
 						# 	ste_signal = sp.signal.decimate(np.array(signal),smooth_factor,axis=1)
 						# else:
-						ste_signal = np.array(signal)
+						ste_signal = signal#np.array(signal)
 						if bootstrap_sd:
 									
 							condition_ste = np.zeros((2,ste_signal.shape[1]))			
@@ -117,13 +113,39 @@ class Plotter(object):
 							tmp_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[0])#np.std(signal, axis=0)/np.sqrt(len(signal))
 							condition_ste = np.array([np.nanmean(signal, axis=0) - tmp_ste/2, np.nanmean(signal, axis=0) + tmp_ste/2])
 
-						if smooth_signal:
-							condition_ste = sp.signal.decimate(condition_ste, smooth_factor, axis=-1)
+						# if smooth_signal:
+						# 	condition_ste = sp.signal.decimate(condition_ste, smooth_factor, axis=-1)
 
 						if self.linestylemap is None:
-							plt.fill_between(list(range(len(msignal))), condition_ste[0], condition_ste[1], alpha=0.1)
+							plt.fill_between(list(range(signal.shape[-1])), condition_ste[0], condition_ste[1], alpha=0.1)
 						else:
-							plt.fill_between(list(range(len(msignal))), condition_ste[0], condition_ste[1], alpha=0.1, color=self.linestylemap[label][0])		
+							plt.fill_between(list(range(signal.shape[-1])), condition_ste[0], condition_ste[1], alpha=0.1, color=self.linestylemap[label][0])		
+
+					if with_stats:
+						# extract_data = np.array([np.array(data[key]) for key in conditions])
+						# embed()
+
+						if isinstance(sig_marker_ypos, dict):
+							ypos = sig_marker_ypos[label]
+						elif isinstance(sig_marker_ypos, list):
+							ypos = sig_marker_ypos[conditions.index(label)]
+						else:
+							ypos = sig_marker_ypos
+										
+						t,p = sp.stats.ttest_1samp(signal, 0.0)
+
+						for time_point,pval in enumerate(p):
+
+							if pval < 0.05:
+								print('found sig. pval (%f) at %i'%(pval,time_point))
+								if self.linestylemap is None:
+									plt.text(time_point, ypos,'*', {'color':'k', 'fontsize':16})					
+								else:
+									plt.text(time_point, ypos,'*', {'color':self.linestylemap[label][0],'fontsize':16})
+
+
+					if compute_mean:
+						msignal = np.nanmean(signal, axis=0)
 
 					if not signal_labels:
 						if self.linestylemap is None:
@@ -178,53 +200,7 @@ class Plotter(object):
 							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markerfacecolor=self.linestylemap[key][4], markeredgecolor=self.linestylemap[key][3])
 
 	
-		if with_stats:
-			extract_data = np.array([np.array(data[key]) for key in conditions])
-
-			
-			p = np.zeros((np.array(extract_data[0]).size,1))
-
-			y_pos = plt.axis()[2]
-
-			if stats_type == 'anova':
-
-				f = np.zeros((np.array(extract_data[0]).size,1))
-
-				for time_point in range(np.array(extract_data[0]).size):
-					y_pos = 0
-					# All conditions one-way
-					f[time_point],p[time_point] = sp.stats.f_oneway(np.array(extract_data[0])[:,time_point],
-																	  np.array(extract_data[1])[:,time_point],
-																	  np.array(extract_data[2])[:,time_point],
-																	  np.array(extract_data[3])[:,time_point])
-
-					if p[time_point] < 0.05:#(0.05/np.array(extract_data[0]).shape[-1]):
-						plt.text(time_point, y_pos,'*')	
-			else:
-				# embed()
-				t = np.zeros((np.array(extract_data[0]).size,1))
-
-				rStart = 0
-				rEnd = np.array(extract_data[0]).shape[-1]
-
-				if x_lim[0] is not None:
-					rStart = x_lim[0]
-				if x_lim[1] is not None:
-					rEnd = x_lim[1]
-
-				num_data_points = min([extract_data[0].shape[0], extract_data[1].shape[0]])
-
-				for time_point in range(rStart, rEnd):
-					y_pos = 0
-					# All conditions ttest
-					try:
-						t[time_point],p[time_point] = sp.stats.ttest_rel(extract_data[0][:num_data_points,time_point],
-																		  extract_data[1][:num_data_points,time_point])
-					except:
-						embed()
-
-					if p[time_point] < 0.05:# (0.05/np.array(extract_data[0]).shape[-1]):
-						plt.text(time_point, y_pos,'*')					
+					
 
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)

@@ -25,7 +25,7 @@ down_fs = int(signal_sample_frequency / deconv_sample_frequency)
 linestylemap = {'PP': [[0,0,0],'-',None,None,None],
 				'UP': [[.9,.1,.1],'-',None,None,None],
 				'PU': [[.1,.9,.1],'--',None,None,None],
-				'UU': ['r','--',None,None,None],
+				'UU': ['b','--',None,None,None],
 				'col_PP': [[.5,.5,.5],'-',None,None,None],
 				'col_UP': ['m','-','o','m','w'],
 				'col_PU': ['y','-','o','y','w'],
