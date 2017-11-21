@@ -137,7 +137,7 @@ class Plotter(object):
 						for time_point,pval in enumerate(p):
 
 							if pval < 0.05:
-								print('found sig. pval (%f) at %i'%(pval,time_point))
+								# print('found sig. pval (%f) at %i'%(pval,time_point))
 								if self.linestylemap is None:
 									plt.text(time_point, ypos,'*', {'color':'k', 'fontsize':16})					
 								else:
@@ -372,8 +372,8 @@ class Plotter(object):
 
 		plt.axhline(y = y, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)	
 
-	def vline(self, x = 0, label = None):
-		plt.axvline(x = x, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)
+	def vline(self, x = 0, label = None, color='k', linewidth = 0.75, linestyle='dashed', alpha=0.5):
+		plt.axvline(x = x, color=color, linewidth = linewidth, figure=self.figure, linestyle=linestyle, alpha=alpha)
 
 		if label is not None:
 			plt.text(x, -0.1, label)

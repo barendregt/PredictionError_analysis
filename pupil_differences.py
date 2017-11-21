@@ -54,6 +54,18 @@ pupil_signals_pile = {'correct': {'PP': np.empty((0,int((stimulus_deconvolution_
 				 'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float),
 				 'UU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float)}}		 
 
+reaction_times = {'correct': {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []},
+				 'incorrect': {'PP': [],
+				 'UP': [],
+				 'PU': [],
+				 'UU': []}}		 
+
+
+
+
 sublist_pile = {'correct': {'PP': [],
 							 'UP': [],
 							 'PU': [],
@@ -88,9 +100,6 @@ for subname in sublist:
 	# Initialize PA object
 	pa = PupilAnalyzer(subname, h5filename, rawfolder, reference_phase = 7, signal_downsample_factor = down_fs, signal_sample_frequency = signal_sample_frequency, deconv_sample_frequency = deconv_sample_frequency, deconvolution_interval = stimulus_deconvolution_interval, verbosity = 0)
 
-	# Get trial-based, event-related, baseline-corrected signals centered on stimulus onset
-	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False)
-
 
 	# Combine signals based on condition	
 
@@ -103,17 +112,31 @@ for subname in sublist:
 								 'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float),
 								 'UU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float)}}		 
 
+	sub_rts = {'correct': {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []},
+					 'incorrect': {'PP': [],
+					 'UP': [],
+					 'PU': [],
+					 'UU': []}}	
+
+
+	# Get trial-based, event-related, baseline-corrected signals centered on stimulus onset
+	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
 
 	for (key,signals) in pa.trial_signals.items():
 		if len(signals)>0:
 			sub_signals['correct'][condition_keymap[key]] = np.append(sub_signals['correct'][condition_keymap[key]], signals, axis=0)
+			sub_rts['correct'][condition_keymap[key]].extend(pa.trial_rts[key])
 
 	# Get trial-based, event-related, baseline-corrected signals centered on stimulus onset
-	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 4, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False)
+	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
 
 	for (key,signals) in pa.trial_signals.items():
 		if len(signals)>0:
 			sub_signals['incorrect'][condition_keymap[key]] = np.append(sub_signals['incorrect'][condition_keymap[key]], signals, axis=0)
+			sub_rts['incorrect'][condition_keymap[key]].extend(pa.trial_rts[key])
 
 
 	# for con in inverse_keymap.keys():
@@ -123,11 +146,15 @@ for subname in sublist:
 	for con in inverse_keymap.keys():
 		pupil_signals['correct'][con] = np.append(pupil_signals['correct'][con], sub_signals['correct'][con].mean(axis=0)[np.newaxis,:], axis=0)
 		pupil_signals['incorrect'][con] = np.append(pupil_signals['incorrect'][con], sub_signals['incorrect'][con].mean(axis=0)[np.newaxis,:], axis=0)	
-		pupil_signals_pile['correct'][con] = np.append(pupil_signals_pile['correct'][con], sub_signals['correct'][con], axis=0)
-		pupil_signals_pile['incorrect'][con] = np.append(pupil_signals_pile['incorrect'][con], sub_signals['incorrect'][con], axis=0)
 
-		sublist_pile['correct'][con].append([subname]*sub_signals['correct'][con].shape[0])
-		sublist_pile['incorrect'][con].append([subname]*sub_signals['incorrect'][con].shape[0])
+		reaction_times['correct'][con].append(np.mean(sub_rts['correct'][con]))
+		reaction_times['incorrect'][con].append(np.mean(sub_rts['incorrect'][con]))
+
+		# pupil_signals_pile['correct'][con] = np.append(pupil_signals_pile['correct'][con], sub_signals['correct'][con], axis=0)
+		# pupil_signals_pile['incorrect'][con] = np.append(pupil_signals_pile['incorrect'][con], sub_signals['incorrect'][con], axis=0)
+
+		# sublist_pile['correct'][con].append([subname]*sub_signals['correct'][con].shape[0])
+		# sublist_pile['incorrect'][con].append([subname]*sub_signals['incorrect'][con].shape[0])
 
 
 error_minus_noerror_correct = {'UP':[],
@@ -146,11 +173,17 @@ for con in ['PU','UP','UU']:
 for con in ['PU','UP','UU']:
 	error_minus_noerror_incorrect[con] = pupil_signals['incorrect'][con]-pupil_signals['incorrect']['PP']#.mean(axis=0)
 
-for con in ['PU','UP','UU']:
+
+error_minus_noerror_correct['UP'] = np.vstack([error_minus_noerror_correct['UP'],error_minus_noerror_correct['UU']])
+error_minus_noerror_incorrect['UP'] = np.vstack([error_minus_noerror_incorrect['UP'],error_minus_noerror_incorrect['UU']])
+
+# incorrect_minus_correct['UP'] = combined_incorrect-combined_correct
+
+for con in ['PU','UP']:
 	incorrect_minus_correct[con] = error_minus_noerror_incorrect[con] - error_minus_noerror_correct[con]
 
 
-embed()
+# embed()
 
 smooth_signal = True
 smooth_factor = 50
@@ -194,14 +227,19 @@ smooth_factor = 50
 #t = np.zeros((5500,1))
 #p = np.zeros((5500,1))
 
+# embed()
 
-combined_correct = np.vstack([error_minus_noerror_correct['UP'],error_minus_noerror_correct['UU']])
-combined_incorrect = np.vstack([error_minus_noerror_incorrect['UP'],error_minus_noerror_incorrect['UU']])
+rt_mean = np.mean(np.hstack([reaction_times['correct']['UP'],reaction_times['correct']['UU']]))
+rt_std = np.std(np.hstack([reaction_times['correct']['UP'],reaction_times['correct']['UU']]))/np.sqrt(66)
 
-incorrect_minus_correct['UP'] = combined_incorrect-combined_correct
+rt_low = rt_mean - rt_std
+rt_up  = rt_mean + rt_std
 
 pl.open_figure(force=1)
 pl.event_related_pupil_average(data=incorrect_minus_correct, conditions=['UP'], signal_labels={'UP':'TaskRel','PU':'TaskIrrel','UU':'both'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, with_stats=True, sig_marker_ypos = -0.05, smooth_factor=smooth_factor, show_legend=True,title='Difference')
+pl.vline(x=rt_mean,linewidth=1,color='k',alpha=0.75)
+pl.vline(x=rt_low,linewidth=1,color='k')
+pl.vline(x=rt_up,linewidth=1,color='k')
 pl.save_figure(filename = 'UP_diff_stats.pdf', sub_folder = 'over_subs/pupil')
 
 # plt.show()
