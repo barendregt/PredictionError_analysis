@@ -1,6 +1,7 @@
 # Project-specific
 Figures/
 Archive/
+data_output/
 
 # Python
 *.py[cod]
