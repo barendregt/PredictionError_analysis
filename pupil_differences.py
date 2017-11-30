@@ -85,7 +85,7 @@ condition_keymap = { 0: 'PP',  1: 'PP',
 					50: 'UU', 60: 'UU'}
 
 inverse_keymap = {'PP': [0,1],
-				  'UP': [30,40,50,60],
+				  'UP': [30,40],
 				  'PU': [10,20],
 				  'UU': [50,60]}
 
@@ -147,8 +147,8 @@ for subname in sublist:
 		pupil_signals['correct'][con] = np.append(pupil_signals['correct'][con], sub_signals['correct'][con].mean(axis=0)[np.newaxis,:], axis=0)
 		pupil_signals['incorrect'][con] = np.append(pupil_signals['incorrect'][con], sub_signals['incorrect'][con].mean(axis=0)[np.newaxis,:], axis=0)	
 
-		reaction_times['correct'][con].append(np.mean(sub_rts['correct'][con]))
-		reaction_times['incorrect'][con].append(np.mean(sub_rts['incorrect'][con]))
+		reaction_times['correct'][con].append(np.median(sub_rts['correct'][con]))
+		reaction_times['incorrect'][con].append(np.median(sub_rts['incorrect'][con]))
 
 		# pupil_signals_pile['correct'][con] = np.append(pupil_signals_pile['correct'][con], sub_signals['correct'][con], axis=0)
 		# pupil_signals_pile['incorrect'][con] = np.append(pupil_signals_pile['incorrect'][con], sub_signals['incorrect'][con], axis=0)
@@ -227,20 +227,47 @@ smooth_factor = 50
 #t = np.zeros((5500,1))
 #p = np.zeros((5500,1))
 
-# embed()
+embed()
 
-rt_mean = np.mean(np.hstack([reaction_times['correct']['UP'],reaction_times['correct']['UU']]))
-rt_std = np.std(np.hstack([reaction_times['correct']['UP'],reaction_times['correct']['UU']]))/np.sqrt(66)
+test_condition = 'UP'
+
+
+combined_rts = np.hstack([reaction_times['correct']['UP'],reaction_times['correct']['UU'],reaction_times['incorrect']['UP'],reaction_times['incorrect']['UU']])
+
+combined_rts_c = np.mean(combined_rts)*np.hstack([reaction_times['correct'][test_condition],reaction_times['correct']['UU']])/np.repeat(reaction_times['correct']['PP'],2)
+combined_rts_i = np.mean(combined_rts)*np.hstack([reaction_times['incorrect'][test_condition],reaction_times['incorrect']['UU']])/np.repeat(reaction_times['incorrect']['PP'],2)
+
+# combined_rts_c = np.mean(combined_rts)*np.array(reaction_times['correct'][test_condition])/np.array(reaction_times['correct']['PP'])
+# combined_rts_i = np.mean(combined_rts)*np.array(reaction_times['incorrect'][test_condition])/np.array(reaction_times['incorrect']['PP'])
+
+# [rt_low, rt_mean, rt_up] = (signal_sample_frequency/smooth_factor) * np.percentile(combined_rts,[2.5,50,97.5]) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+
+rt_mean = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+rt_std = (signal_sample_frequency/smooth_factor) * (1.96*np.std(combined_rts)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
 
 rt_low = rt_mean - rt_std
 rt_up  = rt_mean + rt_std
 
+rt_mean_c = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_c) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+rt_mean_i = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_i) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+
+rt_std_c = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_c)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+rt_std_i = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_i)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+
+
 pl.open_figure(force=1)
-pl.event_related_pupil_average(data=incorrect_minus_correct, conditions=['UP'], signal_labels={'UP':'TaskRel','PU':'TaskIrrel','UU':'both'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, with_stats=True, sig_marker_ypos = -0.05, smooth_factor=smooth_factor, show_legend=True,title='Difference')
-pl.vline(x=rt_mean,linewidth=1,color='k',alpha=0.75)
-pl.vline(x=rt_low,linewidth=1,color='k')
-pl.vline(x=rt_up,linewidth=1,color='k')
-pl.save_figure(filename = 'UP_diff_stats.pdf', sub_folder = 'over_subs/pupil')
+
+pl.linestylemap[test_condition] = ['k','-',None,None,None]
+
+pl.vline(x=rt_mean_c,linewidth=2,color='g',alpha=0.75,linestyle='solid')
+plt.legend(loc='best')
+plt.fill_betweenx(np.arange(-0.1,0.4,0.1),rt_mean_c-rt_std_c,rt_mean_c+rt_std_c,color='g',alpha=0.2)
+
+pl.vline(x=rt_mean_i,linewidth=2,color='r',alpha=0.75,linestyle='solid')
+plt.fill_betweenx(np.arange(-0.1,0.4,0.1),rt_mean_i-rt_std_i,rt_mean_i+rt_std_i,color='r',alpha=0.2)
+
+pl.event_related_pupil_average(data=incorrect_minus_correct, conditions=[test_condition], signal_labels={'UP':'TaskRel','PU':'TaskIrrel','UU':'both'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, with_stats=True, sig_marker_ypos = -0.05, smooth_factor=smooth_factor, show_legend=True,title='Difference incorrect vs correct')
+pl.save_figure(filename = '%s_diff_stats.pdf'%test_condition, sub_folder = 'over_subs/pupil')
 
 # plt.show()
 # embed()
