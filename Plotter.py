@@ -56,7 +56,7 @@ class Plotter(object):
 				return True
 		return False
 
-	def open_figure(self, force = 0):
+	def open_figure(self, force = 0, visible = False):
 
 		if self.figure is None:
 			self.figure = plt.figure()
@@ -67,6 +67,9 @@ class Plotter(object):
 				self.figure = plt.figure()
 			else:
 				print('Warning: figure is already open. Use force=1 to create new axes')
+
+		if visible:
+			plt.show(block=False)
 
 	def show_figure(self):
 		if self.figure is not None:
@@ -86,7 +89,7 @@ class Plotter(object):
 		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
 		sn.despine(offset=5)
 
-	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, sig_marker_ypos = 0.0, smooth_signal = False, smooth_factor = 10):
+	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', show_legend = False, title = '', compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, stats_ttest_ref = 0.0, sig_marker_ypos = 0.0, smooth_signal = False, smooth_factor = 10):
 			
 
 		if onset_marker != []:
@@ -129,10 +132,15 @@ class Plotter(object):
 							ypos = sig_marker_ypos[label]
 						elif isinstance(sig_marker_ypos, list):
 							ypos = sig_marker_ypos[conditions.index(label)]
-						else:
+						elif sig_marker_ypos is not None:
 							ypos = sig_marker_ypos
+						else:
+							if y_lim[0] is not None:
+								ypos = y_lim[0]
+							else:
+								ypos = 0.0
 										
-						t,p = sp.stats.ttest_1samp(signal, 0.0)
+						t,p = sp.stats.ttest_1samp(signal, stats_ttest_ref)
 
 						for time_point,pval in enumerate(p):
 
@@ -146,6 +154,8 @@ class Plotter(object):
 
 					if compute_mean:
 						msignal = np.nanmean(signal, axis=0)
+					else:
+						msignal = signal
 
 					if not signal_labels:
 						if self.linestylemap is None:
@@ -365,18 +375,21 @@ class Plotter(object):
 		g = sn.factorplot(data=data, *args, **kwargs)
 		g.despine(left=True)
 
-	def hline(self, y = 0, label = None):
+	def hline(self, y = 0, color='k', linewidth = 0.75, linestyle='dashed', alpha=0.5, label=None):
 		
 		if label is not None:
 			plt.text(0.55, y, label, alpha = 0.5, fontsize=8, horizontalalignment='left', verticalalignment='center', bbox=dict(facecolor='w',edgecolor='w'))
 
-		plt.axhline(y = y, color='k', linewidth = 0.75, figure=self.figure, linestyle='dashed', alpha=0.5)	
+		plt.axhline(y = y, color=color, linewidth = linewidth, figure=self.figure, linestyle=linestyle, alpha=alpha)	
 
 	def vline(self, x = 0, color='k', linewidth = 0.75, linestyle='dashed', alpha=0.5, label=None):
 		plt.axvline(x = x, color=color, linewidth = linewidth, figure=self.figure, linestyle=linestyle, alpha=alpha)
 
 		if label is not None:
 			plt.text(x, -0.1, label)
+
+	def show(self):
+		plt.show()
 
 	def save_figure(self, filename = '', sub_folder = ''):
 

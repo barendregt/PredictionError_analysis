@@ -39,3 +39,14 @@ linestylemap = {'PP': [[0,0,0],'-',None,None,None],
 
 
 sublist = ['AB','AC','AF','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AS','AT','AV','AX','AZ','BA','BB','BC','IAA','IAC','IAF','IAH','IAJ','IAK','IAL','IAM','IAN','IAO','IAP','IAQ']
+
+#		TASK:  		  COLOR	    ORI
+condition_keymap = { 0: 'PP',  1: 'PP',
+					10: 'PU', 20: 'PU',
+					30: 'UP', 40: 'UP',
+					50: 'UP', 60: 'UP'}
+
+inverse_keymap = {'PP': [0,1],
+				  'UP': [30,40,50,60],
+				  'PU': [10,20]}#,
+				  # 'UU': [30,40]}
