@@ -42,7 +42,7 @@ class PupilAnalyzer(Analyzer):
 		self.pupil_data     = None
 
 
-	def signal_per_trial(self, reference_phase = 1, only_correct = False, only_incorrect = False, return_rt = False, return_blinks = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+	def signal_per_trial(self, reference_phase = 1, only_correct = False, only_incorrect = False, return_dt = False, return_rt = False, return_blinks = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
 		if only_correct==True and only_incorrect==True:
 			display('Error: incompatible trial selection!!')
@@ -106,6 +106,9 @@ class PupilAnalyzer(Analyzer):
 					# self.trial_signals[tcode].append(resample(trial_pupil_signal, round(len(trial_pupil_signal)/self.signal_downsample_factor)))
 					if down_sample:
 						trial_pupil_signal = sp.signal.decimate(trial_pupil_signal, self.PR.signal_downsample_factor, 1)
+
+					if return_dt:
+						trial_pupil_signal = np.hstack([0, np.diff(trial_pupil_signal)])
 
 					self.trial_signals[tcode].append(trial_pupil_signal)
 

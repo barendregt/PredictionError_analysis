@@ -313,49 +313,72 @@ class Plotter(object):
 		sn.despine(offset=5)
 
 
-	def bar_plot(self, data, conditions, with_error = False, with_stats = False, with_data_points = False, ylabel = '', xlabel = '', yticks = [], xticks = [], yticklabels = [], xticklabels = [], x_lim = [None, None], y_lim = [None, None]):
+	def bar_plot(self, data, conditions, with_error = False, with_stats = False, with_data_points = False, ylabel = '', xlabel = '', yticks = [], xticks = [], yticklabels = [], xticklabels = [], x_lim = [None, None], y_lim = [None, None], output_latex = False, engine = 'seaborn'):
 		if self.incorrect_data_format(data, conditions):
 			return
+		
 
 		latex_code = '\\addplot plot coordinates {'
 
+		opacity = 1
+
 		if self.linestylemap is None:
-			bar_color = {key:'w' for key in conditions}
+			# bar_color = {key:'w' for key in conditions}
+			# edge_color = {key:'k' for key in conditions}			
+			palette = 'viridis'
+			saturation = 0.75
+			opacity = 1.0
 		else:
-			bar_color = {key: self.linestylemap[key][0] for key in conditions}
+			palette = {key: self.linestylemap[key][0] for key in conditions}
+			saturation = self.linestylemap['saturation']
+			opacity = self.linestylemap['opacity']
+			# edge_color = {key: [self.linestylemap[key][0][0], self.linestylemap[key][0][1], self.linestylemap[key][0][2], 1.0] for key in conditions}
+			# opacity = 0.7
+			#bar_opa = {key: self.linestylemap[key][0] for key in conditions}
 
 		bar_width = 0.75
 
-		for ii,key in enumerate(conditions):
+		if engine == 'seaborn':
+
+			if not isinstance(data,pd.DataFrame):
+				data = pd.DataFrame.from_dict(data)
 
 			if with_error:
-				plt.bar(ii+1, np.nanmean(data[key]), yerr = np.nanstd(data[key])/np.sqrt(len(data[key])), width = bar_width, label = key, color= bar_color[key],edgecolor='k')
+				sn.barplot(data=data[conditions], palette=palette, saturation=saturation, ci = 68, n_boot=500)
 			else:
-				plt.bar(ii+1, np.nanmean(data[key]), width = bar_width, label = key, color = bar_color[key], edgecolor='k')
-			
-			if with_data_points:
-				plt.plot(np.ones((len(data[key]),1))*ii+1, data[key], 'o')
+				sn.barplot(data=data[conditions], palette=palette, saturation=saturation)
 
-			latex_code += '(%i,%.2f) '%(ii, np.mean(data[key]))
+		else:
+			for ii,key in enumerate(conditions):
 
-		# plt.xticks(1+np.arange(len(conditions)), conditions)
+				if with_error:
+					plt.bar(ii+1, np.nanmean(data[key]), yerr = np.nanstd(data[key])/np.sqrt(len(data[key])), width = bar_width, linewidth = 2, label = key, color= bar_color[key],edgecolor=edge_color[key])
+				else:
+					plt.bar(ii+1, np.nanmean(data[key]), width = bar_width, linewidth = 2, label = key, color = bar_color[key], edgecolor=edge_color[key])
+				
+				if with_data_points:
+					plt.plot(np.ones((len(data[key]),1))*ii+1, data[key], 'o', color=edge_color[key], edge_color = bar_color[key])
+
+				latex_code += '(%i,%.2f) '%(ii, np.mean(data[key]))
+		
 		latex_code += '};'
 
-		print(latex_code)
+		if output_latex:
+			print(latex_code)
 
 		plt.ylabel(ylabel)
 		plt.xlabel(xlabel)
 
 		if len(xticks)>0:
 			if len(xticklabels)>0:
-				plt.xticks(xticks + (bar_width/2), xticklabels)
+				plt.xticks(xticks, xticklabels)
 			else:
-				plt.xticks(xticks + (bar_width/2))
+				plt.xticks(xticks)
 		else:
 			if len(xticklabels)>0:
-				plt.xticks(1+np.arange(len(conditions)) + (bar_width/2), xticklabels)
+				plt.xticks(1+np.arange(len(conditions)), xticklabels)
 			else:
-				plt.xticks(1+np.arange(len(conditions)) + (bar_width/2), conditions)
+				plt.xticks(1+np.arange(len(conditions)), conditions)
 
 		if len(yticks)>0:
 			if len(yticklabels)>0:
@@ -368,7 +391,28 @@ class Plotter(object):
 
 		# plt.axis('square')
 
-		sn.despine()
+		# sn.set({'ytick.color':[.5,.5,.5]})
+
+		sn.despine(offset={'left':5,'bottom':5}, trim=True)
+
+	def violinplot(self, data, y_lim = [None,None], x_lim = [None, None], xticklabels = [], leftOn=True, bottomOn=True):
+
+		if not isinstance(data, pd.DataFrame):
+			data = pd.DataFrame.from_dict(data)
+
+		if self.linestylemap is None:
+			sn.violinplot(data=data)		
+		else:
+			palette = {key: self.linestylemap[key][0] for key in data.keys()}
+			sn.violinplot(data=data, palette=palette, saturation = self.linestylemap['saturation'])
+
+		plt.xlim(x_lim[0], x_lim[1])
+		plt.ylim(y_lim[0], y_lim[1])
+
+		if len(xticklabels)>0:
+			plt.xticks(np.arange(len(data.keys())), xticklabels)
+
+		sn.despine(left=leftOn, bottom=bottomOn, offset={'left':5,'bottom':0}, trim=True)
 
 	def factor_plot(data, *args, **kwargs):
 		# Draw a nested barplot to show survival for class and sex

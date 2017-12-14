@@ -24,7 +24,7 @@ from Plotter import Plotter
 
 from analysis_parameters import *
 
-pl = Plotter(figure_folder = figfolder, linestylemap=linestylemap)
+pl = Plotter(figure_folder = figfolder, linestylemap=linestylemap, sn_style='white')
 
 # raw_data_folder = '/home/barendregt/Projects/PredictionError/fMRI/Attention_Prediction/data/'
 
@@ -33,10 +33,15 @@ pl = Plotter(figure_folder = figfolder, linestylemap=linestylemap)
 # sublist = ['mb1','mb4']
 
 all_rts = []			 
-rts = {'PP': [],
+rts_correct = {'PP': [],
 	 'UP': [],
 	 'PU': [],
 	 'UU': []}
+
+rts_incorrect = {'PP': [],
+	 'UP': [],
+	 'PU': [],
+	 'UU': []}	 
 
 pcs = {'PP': [],
 	 'UP': [],
@@ -62,15 +67,63 @@ for subname in sublist:
 
 	for key in list(pcs.keys()):
 		pcs[key].append(sub_rts['correct'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1])].mean())
+		rts_correct[key].append(sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==1)].median())
+		rts_incorrect[key].append(sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==0)].median())
 
 	#all_rts.append(sub_rts)
-# embed()
+embed()
 
-pl.open_figure(force=1)
+pd_rts = pd.DataFrame()
 
-pl.bar_plot(data=pcs, conditions=['UP','PU'], xticks=np.array([1-0.75/2,2-0.75/2]), xticklabels=['TaskRel','TaskIrrel'], xlabel='Prediction error', ylabel='Proportion correct', y_lim = [0,1], with_data_points=True)
+for key in rts_correct.keys():
+	tmp = {}
+	tmp['Reaction time'] = np.hstack([rts_correct[key], rts_incorrect[key]])
+	tmp['Response'] = np.squeeze(np.hstack([['Correct']*len(sublist),['Incorrect']*len(sublist)]))
+	tmp['subID'] = np.squeeze(np.tile(np.arange(len(sublist)),(1,2)))
+	tmp['prediction_error'] = [keymap_to_words[key]]*2*len(sublist)
+	tmp['TR'] = keymap_to_code[key][0]
+	tmp['TI'] = keymap_to_code[key][1]
 
-pl.save_figure(filename='prop_correct.pdf',sub_folder='over_subs/task')
+	pd_rts = pd_rts.append(other=pd.DataFrame.from_dict(tmp),ignore_index=True)
+
+import matplotlib.pyplot as plt
+import seaborn as sn
+
+palette = {}
+for key in rts_correct.keys():
+	palette[keymap_to_words[key]] = linestylemap[key][0]
+saturation = linestylemap['saturation']
+
+plt.figure()
+
+sn.factorplot(data=pd_rts, x='Response',y='Reaction time',hue='prediction_error',kind='bar', size=10, aspect=1.5, palette=palette,saturation=saturation,ci=68)
+
+plt.save_figure([figfolder+'/over_subs/task/reaction_times.pdf'])
+
+# pl.open_figure(force=1)
+
+# pl.bar_plot(data=pcs, conditions=['PP','UP','PU','UU'], xticks=np.arange(4), xticklabels=['None','TaskRel','TaskIrrel','both'], xlabel='Prediction error', ylabel='Proportion correct', y_lim = [0,1], with_error=True)
+
+# #pl.violinplot(data=pcs,y_lim= [0.5,1.05], xticklabels=['None','TaskRel','TaskIrrel','both'], bottomOn=False)
+
+# pl.save_figure(filename='prop_correct.pdf',sub_folder='over_subs/task')
+
+# pd_rts_correct = pd.DataFrame.from_dict(rts_correct)
+# pd_rts_incorrect = pd.DataFrame.from_dict(rts_incorrect)
+
+# pl.open_figure(force=1)
+
+# #pl.bar_plot(data=rts, conditions=['PP','UP','PU','UU'], xticks=np.array([1,2,3,4])-0.75/2, xticklabels=['None','TaskRel','TaskIrrel','both'], xlabel='Prediction error', ylabel='Reaction time (s)', y_lim = [0,1.4], with_error=True)
+# pl.subplot(1,2,1)
+# # pl.violinplot(data=rts_correct,y_lim= [0,2.3], xticklabels=['None','TaskRel','TaskIrrel','both'], bottomOn=False)
+# pl.bar_plot(data=rts_correct, conditions=['PP','UP','PU','UU'], xticks=np.arange(4),  xticklabels=['None','TaskRel','TaskIrrel','both'], xlabel='Prediction error', ylabel='Reaction time (s)', y_lim = [0,1.4], with_error=True)
+
+# pl.subplot(1,2,2)
+# # pl.violinplot(data=rts_incorrect,y_lim= [0,2.3], xticklabels=['None','TaskRel','TaskIrrel','both'], bottomOn=False)
+# pl.bar_plot(data=rts_incorrect, conditions=['PP','UP','PU','UU'], xticks=np.arange(4),  xticklabels=['None','TaskRel','TaskIrrel','both'], xlabel='Prediction error', ylabel='Reaction time (s)', y_lim = [0,1.4], with_error=True)
+
+# pl.save_figure(filename='reaction_times.pdf',sub_folder='over_subs/task')
+
 
 # pl.show()
 

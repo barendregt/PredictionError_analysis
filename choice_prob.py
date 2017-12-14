@@ -40,7 +40,15 @@ from analysis_parameters import *
 
 pl = Plotter(figure_folder = figfolder, linestylemap = linestylemap)
 
+condition_keymap = { 0: 'PP',  1: 'PP',
+					10: 'PU', 20: 'PU',
+					30: 'UU', 40: 'UU',
+					50: 'UP', 60: 'UP'}
 
+inverse_keymap = {'PP': [0,1],
+				  'UU': [30,40],
+				  'PU': [10,20],
+				  'UP': [50,60]}
 
 choice_prob = {'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/deconv_sample_frequency))),dtype=float),
 			   'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/deconv_sample_frequency))),dtype=float)}	 
@@ -110,14 +118,14 @@ for subname in sublist:
 					 'UU': []}}	
 
 	# Get trial-based, event-related, baseline-corrected signals centered on stimulus onset
-	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
+	pa.signal_per_trial(only_correct = True, only_incorrect = False, return_dt=False, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
 
 	for (key,signals) in pa.trial_signals.items():
 		if len(signals)>0:
 			sub_signals['correct'][condition_keymap[key]] = np.append(sub_signals['correct'][condition_keymap[key]], signals, axis=0)
 
 	# Get trial-based, event-related, baseline-corrected signals centered on stimulus onset
-	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
+	pa.signal_per_trial(only_correct = False, only_incorrect = True, return_dt=False, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
 
 	for (key,signals) in pa.trial_signals.items():
 		if len(signals)>0:
@@ -127,33 +135,43 @@ for subname in sublist:
 	base_correct = sp.signal.decimate(sub_signals['correct']['PP'],50,1)
 	base_incorrect = sp.signal.decimate(sub_signals['incorrect']['PP'],50,1)
 
+	pupil_correct = {'UP': sp.signal.decimate(sub_signals['correct']['UP'],50,1),
+					 'PU': sp.signal.decimate(sub_signals['correct']['PU'],50,1)}
 
-	pupil_correct = {'UP': sp.signal.decimate(sub_signals['correct']['UP'],50,1) - base_correct.mean(axis=0),
+	pupil_incorrect = {'UP': sp.signal.decimate(sub_signals['incorrect']['UP'],50,1),
+					   'PU': sp.signal.decimate(sub_signals['incorrect']['PU'],50,1)}
+
+
+	pupil_correct_nobase = {'UP': sp.signal.decimate(sub_signals['correct']['UP'],50,1) - base_correct.mean(axis=0),
 					 'PU': sp.signal.decimate(sub_signals['correct']['PU'],50,1) - base_correct.mean(axis=0)}
 
-	pupil_incorrect = {'UP': sp.signal.decimate(sub_signals['incorrect']['UP'],50,1) - base_incorrect.mean(axis=0),
+	pupil_incorrect_nobase = {'UP': sp.signal.decimate(sub_signals['incorrect']['UP'],50,1) - base_incorrect.mean(axis=0),
 					   'PU': sp.signal.decimate(sub_signals['incorrect']['PU'],50,1) - base_incorrect.mean(axis=0)}
 
 
-	for key in ['UP','PU']:
-		all_pupil_correct[key] = np.append(all_pupil_correct[key], pupil_correct[key],axis=0)
-		all_pupil_incorrect[key] = np.append(all_pupil_incorrect[key], pupil_incorrect[key],axis=0)
+	pupil_correct_dt = {}					   
+	pupil_incorrect_dt = {}
+
+	pupil_correct_dt['UP'] = np.diff(pupil_correct_nobase['UP'])
+	pupil_incorrect_dt['UP'] = np.diff(pupil_incorrect_nobase['UP'])
+	pupil_correct_dt['PU'] = np.diff(pupil_correct_nobase['PU'])
+	pupil_incorrect_dt['PU'] = np.diff(pupil_incorrect_nobase['PU'])    
 
 	
 	sub_choice_prob = {'UP': np.zeros((pupil_correct['UP'].shape[1])), 
 					   'PU': np.zeros((pupil_correct['PU'].shape[1]))}
 
 	for key in list(choice_prob.keys()):
-		for t in range(0,pupil_correct[key].shape[1]):
-			t0_correct = pupil_correct[key][:,t]
-			t0_incorrect = pupil_incorrect[key][:,t]
+		for t in range(0,pupil_correct_dt[key].shape[1]):
+			t0_correct = pupil_correct_dt[key][:,t]
+			t0_incorrect = pupil_incorrect_dt[key][:,t]
 
 			pdata = np.hstack([t0_correct, t0_incorrect])
 			cdata = np.hstack([np.ones((t0_correct.shape[0],)), np.zeros((t0_incorrect.shape[0],))])
 
 			#sub_choice_prob[key][t] = estimate_auc(pdata, cdata, niter=100)
 
-			# cdf_param = sp.optimize.curve_fit(fitcdf, pdata, cdata, p0=[.5])[0]
+			#cdf_param = sp.optimize.curve_fit(fitcdf, pdata, cdata, p0=[.5])[0]
 
 			fpr, tpr, _ = roc_curve(cdata, pdata)#sp.stats.norm.cdf(pdata,0,cdf_param))
 			sub_choice_prob[key][t] = auc(fpr, tpr)
@@ -163,19 +181,6 @@ for subname in sublist:
 
 
 
-for key in list(choice_prob.keys()):
-	for t in range(all_pupil_correct[key].shape[1]):
-
-		t0_correct = all_pupil_correct[key][:,t]
-		t0_incorrect = all_pupil_incorrect[key][:,t]		
-
-		_,bins = np.histogram(np.hstack([t0_incorrect, t0_correct]), 10)
-
-		bin_count_correct,_ = np.histogram(t0_correct, bins=bins, density=True)
-		bin_count_incorrect,_ = np.histogram(t0_incorrect, bins=bins, density=True)
-
-
-embed()
 smooth_factor = deconv_sample_frequency
 
 pl.open_figure(force=1)
@@ -183,7 +188,7 @@ pl.open_figure(force=1)
 # pl.subplot(1,2,1)
 
 pl.hline(0.5)
-pl.event_related_pupil_average(choice_prob,conditions=['PU','UP'],signal_labels={'UP':'TaskRel','PU':'TaskIrrel'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5), compute_mean=True,compute_sd=True,show_legend=True, ylabel='Choice probability', y_lim=[0.4,0.6], with_stats=True, stats_ttest_ref=0.5)
+pl.event_related_pupil_average(choice_prob,conditions=['UP'],signal_labels={'UP':'TaskRel/dt'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5), compute_mean=True,compute_sd=True,show_legend=True, ylabel='Choice probability', y_lim=[0.4,0.6], with_stats=True, stats_ttest_ref=0.5, sig_marker_ypos = 0.41)
 # plt.show()
-pl.save_figure(filename='choice_probs.pdf', sub_folder='over_subs')
+pl.save_figure(filename='choice_probs_dt.pdf', sub_folder='over_subs')
 embed()
