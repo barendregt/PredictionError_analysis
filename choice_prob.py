@@ -50,8 +50,8 @@ inverse_keymap = {'PP': [0,1],
 				  'PU': [10,20],
 				  'UP': [50,60]}
 
-choice_prob = {'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/deconv_sample_frequency))),dtype=float),
-			   'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/deconv_sample_frequency))),dtype=float)}	 
+choice_prob = {'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(deconv_sample_frequency))),dtype=float),
+			   'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(deconv_sample_frequency))),dtype=float)}	 
 
 def fitcdf(x,s):
 	return sp.stats.norm.cdf(x,0,s)
@@ -77,11 +77,11 @@ def estimate_auc(X,Y, niter = 1000):
 	return roc_auc.mean()
 
 
-all_pupil_correct = {'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/50))),dtype=float),
-					 'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/50))),dtype=float)}
+all_pupil_correct = {'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(deconv_sample_frequency))),dtype=float),
+					 'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(deconv_sample_frequency))),dtype=float)}
 
-all_pupil_incorrect = {'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/50))),dtype=float),
-					   'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(signal_sample_frequency/50))),dtype=float)}
+all_pupil_incorrect = {'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(deconv_sample_frequency))),dtype=float),
+					   'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*(deconv_sample_frequency))),dtype=float)}
 
 # embed()
 for subname in sublist:
@@ -132,21 +132,21 @@ for subname in sublist:
 			sub_signals['incorrect'][condition_keymap[key]] = np.append(sub_signals['incorrect'][condition_keymap[key]], signals, axis=0)
 
 
-	base_correct = sp.signal.decimate(sub_signals['correct']['PP'],50,1)
-	base_incorrect = sp.signal.decimate(sub_signals['incorrect']['PP'],50,1)
+	base_correct = sp.signal.decimate(sub_signals['correct']['PP'],down_fs,1)
+	base_incorrect = sp.signal.decimate(sub_signals['incorrect']['PP'],down_fs,1)
 
-	pupil_correct = {'UP': sp.signal.decimate(sub_signals['correct']['UP'],50,1),
-					 'PU': sp.signal.decimate(sub_signals['correct']['PU'],50,1)}
+	pupil_correct = {'UP': sp.signal.decimate(sub_signals['correct']['UP'],down_fs,1),
+					 'PU': sp.signal.decimate(sub_signals['correct']['PU'],down_fs,1)}
 
-	pupil_incorrect = {'UP': sp.signal.decimate(sub_signals['incorrect']['UP'],50,1),
-					   'PU': sp.signal.decimate(sub_signals['incorrect']['PU'],50,1)}
+	pupil_incorrect = {'UP': sp.signal.decimate(sub_signals['incorrect']['UP'],down_fs,1),
+					   'PU': sp.signal.decimate(sub_signals['incorrect']['PU'],down_fs,1)}
 
 
-	pupil_correct_nobase = {'UP': sp.signal.decimate(sub_signals['correct']['UP'],50,1) - base_correct.mean(axis=0),
-					 'PU': sp.signal.decimate(sub_signals['correct']['PU'],50,1) - base_correct.mean(axis=0)}
+	pupil_correct_nobase = {'UP': sp.signal.decimate(sub_signals['correct']['UP'],down_fs,1) - base_correct.mean(axis=0),
+					 'PU': sp.signal.decimate(sub_signals['correct']['PU'],down_fs,1) - base_correct.mean(axis=0)}
 
-	pupil_incorrect_nobase = {'UP': sp.signal.decimate(sub_signals['incorrect']['UP'],50,1) - base_incorrect.mean(axis=0),
-					   'PU': sp.signal.decimate(sub_signals['incorrect']['PU'],50,1) - base_incorrect.mean(axis=0)}
+	pupil_incorrect_nobase = {'UP': sp.signal.decimate(sub_signals['incorrect']['UP'],down_fs,1) - base_incorrect.mean(axis=0),
+					   'PU': sp.signal.decimate(sub_signals['incorrect']['PU'],down_fs,1) - base_incorrect.mean(axis=0)}
 
 
 	pupil_correct_dt = {}					   
@@ -162,9 +162,9 @@ for subname in sublist:
 					   'PU': np.zeros((pupil_correct['PU'].shape[1]))}
 
 	for key in list(choice_prob.keys()):
-		for t in range(0,pupil_correct_dt[key].shape[1]):
-			t0_correct = pupil_correct_dt[key][:,t]
-			t0_incorrect = pupil_incorrect_dt[key][:,t]
+		for t in range(0,pupil_correct_nobase[key].shape[1]):	
+			t0_correct = pupil_correct_nobase[key][:,t]
+			t0_incorrect = pupil_incorrect_nobase[key][:,t]
 
 			pdata = np.hstack([t0_correct, t0_incorrect])
 			cdata = np.hstack([np.ones((t0_correct.shape[0],)), np.zeros((t0_incorrect.shape[0],))])
@@ -181,14 +181,24 @@ for subname in sublist:
 
 
 
-smooth_factor = deconv_sample_frequency
+smooth_factor = 10# deconv_sample_frequency
+
+# embed()
 
 pl.open_figure(force=1)
 
 # pl.subplot(1,2,1)
 
 pl.hline(0.5)
-pl.event_related_pupil_average(choice_prob,conditions=['UP'],signal_labels={'UP':'TaskRel/dt'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5), compute_mean=True,compute_sd=True,show_legend=True, ylabel='Choice probability', y_lim=[0.4,0.6], with_stats=True, stats_ttest_ref=0.5, sig_marker_ypos = 0.41)
-# plt.show()
-pl.save_figure(filename='choice_probs_dt.pdf', sub_folder='over_subs')
-embed()
+#pl.event_related_pupil_average(choice_prob,conditions=['UP'],signal_labels={'UP':'TaskRel/dt'},x_lim=[80,200],xticks=[100,110,120,130,140,150,200,250],xticklabels=[0,.1,.2,.3,.4,.5,1,1.5], compute_mean=True,compute_sd=True,show_legend=True, ylabel='Choice probability', y_lim=[0.4,0.6], with_stats=True, stats_ttest_ref=0.5, sig_marker_ypos = 0.41, after_smooth=True, after_smooth_factor = 50)
+pl.event_related_pupil_average(choice_prob,conditions=['PU','UP'],signal_labels=keymap_to_words,
+							  x_lim=[0.5*50,4.5*50],xticks=np.arange(0.5*50,5.0*50,0.5*50),xticklabels=np.arange(-0.5,4.5,0.5),
+							  ylabel='Choice probability', y_lim=[0.4,0.55], 
+							  with_stats=True, stats_ttest_ref=0.5, sig_marker_ypos = 0.41, compute_mean=True, compute_sd =True, mark_first_sig = False,
+							  smooth_signal=False, smooth_factor=smooth_factor,
+							  after_smooth=True,after_smooth_window=11)
+# pl.vline(107, label='70ms', linestyle='solid')
+#plt.show()
+pl.save_figure(filename='choice_probs_smooth.pdf', sub_folder='over_subs')
+
+# embed()

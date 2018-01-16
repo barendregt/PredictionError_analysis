@@ -123,7 +123,7 @@ for subname in sublist:
 
 
 	# Get trial-based, event-related, baseline-corrected signals centered on stimulus onset
-	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
+	pa.signal_per_trial(only_correct = True, only_incorrect = False, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_phase=1, baseline_period = [-0.5,0], force_rebuild=False, down_sample = False, return_rt = True)
 
 	for (key,signals) in pa.trial_signals.items():
 		if len(signals)>0:
@@ -131,7 +131,7 @@ for subname in sublist:
 			sub_rts['correct'][condition_keymap[key]].extend(pa.trial_rts[key])
 
 	# Get trial-based, event-related, baseline-corrected signals centered on stimulus onset
-	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_period = [-.5, 0.0], force_rebuild=False, down_sample = False, return_rt = True)
+	pa.signal_per_trial(only_correct = False, only_incorrect = True, reference_phase = 7, with_rt = False, baseline_type = 'relative', baseline_phase=1, baseline_period = [-0.5,0], force_rebuild=False, down_sample = False, return_rt = True)
 
 	for (key,signals) in pa.trial_signals.items():
 		if len(signals)>0:
@@ -183,11 +183,66 @@ for con in ['PU','UP']:
 	incorrect_minus_correct[con] = error_minus_noerror_incorrect[con] - error_minus_noerror_correct[con]
 
 
-# embed()
+pupil_signals['incorrect']['UP'] = (pupil_signals['incorrect']['UP']+pupil_signals['incorrect']['UU'])/2
+
+embed()
 
 smooth_signal = True
-smooth_factor = 50
+smooth_factor = down_fs
 
+x_lim = [750/smooth_factor,4500/smooth_factor]
+y_lim = [-0.25,1.0]
+
+pl.open_figure(force=1)
+
+# pl.subplot(1,2,1)
+
+pl.hline(0.0)
+pl.vline(1000/smooth_factor, linestyle='solid', alpha=0.5)
+
+pl.event_related_pupil_average(data=pupil_signals['correct'], conditions = ['PP','PU','UP'], signal_labels=keymap_to_words, x_lim=x_lim, xticks=np.arange(0/smooth_factor,4500/smooth_factor,500/smooth_factor),xticklabels=np.arange(-1,3.5,0.5),y_lim=y_lim,compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=True, legend_loc = 'lower right', legend_fontsize=9, title='Correct trials', xlabel='Time after stimulus (s)')
+
+pl.save_figure(filename='average_pupil_correct.pdf',sub_folder='over_subs/pupil')
+
+# pl.subplot(1,2,2)
+
+pl.open_figure(force=1)
+
+pl.hline(0.0)
+pl.vline(1000/smooth_factor, linestyle='solid', alpha=0.5)
+
+pl.event_related_pupil_average(data=pupil_signals['incorrect'], conditions = ['PP','PU','UP'], signal_labels=keymap_to_words, x_lim=x_lim,xticks=np.arange(0/smooth_factor,4500/smooth_factor,500/smooth_factor),xticklabels=np.arange(-1,3.5,0.5),y_lim=y_lim,compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=False,title='Incorrect trials', xlabel='Time after stimulus (s)')
+
+pl.save_figure(filename='average_pupil_incorrect.pdf',sub_folder='over_subs/pupil')
+
+# pl.show()
+
+
+
+y_lim = [-0.1,0.25]
+
+pl.open_figure(force=1)
+
+# pl.subplot(1,2,1)
+
+pl.hline(0.0)
+
+pl.event_related_pupil_average(data=error_minus_noerror_correct, conditions = ['PU','UP'], signal_labels=keymap_to_words, x_lim=x_lim,xticks=np.arange(0/smooth_factor,4500/smooth_factor,500/smooth_factor),xticklabels=np.arange(-1,3.5,0.5),y_lim=y_lim,compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=False,title='Incorrect trials', xlabel='Time after stimulus (s)', with_stats=True, sig_marker_ypos=-0.09)
+
+pl.save_figure(filename='average_pupil_correct_difference.pdf',sub_folder='over_subs/pupil')
+
+pl.open_figure(force=1)
+
+pl.hline(0.0)
+
+pl.event_related_pupil_average(data=error_minus_noerror_incorrect, conditions = ['PU','UP'], signal_labels=keymap_to_words, x_lim=x_lim,xticks=np.arange(0/smooth_factor,4500/smooth_factor,500/smooth_factor),xticklabels=np.arange(-1,3.5,0.5),y_lim=y_lim,compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=False,title='Incorrect trials', xlabel='Time after stimulus (s)', with_stats=True, sig_marker_ypos=-0.09)
+
+
+# plt.tight_layout()
+
+# pl.show()
+
+pl.save_figure(filename='average_pupil_incorrect_difference.pdf',sub_folder='over_subs/pupil')
 # pl.open_figure(force=1)
 
 # # pl.subplot(3,2,1)
@@ -230,85 +285,85 @@ smooth_factor = 50
 # embed()
 # pl.open_figure(force=1)
 
-# pl.subplot(1,2,1)
+# # pl.subplot(1,2,1)
 
-test_condition = 'UP'
+# test_condition = 'UP'
 
 
-combined_rts = np.hstack([reaction_times['correct']['UP'],reaction_times['correct']['UU'],reaction_times['incorrect']['UP'],reaction_times['incorrect']['UU']])
+# combined_rts = np.hstack([reaction_times['correct']['UP'],reaction_times['correct']['UU'],reaction_times['incorrect']['UP'],reaction_times['incorrect']['UU']])
 
-combined_rts_c = np.mean(combined_rts)*np.hstack([reaction_times['correct'][test_condition],reaction_times['correct']['UU']])/np.repeat(reaction_times['correct']['PP'],2)
-combined_rts_i = np.mean(combined_rts)*np.hstack([reaction_times['incorrect'][test_condition],reaction_times['incorrect']['UU']])/np.repeat(reaction_times['incorrect']['PP'],2)
+# combined_rts_c = np.mean(combined_rts)*np.hstack([reaction_times['correct'][test_condition],reaction_times['correct']['UU']])/np.repeat(reaction_times['correct']['PP'],2)
+# combined_rts_i = np.mean(combined_rts)*np.hstack([reaction_times['incorrect'][test_condition],reaction_times['incorrect']['UU']])/np.repeat(reaction_times['incorrect']['PP'],2)
+
+# # combined_rts_c = np.mean(combined_rts)*np.array(reaction_times['correct'][test_condition])/np.array(reaction_times['correct']['PP'])
+# # combined_rts_i = np.mean(combined_rts)*np.array(reaction_times['incorrect'][test_condition])/np.array(reaction_times['incorrect']['PP'])
+
+# # [rt_low, rt_mean, rt_up] = (signal_sample_frequency/smooth_factor) * np.percentile(combined_rts,[2.5,50,97.5]) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+
+# rt_mean = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_std = (signal_sample_frequency/smooth_factor) * (1.96*np.std(combined_rts)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+
+# rt_low = rt_mean - rt_std
+# rt_up  = rt_mean + rt_std
+
+# rt_mean_c = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_c) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_mean_i = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_i) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+
+# rt_std_c = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_c)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_std_i = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_i)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+
+
+# pl.open_figure(force=1)
+
+# pl.linestylemap[test_condition] = ['k','-',None,None,None]
+
+# pl.hline(0.0, linewidth=0.5, color='k',linestyle='dotted')
+# pl.vline(x=rt_mean_c,linewidth=2,color='g',alpha=0.75,linestyle='solid')
+# plt.legend(loc='best')
+# plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_c-rt_std_c,rt_mean_c+rt_std_c,color='g',alpha=0.2)
+
+# pl.vline(x=rt_mean_i,linewidth=2,color='r',alpha=0.75,linestyle='solid')
+# plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_i-rt_std_i,rt_mean_i+rt_std_i,color='r',alpha=0.2)
+
+# pl.event_related_pupil_average(data=incorrect_minus_correct, conditions=[test_condition], signal_labels={'UP':'TaskRel','PU':'TaskIrrel','UU':'both'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.2,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, with_stats=True, sig_marker_ypos = -0.05, smooth_factor=smooth_factor, show_legend=True,title='Difference incorrect vs correct')
+# pl.save_figure(filename = '%s_diff_stats.pdf'%test_condition, sub_folder = 'over_subs/pupil')
+
+
+
+
+# test_condition = 'PU'
+
+
+# combined_rts = np.hstack([reaction_times['correct'][test_condition],reaction_times['incorrect'][test_condition]])
 
 # combined_rts_c = np.mean(combined_rts)*np.array(reaction_times['correct'][test_condition])/np.array(reaction_times['correct']['PP'])
 # combined_rts_i = np.mean(combined_rts)*np.array(reaction_times['incorrect'][test_condition])/np.array(reaction_times['incorrect']['PP'])
 
-# [rt_low, rt_mean, rt_up] = (signal_sample_frequency/smooth_factor) * np.percentile(combined_rts,[2.5,50,97.5]) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# # [rt_low, rt_mean, rt_up] = (signal_sample_frequency/smooth_factor) * np.percentile(combined_rts,[2.5,50,97.5]) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
 
-rt_mean = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-rt_std = (signal_sample_frequency/smooth_factor) * (1.96*np.std(combined_rts)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_mean = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_std = (signal_sample_frequency/smooth_factor) * (1.96*np.std(combined_rts)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
 
-rt_low = rt_mean - rt_std
-rt_up  = rt_mean + rt_std
+# rt_low = rt_mean - rt_std
+# rt_up  = rt_mean + rt_std
 
-rt_mean_c = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_c) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-rt_mean_i = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_i) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_mean_c = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_c) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_mean_i = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_i) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
 
-rt_std_c = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_c)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-rt_std_i = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_i)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-
-
-pl.open_figure(force=1)
-
-pl.linestylemap[test_condition] = ['k','-',None,None,None]
-
-pl.hline(0.0, linewidth=0.5, color='k',linestyle='dotted')
-pl.vline(x=rt_mean_c,linewidth=2,color='g',alpha=0.75,linestyle='solid')
-plt.legend(loc='best')
-plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_c-rt_std_c,rt_mean_c+rt_std_c,color='g',alpha=0.2)
-
-pl.vline(x=rt_mean_i,linewidth=2,color='r',alpha=0.75,linestyle='solid')
-plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_i-rt_std_i,rt_mean_i+rt_std_i,color='r',alpha=0.2)
-
-pl.event_related_pupil_average(data=incorrect_minus_correct, conditions=[test_condition], signal_labels={'UP':'TaskRel','PU':'TaskIrrel','UU':'both'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.2,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, with_stats=True, sig_marker_ypos = -0.05, smooth_factor=smooth_factor, show_legend=True,title='Difference incorrect vs correct')
-pl.save_figure(filename = '%s_diff_stats.pdf'%test_condition, sub_folder = 'over_subs/pupil')
+# rt_std_c = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_c)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
+# rt_std_i = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_i)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
 
 
+# pl.open_figure(force=1)
 
+# pl.linestylemap[test_condition] = ['k','-',None,None,None]
+# pl.hline(0.0, linewidth=0.5, color='k',linestyle='dotted')
+# pl.vline(x=rt_mean_c,linewidth=2,color='g',alpha=0.75,linestyle='solid')
+# plt.legend(loc='best')
+# plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_c-rt_std_c,rt_mean_c+rt_std_c,color='g',alpha=0.2)
 
-test_condition = 'PU'
+# pl.vline(x=rt_mean_i,linewidth=2,color='r',alpha=0.75,linestyle='solid')
+# plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_i-rt_std_i,rt_mean_i+rt_std_i,color='r',alpha=0.2)
 
-
-combined_rts = np.hstack([reaction_times['correct'][test_condition],reaction_times['incorrect'][test_condition]])
-
-combined_rts_c = np.mean(combined_rts)*np.array(reaction_times['correct'][test_condition])/np.array(reaction_times['correct']['PP'])
-combined_rts_i = np.mean(combined_rts)*np.array(reaction_times['incorrect'][test_condition])/np.array(reaction_times['incorrect']['PP'])
-
-# [rt_low, rt_mean, rt_up] = (signal_sample_frequency/smooth_factor) * np.percentile(combined_rts,[2.5,50,97.5]) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-
-rt_mean = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-rt_std = (signal_sample_frequency/smooth_factor) * (1.96*np.std(combined_rts)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-
-rt_low = rt_mean - rt_std
-rt_up  = rt_mean + rt_std
-
-rt_mean_c = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_c) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-rt_mean_i = (signal_sample_frequency/smooth_factor) * np.mean(combined_rts_i) + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-
-rt_std_c = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_c)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-rt_std_i = (signal_sample_frequency/smooth_factor) * (np.std(combined_rts_i)/sqrt(33))# + ((signal_sample_frequency/smooth_factor)*abs(stimulus_deconvolution_interval[0]))
-
-
-pl.open_figure(force=1)
-
-pl.linestylemap[test_condition] = ['k','-',None,None,None]
-pl.hline(0.0, linewidth=0.5, color='k',linestyle='dotted')
-pl.vline(x=rt_mean_c,linewidth=2,color='g',alpha=0.75,linestyle='solid')
-plt.legend(loc='best')
-plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_c-rt_std_c,rt_mean_c+rt_std_c,color='g',alpha=0.2)
-
-pl.vline(x=rt_mean_i,linewidth=2,color='r',alpha=0.75,linestyle='solid')
-plt.fill_betweenx(np.arange(-0.2,0.4,0.1),rt_mean_i-rt_std_i,rt_mean_i+rt_std_i,color='r',alpha=0.2)
-
-pl.event_related_pupil_average(data=incorrect_minus_correct, conditions=[test_condition], signal_labels={'UP':'TaskRel','PU':'TaskIrrel','UU':'both'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.2,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, with_stats=True, sig_marker_ypos = -0.05, smooth_factor=smooth_factor, show_legend=True,title='Difference incorrect vs correct')
-pl.save_figure(filename = '%s_diff_stats.pdf'%test_condition, sub_folder = 'over_subs/pupil')
+# pl.event_related_pupil_average(data=incorrect_minus_correct, conditions=[test_condition], signal_labels={'UP':'TaskRel','PU':'TaskIrrel','UU':'both'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.2,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, with_stats=True, sig_marker_ypos = -0.05, smooth_factor=smooth_factor, show_legend=True,title='Difference incorrect vs correct')
+# pl.save_figure(filename = '%s_diff_stats.pdf'%test_condition, sub_folder = 'over_subs/pupil')

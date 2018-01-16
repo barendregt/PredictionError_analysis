@@ -71,7 +71,7 @@ for subname in sublist:
 		rts_incorrect[key].append(sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==0)].median())
 
 	#all_rts.append(sub_rts)
-embed()
+# embed()
 
 pd_rts = pd.DataFrame()
 
@@ -86,6 +86,20 @@ for key in rts_correct.keys():
 
 	pd_rts = pd_rts.append(other=pd.DataFrame.from_dict(tmp),ignore_index=True)
 
+
+pd_pcs = pd.DataFrame()
+
+for key in pcs.keys():
+	tmp = {}
+	tmp['Percentage correct'] = pcs[key]
+	#tmp['Response'] = np.squeeze(np.hstack([['Correct']*len(sublist),['Incorrect']*len(sublist)]))
+	tmp['subID'] = np.arange(len(sublist))
+	tmp['prediction_error'] = [keymap_to_words[key]]*len(sublist)
+	tmp['TR'] = keymap_to_code[key][0]
+	tmp['TI'] = keymap_to_code[key][1]
+
+	pd_pcs = pd_pcs.append(other=pd.DataFrame.from_dict(tmp),ignore_index=True)
+
 import matplotlib.pyplot as plt
 import seaborn as sn
 
@@ -94,11 +108,39 @@ for key in rts_correct.keys():
 	palette[keymap_to_words[key]] = linestylemap[key][0]
 saturation = linestylemap['saturation']
 
-plt.figure()
+# plt.figure()
 
-sn.factorplot(data=pd_rts, x='Response',y='Reaction time',hue='prediction_error',kind='bar', size=10, aspect=1.5, palette=palette,saturation=saturation,ci=68)
 
-plt.save_figure([figfolder+'/over_subs/task/reaction_times.pdf'])
+embed()
+
+f=sn.factorplot(data=pd_rts, x='Response',y='Reaction time',hue='prediction_error',kind='bar', size=10, aspect=1.5, palette=palette,saturation=saturation,ci=68)
+
+plt.savefig(figfolder+'/over_subs/task/reaction_times.pdf')
+
+# plt.figure()
+
+# fig, ax = plt.subplots()
+
+g=sn.factorplot(data=pd_pcs, x='prediction_error',y='Percentage correct',kind='bar', size=10, aspect=1.5, palette=palette,saturation=saturation,ci=68)
+
+g = (g.set_axis_labels("Prediction error", "Percentage correct (%)")
+	.set(ylim=(0.5, 1.0),xticks=[],
+	yticks=[.5,.6,.7,.8,.9,1.0],yticklabels=['50%','60%','70%','80%','90%','100%'])
+	)
+
+
+# for patch,label in zip(ax.patches,keymap_to_words.values()) :
+
+# 	patch_x = patch.get_x()
+# 	patch_width = patch.get_width()
+
+# 	ax.text(patch_x+patch_width/2, 0, label, {'color':'w','fontsize':24,'family':'Helvetica','va':'bottom','ha':'center','fontweight':'bold'}, rotation=90)
+
+
+# plt.show()
+
+
+plt.savefig(figfolder+'/over_subs/task/performance.pdf')
 
 # pl.open_figure(force=1)
 

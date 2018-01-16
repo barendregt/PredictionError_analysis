@@ -32,16 +32,16 @@ data = hddm.load_csv('%s.csv'%filename)
 m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_PE'],'t':['TR_PE','TI_PE']})
 
 
-# embed()
+embed()
 
 
 # m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_PE']})
 
-m.find_starting_values()
+# m.find_starting_values()
 
-runii = 1
+# runii = 1
 
-m.sample(10000, burn = 5000, dbname = '%s-%i-db.pickle'%(filename,runii), db = 'pickle')
+# m.sample(500, burn = 250, dbname = '%s-%i-db.pickle'%(filename,runii), db = 'pickle')
 
 
-embed()
+# embed()
