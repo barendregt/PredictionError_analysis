@@ -45,9 +45,9 @@ use_data = hddm.utils.flip_errors(use_data)
 
 models = []
 
-# for runii in range(5):
+for runii in range(5):
 
-def run_hddm(runii, use_data):
+# def run_hddm(runii, use_data):
 
 	m = hddm.HDDM(use_data, p_outlier = 0.05, depends_on = {'v':['TR_PE','TI_PE'],'t':['TR_PE','TI_PE']})
 
@@ -60,9 +60,9 @@ def run_hddm(runii, use_data):
 	# models.append(m)
 
 # Run everything in parallel for speed 
-num_jobs = 5
+# num_jobs = 5
 
-Parallel(n_jobs=num_jobs)(delayed(run_hddm)(runii, use_data) for runii in range(num_jobs))	
+# Parallel(n_jobs=num_jobs)(delayed(run_hddm)(runii, use_data) for runii in range(num_jobs))	
 
 # hddm.analyze.gelman_rubin(models)
 # embed()
