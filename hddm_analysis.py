@@ -36,7 +36,7 @@ use_data = hddm.utils.flip_errors(use_data)
 
 
 
-embed()
+
 
 
 # m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_PE']})
@@ -50,6 +50,10 @@ for runii in range(5):
 	m = hddm.load('model-run%i'%runii)
 
 	models.append(m)
+
+
+
+embed()
 
 # # def run_hddm(runii, use_data):
 
