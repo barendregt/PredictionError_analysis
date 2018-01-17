@@ -7,8 +7,8 @@ matplotlib.use('WebAgg')
 # import matplotlib.pyplot as plt
 # import seaborn as sn
 
-from joblib import Parallel, delayed
-import multiprocessing
+# from joblib import Parallel, delayed
+# import multiprocessing
 
 from math import *
 import os,glob,sys,platform
@@ -36,7 +36,7 @@ use_data = hddm.utils.flip_errors(use_data)
 
 
 
-# embed()
+embed()
 
 
 # m = hddm.HDDM(data[data['missed_response']==0], depends_on = {'v':['TR_PE','TI_PE']})
@@ -47,15 +47,19 @@ models = []
 
 for runii in range(5):
 
-# def run_hddm(runii, use_data):
+	m = hddm.load('model-run%i'%runii)
 
-	m = hddm.HDDM(use_data, p_outlier = 0.05, depends_on = {'v':['TR_PE','TI_PE'],'t':['TR_PE','TI_PE']})
+	models.append(m)
 
-	m.find_starting_values()
+# # def run_hddm(runii, use_data):
 
-	m.sample(5000, burn = 2500, dbname = '%s-%i-db.pickle'%(filename,runii), db = 'pickle')
+# 	m = hddm.HDDM(use_data, p_outlier = 0.05, depends_on = {'v':['TR_PE','TI_PE'],'t':['TR_PE','TI_PE']})
 
-	m.save('model-run%i'%runii)
+# 	m.find_starting_values()
+
+# 	m.sample(5000, burn = 2500, dbname = '%s-%i-db.pickle'%(filename,runii), db = 'pickle')
+
+# 	m.save('model-run%i'%runii)
 
 	# models.append(m)
 
