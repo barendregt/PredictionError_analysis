@@ -2,6 +2,7 @@
 Figures/
 Archive/
 data_output/
+pupil_data/
 
 # Python
 *.py[cod]
@@ -9,4 +10,4 @@ data_output/
 *.h5
 
 *.pdf
-*.csv
+#*.csv

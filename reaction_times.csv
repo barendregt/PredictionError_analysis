@@ -1,0 +1,265 @@
+,Reaction time,Response,TI,TR,prediction_error,subID
+0,1.2669026979,Correct,0,0,None,0
+1,1.2252414850800002,Correct,0,0,None,1
+2,1.175194521425,Correct,0,0,None,2
+3,1.016895566025,Correct,0,0,None,3
+4,0.95851344079,Correct,0,0,None,4
+5,0.9501410485175,Correct,0,0,None,5
+6,0.6835032762905,Correct,0,0,None,6
+7,1.19181147424,Correct,0,0,None,7
+8,0.7085206870584999,Correct,0,0,None,8
+9,0.9377239424920001,Correct,0,0,None,9
+10,1.00855313776,Correct,0,0,None,10
+11,0.775171767275,Correct,0,0,None,11
+12,1.1168535780000002,Correct,0,0,None,12
+13,1.0252358368049999,Correct,0,0,None,13
+14,0.950182243269,Correct,0,0,None,14
+15,1.47523635661,Correct,0,0,None,15
+16,1.0585253808,Correct,0,0,None,16
+17,0.70856404311,Correct,0,0,None,17
+18,1.558568132145,Correct,0,0,None,18
+19,0.7501740689675,Correct,0,0,None,19
+20,0.8668567233594999,Correct,0,0,None,20
+21,1.50426233107,Correct,0,0,None,21
+22,0.9335072254365,Correct,0,0,None,22
+23,1.58765747152,Correct,0,0,None,23
+24,1.1167086786,Correct,0,0,None,24
+25,0.8667840834005001,Correct,0,0,None,25
+26,0.8959252495345,Correct,0,0,None,26
+27,1.27097303645,Correct,0,0,None,27
+28,1.750077615515,Correct,0,0,None,28
+29,0.941787081187,Correct,0,0,None,29
+30,0.76674808652,Correct,0,0,None,30
+31,1.11673941998,Correct,0,0,None,31
+32,1.20008814782,Correct,0,0,None,32
+33,1.241908062,Incorrect,0,0,None,0
+34,1.291893388,Incorrect,0,0,None,1
+35,1.22519841811,Incorrect,0,0,None,2
+36,1.0251810674450001,Incorrect,0,0,None,3
+37,1.00841969618,Incorrect,0,0,None,4
+38,0.991864374057,Incorrect,0,0,None,5
+39,0.700191500532,Incorrect,0,0,None,6
+40,1.2335149962549998,Incorrect,0,0,None,7
+41,0.741823573407,Incorrect,0,0,None,8
+42,0.975188166214,Incorrect,0,0,None,9
+43,1.0293747316,Incorrect,0,0,None,10
+44,0.754357483113,Incorrect,0,0,None,11
+45,1.1626968855,Incorrect,0,0,None,12
+46,1.03356092245,Incorrect,0,0,None,13
+47,0.958419350338,Incorrect,0,0,None,14
+48,1.508574041085,Incorrect,0,0,None,15
+49,1.05850806237,Incorrect,0,0,None,16
+50,0.741801965623,Incorrect,0,0,None,17
+51,1.55855097423,Incorrect,0,0,None,18
+52,0.775195260321,Incorrect,0,0,None,19
+53,0.875092085771,Incorrect,0,0,None,20
+54,1.583384720205,Incorrect,0,0,None,21
+55,0.9668022222985,Incorrect,0,0,None,22
+56,1.6209650127950002,Incorrect,0,0,None,23
+57,1.05011497451,Incorrect,0,0,None,24
+58,0.8834247408725,Incorrect,0,0,None,25
+59,0.8917591577895,Incorrect,0,0,None,26
+60,1.34595335768,Incorrect,0,0,None,27
+61,1.879228833915,Incorrect,0,0,None,28
+62,0.975086346369,Incorrect,0,0,None,29
+63,0.7750542799015,Incorrect,0,0,None,30
+64,1.17510741947,Incorrect,0,0,None,31
+65,1.17506180611,Incorrect,0,0,None,32
+66,1.22934659932,Correct,0,1,Task relevant,0
+67,1.208529158775,Correct,0,1,Task relevant,1
+68,1.1335569462450001,Correct,0,1,Task relevant,2
+69,1.00021199235,Correct,0,1,Task relevant,3
+70,0.950190600139,Correct,0,1,Task relevant,4
+71,0.933491358132,Correct,0,1,Task relevant,5
+72,0.6669051737225,Correct,0,1,Task relevant,6
+73,1.12527589394,Correct,0,1,Task relevant,7
+74,0.691901476209,Correct,0,1,Task relevant,8
+75,0.908541181043,Correct,0,1,Task relevant,9
+76,1.012710400805,Correct,0,1,Task relevant,10
+77,0.7835036386785,Correct,0,1,Task relevant,11
+78,1.06271263249,Correct,0,1,Task relevant,12
+79,1.02518436226,Correct,0,1,Task relevant,13
+80,0.925196715291,Correct,0,1,Task relevant,14
+81,1.45024916949,Correct,0,1,Task relevant,15
+82,1.02524738091,Correct,0,1,Task relevant,16
+83,0.683513491411,Correct,0,1,Task relevant,17
+84,1.5585546623800002,Correct,0,1,Task relevant,18
+85,0.7335450704725,Correct,0,1,Task relevant,19
+86,0.850219867307,Correct,0,1,Task relevant,20
+87,1.470892506635,Correct,0,1,Task relevant,21
+88,0.925135828853,Correct,0,1,Task relevant,22
+89,1.54598081447,Correct,0,1,Task relevant,23
+90,1.05846880066,Correct,0,1,Task relevant,24
+91,0.841771639469,Correct,0,1,Task relevant,25
+92,0.883390198317,Correct,0,1,Task relevant,26
+93,1.19595308684,Correct,0,1,Task relevant,27
+94,1.712578132235,Correct,0,1,Task relevant,28
+95,0.891792426608,Correct,0,1,Task relevant,29
+96,0.758431345047,Correct,0,1,Task relevant,30
+97,1.095904518685,Correct,0,1,Task relevant,31
+98,1.20008814782,Correct,0,1,Task relevant,32
+99,1.4335829418650001,Incorrect,0,1,Task relevant,0
+100,1.400244964875,Incorrect,0,1,Task relevant,1
+101,1.30854861569,Incorrect,0,1,Task relevant,2
+102,1.18355106113,Incorrect,0,1,Task relevant,3
+103,1.18354427741,Incorrect,0,1,Task relevant,4
+104,1.09185760706,Incorrect,0,1,Task relevant,5
+105,0.7586079826,Incorrect,0,1,Task relevant,6
+106,1.46687829493,Incorrect,0,1,Task relevant,7
+107,0.841838069935,Incorrect,0,1,Task relevant,8
+108,1.1252147218,Incorrect,0,1,Task relevant,9
+109,1.1293021859599999,Incorrect,0,1,Task relevant,10
+110,0.800266642976,Incorrect,0,1,Task relevant,11
+111,1.18361280234,Incorrect,0,1,Task relevant,12
+112,1.012700101285,Incorrect,0,1,Task relevant,13
+113,1.00859277409,Incorrect,0,1,Task relevant,14
+114,1.5835890028,Incorrect,0,1,Task relevant,15
+115,1.1501956661600001,Incorrect,0,1,Task relevant,16
+116,0.825191022082,Incorrect,0,1,Task relevant,17
+117,1.55855738841,Incorrect,0,1,Task relevant,18
+118,0.9127346002279999,Incorrect,0,1,Task relevant,19
+119,0.92522555201,Incorrect,0,1,Task relevant,20
+120,1.70839566041,Incorrect,0,1,Task relevant,21
+121,0.970954136219,Incorrect,0,1,Task relevant,22
+122,1.912627058455,Incorrect,0,1,Task relevant,23
+123,1.31671529255,Incorrect,0,1,Task relevant,24
+124,1.06258997974,Incorrect,0,1,Task relevant,25
+125,0.958421472157,Incorrect,0,1,Task relevant,26
+126,1.48343462329,Incorrect,0,1,Task relevant,27
+127,2.24169285923,Incorrect,0,1,Task relevant,28
+128,1.16675290613,Incorrect,0,1,Task relevant,29
+129,0.8417527048725,Incorrect,0,1,Task relevant,30
+130,1.20839491137,Incorrect,0,1,Task relevant,31
+131,1.2625730384,Incorrect,0,1,Task relevant,32
+132,1.237751804155,Correct,1,0,Task irrelevant,0
+133,1.20867107676,Correct,1,0,Task irrelevant,1
+134,1.12521339548,Correct,1,0,Task irrelevant,2
+135,1.000205257345,Correct,1,0,Task irrelevant,3
+136,0.950235500055,Correct,1,0,Task irrelevant,4
+137,0.9334613716919999,Correct,1,0,Task irrelevant,5
+138,0.675200857471,Correct,1,0,Task irrelevant,6
+139,1.12523644616,Correct,1,0,Task irrelevant,7
+140,0.691901476209,Correct,1,0,Task irrelevant,8
+141,0.90439684181,Correct,1,0,Task irrelevant,9
+142,1.016871031355,Correct,1,0,Task irrelevant,10
+143,0.783534267022,Correct,1,0,Task irrelevant,11
+144,1.04603268832,Correct,1,0,Task irrelevant,12
+145,1.02520921757,Correct,1,0,Task irrelevant,13
+146,0.933489625844,Correct,1,0,Task irrelevant,14
+147,1.45024916949,Correct,1,0,Task irrelevant,15
+148,1.02519895345,Correct,1,0,Task irrelevant,16
+149,0.683476609917,Correct,1,0,Task irrelevant,17
+150,1.579304511245,Correct,1,0,Task irrelevant,18
+151,0.7335263085485,Correct,1,0,Task irrelevant,19
+152,0.8502310923905,Correct,1,0,Task irrelevant,20
+153,1.46672653487,Correct,1,0,Task irrelevant,21
+154,0.9334597562564999,Correct,1,0,Task irrelevant,22
+155,1.5542810785599999,Correct,1,0,Task irrelevant,23
+156,1.05843943697,Correct,1,0,Task irrelevant,24
+157,0.850075290771,Correct,1,0,Task irrelevant,25
+158,0.891736065893,Correct,1,0,Task irrelevant,26
+159,1.19179025353,Correct,1,0,Task irrelevant,27
+160,1.708411982295,Correct,1,0,Task irrelevant,28
+161,0.8875883598115,Correct,1,0,Task irrelevant,29
+162,0.758431345047,Correct,1,0,Task irrelevant,30
+163,1.08339576662,Correct,1,0,Task irrelevant,31
+164,1.2000624903,Correct,1,0,Task irrelevant,32
+165,1.383534015465,Incorrect,1,0,Task irrelevant,0
+166,1.43356313891,Incorrect,1,0,Task irrelevant,1
+167,1.29187979488,Incorrect,1,0,Task irrelevant,2
+168,1.2543680527199998,Incorrect,1,0,Task irrelevant,3
+169,1.23353953085,Incorrect,1,0,Task irrelevant,4
+170,1.058543633955,Incorrect,1,0,Task irrelevant,5
+171,0.7168896670210001,Incorrect,1,0,Task irrelevant,6
+172,1.37101633523,Incorrect,1,0,Task irrelevant,7
+173,0.854357361222,Incorrect,1,0,Task irrelevant,8
+174,1.05860670407,Incorrect,1,0,Task irrelevant,9
+175,1.11683472646,Incorrect,1,0,Task irrelevant,10
+176,0.7751924534325,Incorrect,1,0,Task irrelevant,11
+177,1.18361280234,Incorrect,1,0,Task irrelevant,12
+178,1.02525427784,Incorrect,1,0,Task irrelevant,13
+179,1.008559099575,Incorrect,1,0,Task irrelevant,14
+180,1.50857805012,Incorrect,1,0,Task irrelevant,15
+181,1.24186787579,Incorrect,1,0,Task irrelevant,16
+182,0.8418949711279999,Incorrect,1,0,Task irrelevant,17
+183,1.500195792625,Incorrect,1,0,Task irrelevant,18
+184,0.8543909478364999,Incorrect,1,0,Task irrelevant,19
+185,0.908525194057,Incorrect,1,0,Task irrelevant,20
+186,1.6917498763449998,Incorrect,1,0,Task irrelevant,21
+187,0.958464324987,Incorrect,1,0,Task irrelevant,22
+188,1.59180582169,Incorrect,1,0,Task irrelevant,23
+189,1.2792406721849998,Incorrect,1,0,Task irrelevant,24
+190,1.05010642198,Incorrect,1,0,Task irrelevant,25
+191,0.933403255216,Incorrect,1,0,Task irrelevant,26
+192,1.495942367215,Incorrect,1,0,Task irrelevant,27
+193,2.070871161095,Incorrect,1,0,Task irrelevant,28
+194,1.241736762955,Incorrect,1,0,Task irrelevant,29
+195,0.8500245456905,Incorrect,1,0,Task irrelevant,30
+196,1.2208731595,Incorrect,1,0,Task irrelevant,31
+197,1.32502899299,Incorrect,1,0,Task irrelevant,32
+198,1.22934659932,Correct,1,1,Both,0
+199,1.208529158775,Correct,1,1,Both,1
+200,1.1335569462450001,Correct,1,1,Both,2
+201,1.00021199235,Correct,1,1,Both,3
+202,0.950190600139,Correct,1,1,Both,4
+203,0.933491358132,Correct,1,1,Both,5
+204,0.6669051737225,Correct,1,1,Both,6
+205,1.12527589394,Correct,1,1,Both,7
+206,0.691901476209,Correct,1,1,Both,8
+207,0.908541181043,Correct,1,1,Both,9
+208,1.012710400805,Correct,1,1,Both,10
+209,0.7835036386785,Correct,1,1,Both,11
+210,1.06271263249,Correct,1,1,Both,12
+211,1.02518436226,Correct,1,1,Both,13
+212,0.925196715291,Correct,1,1,Both,14
+213,1.45024916949,Correct,1,1,Both,15
+214,1.02524738091,Correct,1,1,Both,16
+215,0.683513491411,Correct,1,1,Both,17
+216,1.5585546623800002,Correct,1,1,Both,18
+217,0.7335450704725,Correct,1,1,Both,19
+218,0.850219867307,Correct,1,1,Both,20
+219,1.470892506635,Correct,1,1,Both,21
+220,0.925135828853,Correct,1,1,Both,22
+221,1.54598081447,Correct,1,1,Both,23
+222,1.05846880066,Correct,1,1,Both,24
+223,0.841771639469,Correct,1,1,Both,25
+224,0.883390198317,Correct,1,1,Both,26
+225,1.19595308684,Correct,1,1,Both,27
+226,1.712578132235,Correct,1,1,Both,28
+227,0.891792426608,Correct,1,1,Both,29
+228,0.758431345047,Correct,1,1,Both,30
+229,1.095904518685,Correct,1,1,Both,31
+230,1.20008814782,Correct,1,1,Both,32
+231,1.4335829418650001,Incorrect,1,1,Both,0
+232,1.400244964875,Incorrect,1,1,Both,1
+233,1.30854861569,Incorrect,1,1,Both,2
+234,1.18355106113,Incorrect,1,1,Both,3
+235,1.18354427741,Incorrect,1,1,Both,4
+236,1.09185760706,Incorrect,1,1,Both,5
+237,0.7586079826,Incorrect,1,1,Both,6
+238,1.46687829493,Incorrect,1,1,Both,7
+239,0.841838069935,Incorrect,1,1,Both,8
+240,1.1252147218,Incorrect,1,1,Both,9
+241,1.1293021859599999,Incorrect,1,1,Both,10
+242,0.800266642976,Incorrect,1,1,Both,11
+243,1.18361280234,Incorrect,1,1,Both,12
+244,1.012700101285,Incorrect,1,1,Both,13
+245,1.00859277409,Incorrect,1,1,Both,14
+246,1.5835890028,Incorrect,1,1,Both,15
+247,1.1501956661600001,Incorrect,1,1,Both,16
+248,0.825191022082,Incorrect,1,1,Both,17
+249,1.55855738841,Incorrect,1,1,Both,18
+250,0.9127346002279999,Incorrect,1,1,Both,19
+251,0.92522555201,Incorrect,1,1,Both,20
+252,1.70839566041,Incorrect,1,1,Both,21
+253,0.970954136219,Incorrect,1,1,Both,22
+254,1.912627058455,Incorrect,1,1,Both,23
+255,1.31671529255,Incorrect,1,1,Both,24
+256,1.06258997974,Incorrect,1,1,Both,25
+257,0.958421472157,Incorrect,1,1,Both,26
+258,1.48343462329,Incorrect,1,1,Both,27
+259,2.24169285923,Incorrect,1,1,Both,28
+260,1.16675290613,Incorrect,1,1,Both,29
+261,0.8417527048725,Incorrect,1,1,Both,30
+262,1.20839491137,Incorrect,1,1,Both,31
+263,1.2625730384,Incorrect,1,1,Both,32
