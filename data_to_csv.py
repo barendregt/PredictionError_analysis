@@ -70,7 +70,7 @@ for subname in sublist:
 	beh_data['pupil_response_1'] = 0
 	if beh_data.shape[0] > len(pa.TPR):
 		beh_data['pupil_response_1'][0:len(pa.TPR)] = pa.TPR
-		beh_data['missed_response_1'][len(pa.TPR):] = 1
+		beh_data['missed_response'][len(pa.TPR):] = 1
 	else:
 		beh_data['pupil_response_1'] = pa.TPR
 
@@ -80,7 +80,7 @@ for subname in sublist:
 	beh_data['pupil_response_2'] = 0
 	if beh_data.shape[0] > len(pa.TPR):
 		beh_data['pupil_response_2'][0:len(pa.TPR)] = pa.TPR
-		beh_data['missed_response_2'][len(pa.TPR):] = 1
+		beh_data['missed_response'][len(pa.TPR):] = 1
 	else:
 		beh_data['pupil_response_2'] = pa.TPR		
 
