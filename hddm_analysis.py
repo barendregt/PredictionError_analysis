@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 
 import matplotlib
-matplotlib.use('WebAgg')
+matplotlib.use('qt')
 
 # import matplotlib.pyplot as plt
 # import seaborn as sn
@@ -19,6 +19,7 @@ import pandas as pd
 from IPython import embed
 
 import hddm
+import kabuki
 # import pymc
 
 filename = 'PE_analysis_more_samps'

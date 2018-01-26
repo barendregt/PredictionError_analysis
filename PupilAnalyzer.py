@@ -155,7 +155,7 @@ class PupilAnalyzer(Analyzer):
 
 		if only_correct:
 			selected_trials = np.array(trial_parameters['correct_answer']==1, dtype=bool)
-		if only_incorrect:
+		elif only_incorrect:
 			selected_trials = np.array(trial_parameters['correct_answer']==0, dtype=bool)				
 		else:
 			selected_trials = np.array((trial_parameters['correct_answer']==1) | (trial_parameters['correct_answer']==0), dtype=bool)			

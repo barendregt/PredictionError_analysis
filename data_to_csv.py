@@ -54,31 +54,43 @@ for subname in sublist:
 
 	# Get trial information
 	trial_codes = ba.recode_trial_code(beh_data)
-	beh_data['TR_PE'] = np.array((trial_codes > 1) & (trial_codes >= 30), dtype=int)
-	beh_data['TI_PE'] = np.array((trial_codes > 1) & ((trial_codes < 30) | (trial_codes >= 50)), dtype=int)
+	beh_data['trial_TR_PE'] = np.array((trial_codes > 1) & (trial_codes >= 30), dtype=int)
+	beh_data['trial_TI_PE'] = np.array((trial_codes > 1) & ((trial_codes < 30) | (trial_codes >= 50)), dtype=int)
+
+	beh_data['trial_PE'] = [condition_keymap[tcode] for tcode in trial_codes]
 
 	# Some accounting
 	beh_data['missed_response'] = np.array(beh_data['reaction_time'] < .3, dtype=int)
 	beh_data['subj_idx'] = sublist.index(subname)
 
 
-	# Get pupil size change per trial
-	pa.compute_TPR(reference_phase=6, time_window = np.array([0.0, 2.0]), sort_by_code = False)
+	# Get pupil size change per trial at interval [-0.5,0.5] around stimulus offset
+	pa.compute_TPR(reference_phase=7, time_window = np.array([-0.5, 0.5]), sort_by_code = False)
 
-	beh_data['pupil_response'] = 0
+	beh_data['pupil_response_1'] = 0
 	if beh_data.shape[0] > len(pa.TPR):
-		beh_data['pupil_response'][0:len(pa.TPR)] = pa.TPR
-		beh_data['missed_response'][len(pa.TPR):] = 1
+		beh_data['pupil_response_1'][0:len(pa.TPR)] = pa.TPR
+		beh_data['missed_response_1'][len(pa.TPR):] = 1
 	else:
-		beh_data['pupil_response'] = pa.TPR
+		beh_data['pupil_response_1'] = pa.TPR
+
+	# Get pupil size change per trial at interval [0.5, 2.5] after stimulus offset (response window)
+	pa.compute_TPR(reference_phase=7, time_window = np.array([0.5,2.5]), sort_by_code = False)
+
+	beh_data['pupil_response_2'] = 0
+	if beh_data.shape[0] > len(pa.TPR):
+		beh_data['pupil_response_2'][0:len(pa.TPR)] = pa.TPR
+		beh_data['missed_response_2'][len(pa.TPR):] = 1
+	else:
+		beh_data['pupil_response_2'] = pa.TPR		
 
 	# Dump everything to a TSV file
 	if sublist.index(subname)==0:
-		tsv_output_data = beh_data[['subj_idx','TR_PE','TI_PE','reaction_time','pupil_response','missed_response','correct_answer']]
+		tsv_output_data = beh_data[['subj_idx','trial_PE','trial_TR_PE','trial_TI_PE','reaction_time','pupil_response_1','pupil_response_2','missed_response','correct_answer']]
 	else:
-		tsv_output_data = tsv_output_data.append(beh_data[['subj_idx','TR_PE','TI_PE','reaction_time','pupil_response','missed_response','correct_answer']], ignore_index = True)
+		tsv_output_data = tsv_output_data.append(beh_data[['subj_idx','trial_PE','trial_TR_PE','trial_TI_PE','reaction_time','pupil_response_1','pupil_response_2','missed_response','correct_answer']], ignore_index = True)
 
 # Rename columns for HDDM convention
 tsv_output_data.rename(columns = {'reaction_time': 'rt', 'correct_answer': 'response'}, inplace = True)
 
-tsv_output_data.to_csv('PE_analysis.csv')
+tsv_output_data.to_csv('hddm_dataset.csv')
