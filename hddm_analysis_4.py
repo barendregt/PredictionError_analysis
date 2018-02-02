@@ -40,7 +40,7 @@ def fit_reg_model(trace_id, data, model_spec, model_dir, model_name, samples=100
 	import hddm
 	from patsy import dmatrix  # for regression only
 
-	m = hddm.models.HDDMRegressor(data, model_spec,include=('sv'), p_outlier = 0.05)
+	m = hddm.models.HDDMRegressor(data, model_spec,include=('sv'), p_outlier = 0.05, keep_regressor_trace = True)
 
 	# m = hddm.models.HDDMRegressor(data, ['v ~ pupil_response_2:C(trial_PE)','t ~ pupil_response_2:C(trial_PE)'], p_outlier = 0.05)
 	m.find_starting_values()
@@ -101,9 +101,9 @@ job_server = pp.Server(ppservers=(), ncpus=n_jobs)
 # comb_model = kabuki.utils.concat_models(models)
 # comb_model.save(os.path.join(model_dir, '{}_{}'.format(model_name,'combined')))
 
-# # More complicated model
-model_name = 'only_RT-v_and_t'
-model_spec = ["v ~ 0+C(trial_PE)","t ~ 0+C(trial_PE)"]
+
+model_name = 'RT_and_pupil-v_and_t-extrazero'
+model_spec = ["v ~ 0+C(trial_PE)*(0+pupil_response_1)","t ~ 0+C(trial_PE)"]
 
 start_time = time.time()
 jobs = [(trace_id, job_server.submit(fit_reg_model,(trace_id, use_data, model_spec, model_dir, model_name, samples), (), ('hddm',))) for trace_id in range(n_jobs)]
@@ -130,6 +130,39 @@ text_file.close()
 # Save combined model
 comb_model = kabuki.utils.concat_models(models)
 comb_model.save(os.path.join(model_dir, '{}_{}'.format(model_name,'combined')))
+
+
+
+
+# # # More complicated model
+# model_name = 'only_RT-v_and_t'
+# model_spec = ["v ~ 0+C(trial_PE)","t ~ 0+C(trial_PE)"]
+
+# start_time = time.time()
+# jobs = [(trace_id, job_server.submit(fit_reg_model,(trace_id, use_data, model_spec, model_dir, model_name, samples), (), ('hddm',))) for trace_id in range(n_jobs)]
+
+# models = []
+# for s, job in jobs:
+#     models.append(job())
+# print "Time elapsed: ", time.time() - start_time, "s"
+# job_server.print_stats()
+
+# # save individual models
+# for i in range(n_jobs):
+#     model = models[i]
+#     model.save(os.path.join(model_dir, '{}_{}'.format(model_name,i)))
+
+
+# # Compute gelman rubic (Rhat) thingy
+# gr = hddm.analyze.gelman_rubin(models)
+# text_file = open(os.path.join(model_dir, 'diagnostics', '{}-{}.txt'.format('gelman_rubic',model_name)), 'w')
+# for p in gr.items():
+#     text_file.write("%s:%s\n" % p)
+# text_file.close()
+
+# # Save combined model
+# comb_model = kabuki.utils.concat_models(models)
+# comb_model.save(os.path.join(model_dir, '{}_{}'.format(model_name,'combined')))
 
 # # # More complicated model with pupil
 # model_name = 'RT_and_pupil-only_v'
