@@ -84,12 +84,12 @@ class Plotter(object):
 	def tsplot(self, data, tnames = [], time = [], name = 'Time (au)', ci=[95], legend=True):
 		sn.tsplot(data = data, condition = tnames, time = time, name= name, ci=ci, legend=legend)
 		sn.despine(offset=5)
-
+		
 	def event_related_pupil_average(self, data, conditions = [], signal_labels = [], 
 									xtimes = [], yticks = [], xticks = [], x_lim =[None, None], y_lim=[None, None], axis_ratio = None,
 									yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', 
 									title = '', show_legend = False, legend_prop = None, legend_loc = 'best', legend_fontsize = None,
-									compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, stats_ttest_ref = 0.0, sig_marker_ypos = 0.0, mark_first_sig = False, report_pvals = False,
+									compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, stats_ttest_ref = 0.0, stats_ttest_p = 0.05, sig_marker_ypos = 0.0, jitter_sig_markers = False, mark_first_sig = False, report_pvals = False,
 									smooth_signal = False, smooth_factor = 10, after_smooth = False, after_smooth_window = 10,
 									dt = False):
 			
@@ -100,9 +100,6 @@ class Plotter(object):
 		if isinstance(data, dict):
 			for (label, signal) in list(data.items()):
 				if (len(conditions)==0) | (label in conditions):
-
-					if dt:
-						signal = np.diff(signal, axis=-1)
 
 					if smooth_signal:
 						signal = sp.signal.decimate(signal, smooth_factor, 1)
@@ -150,7 +147,8 @@ class Plotter(object):
 								ypos = 0.0
 											
 						# Add some jitter to ypos to differentiate multiple conditions
-						ypos = ypos + (0.02*np.random.rand()-0.01)									
+						if jitter_sig_markers:
+							ypos = ypos + (0.02*np.random.rand()-0.01)									
 
 						t,p = sp.stats.ttest_1samp(signal, stats_ttest_ref)
 
@@ -164,7 +162,7 @@ class Plotter(object):
 							if (x_lim[1] is not None) and (time_point > x_lim[1]):
 								break
 
-							if pval < 0.05:
+							if pval < stats_ttest_p:
 								if report_pvals:
 									print('found sig. pval (%f) at %i'%(pval,time_point))
 
@@ -186,6 +184,23 @@ class Plotter(object):
 					if after_smooth:
 						msignal = sp.signal.savgol_filter(msignal, after_smooth_window, 2)						
 
+					if dt:
+						dt_msignal = np.diff(msignal, axis=-1) + 0.5
+
+						self.plot(xtimes[:-1], dt_msignal)
+
+						# if not signal_labels:
+						# 	if self.linestylemap is None:
+						# 		self.plot(xtimes[:-1], dt_msignal, label=label, alpha=1)
+						# 	else:
+						# 		self.plot(xtimes[:-1], dt_msignal, label=label, alpha=1, color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3], markerfacecolor=self.linestylemap[label][4], linewidth=self.linestylemap[label][5])
+						# else:
+						# 	if self.linestylemap is None:
+						# 		self.plot(xtimes[:-1], dt_msignal, label=signal_labels[label], alpha=1)
+						# 	else:
+						# 		self.plot(xtimes[:-1], dt_msignal, label=signal_labels[label], alpha=1, color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3], markerfacecolor=self.linestylemap[label][4], linewidth=self.linestylemap[label][5])
+
+
 					if not signal_labels:
 						if self.linestylemap is None:
 							self.plot(xtimes, msignal, label=label)
@@ -197,47 +212,12 @@ class Plotter(object):
 						else:
 							self.plot(xtimes, msignal, label=signal_labels[label], color=self.linestylemap[label][0], ls=self.linestylemap[label][1], marker=self.linestylemap[label][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[label][3], markerfacecolor=self.linestylemap[label][4], linewidth=self.linestylemap[label][5])
 
+
+
 				
 
 		else:
-			for (key,signal) in enumerate(data):
-				if (len(conditions)==0) | (key in conditions):
-					if compute_mean:
-						msignal = np.nanmean(signal, axis=0)
-					else:
-						msignal = signal
-
-					if smooth_signal:
-						msignal = sp.signal.decimate(msignal, smooth_factor)
-
-					if compute_sd:	
-						if smooth_signal:
-							ste_signal = np.array(sp.signal.decimate(signal,smooth_factor,axis=1))
-						else:
-							ste_signal = np.array(signal)
-						if bootstrap_sd:
-									
-							condition_ste = np.zeros((2,ste_signal.shape[1]))			
-							for t in range(ste_signal.shape[1]):
-								condition_ste[:,t] = self.bootstrap(ste_signal[:,t], 1000, np.nanmean, 0.5)
-						else:
-							condition_ste = ste_signal.std(axis=0)/np.sqrt(ste_signal.shape[0])#np.std(signal, axis=0)/np.sqrt(len(signal))	
-						if self.linestylemap is None:
-							plt.fill_between(list(range(len(msignal))), msignal-condition_ste, msignal+condition_ste, alpha=0.1)	
-						else:
-							plt.fill_between(list(range(len(msignal))), msignal-condition_ste, msignal+condition_ste, alpha=0.1, color=self.linestylemap[key][0])	
-
-					if not signal_labels:
-						if self.linestylemap is None:
-							self.plot(xtimes, msignal, label=label)
-						else:
-							self.plot(xtimes, msignal, label=label, color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markeredgecolor=self.linestylemap[key][3], markerfacecolor=self.linestylemap[key][4], linewidth=self.linestylemap[key][5])
-					else:
-						if self.linestylemap is None:
-							self.plot(xtimes, msignal, label=signal_labels[key])
-						else:
-							self.plot(xtimes, msignal, label=signal_labels[key], color=self.linestylemap[key][0], ls=self.linestylemap[key][1], marker=self.linestylemap[key][2], markersize=MARKERSIZE, markerfacecolor=self.linestylemap[key][4], markeredgecolor=self.linestylemap[key][3], linewidth=self.linestylemap[key][5])
-
+			print('bleh...')
 	
 					
 
