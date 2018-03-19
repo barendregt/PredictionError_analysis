@@ -1,3 +1,6 @@
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 import numpy as np
 import scipy as sp
 
@@ -90,12 +93,16 @@ class Plotter(object):
 									yticklabels = [], xticklabels = [], onset_marker = [], xlabel = 'Time (s)', ylabel = 'Pupil size (sd)', 
 									title = '', show_legend = False, legend_prop = None, legend_loc = 'best', legend_fontsize = None,
 									compute_mean = False, compute_sd = False, bootstrap_sd = False, with_stats = False, stats_ttest_ref = 0.0, stats_ttest_p = 0.05, sig_marker_ypos = 0.0, jitter_sig_markers = False, mark_first_sig = False, report_pvals = False,
-									smooth_signal = False, smooth_factor = 10, after_smooth = False, after_smooth_window = 10,
+									smooth_signal = False, smooth_factor = 10, after_smooth = False, after_smooth_window = 11,
 									dt = False):
 			
 
 		if onset_marker != []:
 			plt.axvline(onset_marker, ymin=0, ymax=1, linewidth=1.5, color='k', figure = self.figure)
+
+		# Window size must be odd
+		if (after_smooth_window%2)==0:
+			after_smooth_window += 1
 
 		if isinstance(data, dict):
 			for (label, signal) in list(data.items()):
@@ -448,6 +455,12 @@ class Plotter(object):
 			plt.text(x, 0.55, label, alpha = 0.5, fontsize=8, horizontalalignment='left', verticalalignment='center', bbox=dict(facecolor='w',edgecolor='w'))
 
 	def show(self):
+
+		try:
+			self.figure.tight_layout()
+		except:
+			pass
+
 		plt.show()
 
 	def save_figure(self, filename = '', sub_folder = ''):

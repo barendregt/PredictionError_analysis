@@ -65,7 +65,7 @@ for subname in sublist:
 
 
 	# Get pupil size change per trial at interval [-0.5,0.5] around stimulus offset
-	pa.compute_TPR(reference_phase=7, time_window = np.array([-0.5, 0.5]), sort_by_code = False)
+	pa.compute_TPR(reference_phase=7, time_window = np.array([0.0, 0.5]), sort_by_code = False)
 
 	beh_data['pupil_response_1'] = 0
 	if beh_data.shape[0] > len(pa.TPR):
@@ -75,7 +75,7 @@ for subname in sublist:
 		beh_data['pupil_response_1'] = pa.TPR
 
 	# Get pupil size change per trial at interval [0.5, 2.5] after stimulus offset (response window)
-	pa.compute_TPR(reference_phase=7, time_window = np.array([0.5,2.5]), sort_by_code = False)
+	pa.compute_TPR(reference_phase=7, time_window = np.array([1.5,2.5]), sort_by_code = False)
 
 	beh_data['pupil_response_2'] = 0
 	if beh_data.shape[0] > len(pa.TPR):

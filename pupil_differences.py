@@ -34,6 +34,7 @@ from analysis_parameters import *
 
 pl = Plotter(figure_folder = figfolder, linestylemap = linestylemap)
 
+plot_individual = True
 
 
 pupil_signals = {'correct': {'PP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float),
@@ -63,7 +64,10 @@ reaction_times = {'correct': {'PP': [],
 				 'PU': [],
 				 'UU': []}}		 
 
-
+all_pupil_signals = {'PP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float),
+				 'UP': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float),
+				 'PU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float),
+				 'UU': np.empty((0,int((stimulus_deconvolution_interval[1] - stimulus_deconvolution_interval[0])*signal_sample_frequency)),dtype=float)}
 
 
 sublist_pile = {'correct': {'PP': [],
@@ -147,6 +151,8 @@ for subname in sublist:
 		pupil_signals['correct'][con] = np.append(pupil_signals['correct'][con], sub_signals['correct'][con].mean(axis=0)[np.newaxis,:], axis=0)
 		pupil_signals['incorrect'][con] = np.append(pupil_signals['incorrect'][con], sub_signals['incorrect'][con].mean(axis=0)[np.newaxis,:], axis=0)	
 
+		all_pupil_signals[con] = np.append(all_pupil_signals[con], np.vstack([sub_signals['correct'][con], sub_signals['incorrect'][con]]).mean(axis=0)[np.newaxis,:], axis=0)
+
 		reaction_times['correct'][con].append(np.median(sub_rts['correct'][con]))
 		reaction_times['incorrect'][con].append(np.median(sub_rts['incorrect'][con]))
 
@@ -155,6 +161,36 @@ for subname in sublist:
 
 		# sublist_pile['correct'][con].append([subname]*sub_signals['correct'][con].shape[0])
 		# sublist_pile['incorrect'][con].append([subname]*sub_signals['incorrect'][con].shape[0])
+
+
+	if plot_individual:
+		smooth_signal = True
+		smooth_factor = down_fs
+
+		x_lim = [750/smooth_factor,4500/smooth_factor]
+		y_lim = [-0.5, 2.0]
+
+		pl.open_figure(force=1)
+
+		# pl.subplot(1,2,1)
+
+		pl.hline(0.0)
+		pl.vline(1000/smooth_factor, linestyle='solid', alpha=0.5)
+
+		pl.event_related_pupil_average(data=sub_signals['correct'], conditions = ['PP','PU','UP'], signal_labels=keymap_to_words, x_lim=x_lim, xticks=np.arange(0/smooth_factor,4500/smooth_factor,500/smooth_factor),xticklabels=np.arange(-1,3.5,0.5),y_lim=y_lim,compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=True, legend_loc = 'lower right', legend_fontsize=9, title='Correct trials', xlabel='Time after stimulus (s)')
+
+		pl.save_figure(filename='%s-average_pupil_correct.pdf'%subname,sub_folder='per_sub/pupil')
+
+		# pl.subplot(1,2,2)
+
+		pl.open_figure(force=1)
+
+		pl.hline(0.0)
+		pl.vline(1000/smooth_factor, linestyle='solid', alpha=0.5)
+
+		pl.event_related_pupil_average(data=sub_signals['incorrect'], conditions = ['PP','PU','UP'], signal_labels=keymap_to_words, x_lim=x_lim,xticks=np.arange(0/smooth_factor,4500/smooth_factor,500/smooth_factor),xticklabels=np.arange(-1,3.5,0.5),y_lim=y_lim,compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=False,title='Incorrect trials', xlabel='Time after stimulus (s)')
+
+		pl.save_figure(filename='%s-average_pupil_incorrect.pdf'%subname,sub_folder='per_sub/pupil')		
 
 
 error_minus_noerror_correct = {'UP':[],
@@ -166,6 +202,9 @@ error_minus_noerror_incorrect = {'UP':[],
 incorrect_minus_correct =  {'UP':[],
 							   'PU':[],
 							   'UU':[]}
+correct_minus_incorrect =  {'UP':[],
+							   'PU':[],
+							   'UU':[]}							   
 
 for con in ['PU','UP','UU']:
 	error_minus_noerror_correct[con] = pupil_signals['correct'][con]-pupil_signals['correct']['PP']#.mean(axis=0)
@@ -179,13 +218,35 @@ error_minus_noerror_incorrect['UP'] = np.vstack([error_minus_noerror_incorrect['
 
 # incorrect_minus_correct['UP'] = combined_incorrect-combined_correct
 
-for con in ['PU','UP']:
-	incorrect_minus_correct[con] = error_minus_noerror_incorrect[con] - error_minus_noerror_correct[con]
+for con in ['PU','UP','UU']:
+	#incorrect_minus_correct[con] = error_minus_noerror_correct[con]- error_minus_noerror_incorrect[con]
+	correct_minus_incorrect[con] = error_minus_noerror_correct[con]- error_minus_noerror_incorrect[con]
 
 
 pupil_signals['incorrect']['UP'] = (pupil_signals['incorrect']['UP']+pupil_signals['incorrect']['UU'])/2
 
 embed()
+
+
+
+smooth_signal = True
+smooth_factor = down_fs
+
+x_lim = [750/smooth_factor,4500/smooth_factor]
+y_lim = [-0.25,1.0]
+
+pl.open_figure(force=1)
+
+# pl.subplot(1,2,1)
+
+pl.hline(0.0)
+pl.vline(1000/smooth_factor, linestyle='solid', alpha=0.5)
+
+pl.event_related_pupil_average(data=all_pupil_signals, conditions = ['PP','PU','UP'], signal_labels=keymap_to_words, x_lim=x_lim, xticks=np.arange(0/smooth_factor,4500/smooth_factor,500/smooth_factor),xticklabels=np.arange(-1,3.5,0.5),y_lim=y_lim,compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=True, legend_loc = 'lower right', legend_fontsize=9, title='Correct trials', xlabel='Time after stimulus (s)')
+
+pl.save_figure(filename='average_pupil_correct.pdf',sub_folder='over_subs/pupil')
+
+
 
 smooth_signal = True
 smooth_factor = down_fs
@@ -273,11 +334,11 @@ pl.save_figure(filename='average_pupil_incorrect_difference.pdf',sub_folder='ove
 # pl.save_figure(filename = 'incorrect_pupil_diff.pdf', sub_folder = 'over_subs/pupil')
 
 # # pl.subplot(3,1,3)
-# pl.open_figure(force=1)
+pl.open_figure(force=1)
 
-# pl.event_related_pupil_average(data=incorrect_minus_correct, conditions = ['UP','PU'], signal_labels={'UP':'TaskRel','PU':'TaskIrrel'},x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=True,title='Difference')
+pl.event_related_pupil_average(data=correct_minus_incorrect, conditions = ['UP','PU','UU'],x_lim=[500/smooth_factor,5000/smooth_factor],xticks=np.arange(500/smooth_factor,6000/smooth_factor,500/smooth_factor),xticklabels=np.arange(-0.5,4.5,0.5),y_lim=[-0.1,0.3],compute_mean=True, compute_sd = True, smooth_signal=smooth_signal, smooth_factor=smooth_factor, show_legend=False,title='Difference')
 
-# pl.save_figure(filename = 'incorrect_minus_correct.pdf', sub_folder = 'over_subs/pupil')
+pl.save_figure(filename = 'correct_minus_incorrect.pdf', sub_folder = 'over_subs/pupil')
 
 #t = np.zeros((5500,1))
 #p = np.zeros((5500,1))

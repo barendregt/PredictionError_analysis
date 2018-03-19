@@ -26,9 +26,9 @@ def fit_hddm_model(trace_id, data, model_dir, model_name, samples=10000):
 	import hddm
 	
 
-	m = hddm.HDDM(data, p_outlier = 0.05, depends_on = {'v':'trial_PE','z':'trial_PE','t':'trial_PE'},include=('sv'))
+	m = hddm.HDDM(data, p_outlier = 0.05, depends_on = {'z':'trial_PE','t':'trial_PE'},include=('sv'))
 	m.find_starting_values()
-	m.sample(samples, burn=1000, dbname=os.path.join(model_dir, model_name+ '_db{}'.format(trace_id)), db='hdf5')
+	m.sample(samples, burn=samples/10, thin=2, dbname=os.path.join(model_dir, model_name+ '_db{}'.format(trace_id)), db='pickle')
 
 	return m
 
@@ -40,11 +40,11 @@ def fit_reg_model(trace_id, data, model_spec, model_dir, model_name, samples=100
 	import hddm
 	from patsy import dmatrix  # for regression only
 
-	m = hddm.models.HDDMRegressor(data, model_spec, p_outlier = 0.05)#, keep_regressor_trace=True)
+	m = hddm.models.HDDMRegressor(data, model_spec,include=('sv'), p_outlier = 0.05, keep_regressor_trace=True)
 
 	# m = hddm.models.HDDMRegressor(data, ['v ~ pupil_response_2:C(trial_PE)','t ~ pupil_response_2:C(trial_PE)'], p_outlier = 0.05)
 	m.find_starting_values()
-	m.sample(samples, burn=1000, dbname=os.path.join(model_dir, model_name+ '_db{}'.format(trace_id)), db='hdf5')
+	m.sample(samples, burn=1000, dbname=os.path.join(model_dir, model_name+ '_db{}'.format(trace_id)), db='pickle')
 
 	return m
 
@@ -132,17 +132,16 @@ job_server = pp.Server(ppservers=(), ncpus=n_jobs)
 # comb_model.save(os.path.join(model_dir, '{}_{}'.format(model_name,'combined')))
 
 # More complicated model with pupil
-model_name = 'RT_and_pupil-z'
-model_spec = ["z ~ 0+C(trial_PE)"]
+model_name = 'RT_and_pupil-v_and_t_and_z'
+model_spec = ["v ~ 0+C(trial_PE)","t ~ 0+C(trial_PE)","z ~ 0+C(trial_PE)"]
 
 start_time = time.time()
-jobs = [(trace_id, job_server.submit(fit_hddm_model,(trace_id, use_data, model_dir, model_name, samples), (), ('hddm',))) for trace_id in range(n_jobs)]
+jobs = [(trace_id, job_server.submit(fit_reg_model,(trace_id, use_data, model_spec, model_dir, model_name, samples), (), ('hddm',))) for trace_id in range(n_jobs)]
 
 models = []
-for s,job in jobs:
-    #models.append(fit_reg_model(trace_id, use_data, model_spec, model_dir, model_name, samples))
+for s, job in jobs:
     models.append(job())
-    print "Time elapsed: ", time.time() - start_time, "s"
+print "Time elapsed: ", time.time() - start_time, "s"
 job_server.print_stats()
 
 # save individual models

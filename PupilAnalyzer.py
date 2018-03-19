@@ -42,7 +42,7 @@ class PupilAnalyzer(Analyzer):
 		self.pupil_data     = None
 
 
-	def signal_per_trial(self, reference_phase = 1, only_correct = False, only_incorrect = False, return_dt = False, return_rt = False, return_blinks = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
+	def signal_per_trial(self, reference_phase = 1, only_correct = False, only_incorrect = False, only_FA = False, only_Hit = False, sdt_dir = 1, return_dt = False, return_rt = False, return_blinks = False, with_rt = False, baseline_phase = 1, baseline_correction = True, baseline_type = 'absolute', baseline_period = [-0.5, 0.0], force_rebuild = False, signal_type = 'clean_signal', down_sample = False):
 
 		if only_correct==True and only_incorrect==True:
 			display('Error: incompatible trial selection!!')
@@ -69,7 +69,11 @@ class PupilAnalyzer(Analyzer):
 			if only_correct:
 				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==1), dtype=bool)
 			elif only_incorrect:
-				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==0), dtype=bool)				
+				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & (trial_parameters['correct_answer']==0), dtype=bool)
+			elif only_Hit:
+				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & ((trial_parameters['trial_direction']==sdt_dir) & (trial_parameters['response']==sdt_dir)), dtype=bool)		
+			elif only_FA:
+				selected_trials = np.array((trial_parameters['trial_codes']==tcode) & ((trial_parameters['trial_direction']==(-1*sdt_dir)) & (trial_parameters['response']==sdt_dir)), dtype=bool)						
 			else:
 				selected_trials = np.array(trial_parameters['trial_codes']==tcode, dtype=bool)			
 
@@ -172,7 +176,8 @@ class PupilAnalyzer(Analyzer):
 		for tii,(ts,te) in enumerate(trial_times):
 			if (ts > 0) & (te < recorded_pupil_signal.size):
 
-				trial_pupil_response = np.mean(recorded_pupil_signal[int(ts):int(te)]) - np.mean(recorded_pupil_signal[int(baseline_times[0, int(tii)]):int(baseline_times[1,int(tii)])])
+				trial_pupil_response = recorded_pupil_signal[int(ts):int(te)] - np.mean(recorded_pupil_signal[int(baseline_times[0, int(tii)]):int(baseline_times[1,int(tii)])])
+				trial_pupil_response = np.max(np.abs(trial_pupil_response))
 				# trial_puresponsegnal = np.mean(recorded_pupil_signal[int(ts):int(te)]) - 
 
 				if sort_by_code:

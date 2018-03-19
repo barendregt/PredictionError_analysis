@@ -12,7 +12,7 @@ figfolder = '/home/barendregt/Analysis/PredictionError/New_Figures'
 
 
 
-low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.05
+low_pass_pupil_f, high_pass_pupil_f = 4.0, 0.01
 
 signal_sample_frequency = 1000
 deconv_sample_frequency = 50
@@ -58,6 +58,11 @@ keymap_to_words = {'PP':'None',
 				   'UP': 'T-Relevant',
 				   'PU': 'T-Irrelevant',
 				   'UU': 'Combined'}
+
+# words_to_keymap = {'PP':'None',
+# 				   'UP': 'T-Relevant',
+# 				   'PU': 'T-Irrelevant',
+# 				   'UU': 'Combined'}				   
 
 keymap_to_code = {'PP':[0, 0],
 				   'UP': [1, 0],

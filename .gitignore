@@ -3,6 +3,7 @@ Figures/
 Archive/
 data_output/
 pupil_data/
+hddm/
 
 # Python
 *.py[cod]

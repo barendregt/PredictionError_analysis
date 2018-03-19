@@ -5,6 +5,7 @@ import scipy as sp
 
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
+import statsmodels.formula.api as smf
 from statsmodels.stats.anova import anova_lm
 
 from numpy import *
@@ -43,10 +44,26 @@ rts_incorrect = {'PP': [],
 	 'PU': [],
 	 'UU': []}	 
 
+
+all_rts_correct = {'PP': [],
+	 'UP': [],
+	 'PU': [],
+	 'UU': []}
+
+all_rts_incorrect = {'PP': [],
+	 'UP': [],
+	 'PU': [],
+	 'UU': []}	
+
+
 pcs = {'PP': [],
 	 'UP': [],
 	 'PU': [],
 	 'UU': []}	 
+
+
+
+all_pd_rts = pd.DataFrame([],columns=['Reaction time','Response','subID','prediction_error','TR','TI'])
 
 for subname in sublist:
 
@@ -69,6 +86,19 @@ for subname in sublist:
 		pcs[key].append(sub_rts['correct'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1])].mean())
 		rts_correct[key].append(sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==1)].median())
 		rts_incorrect[key].append(sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==0)].median())
+		# all_rts_correct[key].append(sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==1)])
+		# all_rts_incorrect[key].append(sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==0)])
+
+		tmp = pd.DataFrame()
+		tmp['Reaction time'] = np.hstack([sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==1)], sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==0)]])
+		tmp['Reaction time'] = tmp['Reaction time']
+		tmp['Response'] = np.hstack([['Correct']*sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==1)].shape[0],['Incorrect']*sub_rts['reaction_time'][(sub_rts['trial_code']==inverse_keymap[key][0]) + (sub_rts['trial_code']==inverse_keymap[key][1]) + (sub_rts['correct']==0)].shape[0]])
+		tmp['subID'] = sublist.index(subname)
+		tmp['prediction_error'] = keymap_to_words[key]
+		tmp['TR'] = keymap_to_code[key][0]
+		tmp['TI'] = keymap_to_code[key][1]		
+
+		all_pd_rts = all_pd_rts.append(other=tmp, ignore_index=True)
 
 	#all_rts.append(sub_rts)
 # embed()
@@ -113,7 +143,7 @@ saturation = linestylemap['saturation']
 
 embed()
 
-f=sn.factorplot(data=pd_rts, x='Response',y='Reaction time',hue='prediction_error',kind='bar', size=10, aspect=1.5, palette=palette,saturation=saturation,ci=68)
+f=sn.factorplot(data=pd_rts, x='prediction_error',y='Reaction time',kind='bar', size=10, aspect=1.5, palette=palette,saturation=saturation,ci=68)
 
 plt.savefig(figfolder+'/over_subs/task/reaction_times.pdf')
 
@@ -127,6 +157,82 @@ g = (g.set_axis_labels("Prediction error", "Percentage correct (%)")
 	.set(ylim=(0.5, 1.0),xticks=[],
 	yticks=[.5,.6,.7,.8,.9,1.0],yticklabels=['50%','60%','70%','80%','90%','100%'])
 	)
+
+
+
+# Normalize RTs per subject before combining
+overall_mean = all_pd_rts['Reaction time'].mean()
+
+all_pd_rts['Normalized RT'] = all_pd_rts['Reaction time'] / np.repeat(all_pd_rts.groupby('subID')['Reaction time'].median().values,all_pd_rts.groupby('subID').count()['Reaction time'].values)
+# all_pd_rts['Normalized RT'] *= overall_mean
+
+
+
+
+
+sn.factorplot(x="prediction_error",y="Normalized RT",data=all_pd_rts,kind="bar",estimator=np.median)
+
+
+
+
+plt.figure(figsize=(10,8))
+
+plt.subplot(2,1,1)
+plt.title('Correct')
+# plt.axis([0, 3, 0, 1.65])
+
+plt.subplot(2,1,2)
+plt.title('Incorrect')
+# plt.axis([0, 3, 0, 1.65])
+
+for key in rts_correct.keys():
+	plt.subplot(2,1,1)
+
+
+	y,x = np.histogram(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Correct")], bins=50)
+
+	x = x[:-1]-np.diff(x)
+
+
+	alpha,loc,scale = sp.stats.gamma.fit(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Correct")])
+
+	fit_vals = sp.stats.gamma.pdf(x, alpha, loc, scale) * np.max(y)
+
+	plt.plot(x,fit_vals,color=linestylemap[key][0],lw=3)
+
+
+	# ax1 = sn.distplot(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Correct")],kde=False,color=linestylemap[key][0])#,lw=linestylemap[key][-1],ls=linestylemap[key][1])
+	# ax2 = ax1.twinx()
+	# sn.distplot(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Correct")],hist=False,fit=sp.stats.gamma,color=linestylemap[key][0],ax=ax2)#,lw=linestylemap[key][-1],ls=linestylemap[key][1], ax=ax)
+	# # sn.hist()
+
+	plt.subplot(2,1,2)
+
+	y,x = np.histogram(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Incorrect")], bins=50)
+
+	x = x[:-1]-np.diff(x)
+
+	alpha,loc,scale = sp.stats.gamma.fit(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Incorrect")])
+
+	fit_vals = sp.stats.gamma.pdf(x, alpha, loc, scale) * np.max(y)
+
+	plt.plot(x,fit_vals,color=linestylemap[key][0],lw=3)
+
+	# ax1=sn.distplot(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Incorrect")],kde=False,color=linestylemap[key][0])#,lw=linestylemap[key][-1],ls=linestylemap[key][1])
+	# ax2 = ax1.twinx()
+	# sn.distplot(all_pd_rts['Normalized RT'][(all_pd_rts['prediction_error']==keymap_to_words[key]) * (all_pd_rts['Response']=="Incorrect")],hist=False,fit=sp.stats.gamma,color=linestylemap[key][0],ax=ax2)#,lw=linestylemap[key][-1],ls=linestylemap[key][1], ax=ax)
+
+sn.despine(offset=5)
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+
 
 
 # for patch,label in zip(ax.patches,keymap_to_words.values()) :
